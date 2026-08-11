@@ -1,0 +1,125 @@
+sector,valor_agregado_bruto
+"Cultivo de cereales, oleaginosas y forrajeras",4387907.603190975
+"Cultivo de hortalizas, legumbres, flores y plantas ornamentales",1098890.3077655993
+Cultivo de frutas y nueces,520990.7647313187
+Cultivos industriales,1260054.2553105664
+Producción de semillas,652815.2141325143
+"Cría de ganado y producción de leche, lana y pelos",4153470.7026612386
+Producción de granja,611169.3763510495
+Servicios agropecuarios,681670.3946658893
+Caza,29736.413039247123
+Silvicultura y extracción de madera,301737.8153911075
+Pesca,484887.74850472726
+"Extracción de petróleo, gas, carbón y uranio",5392030.1427776
+Extracción de minerales metalíferos,69451.89857933408
+Extracción de otros minerales,739410.7393170606
+"Matanza de animales, conservación y procesamiento de carnes",1743447.3632839862
+Elaboración y conservación de pescado y productos de pescado,128705.442598967
+"Elaboración y conservación de frutas, legumbres y hortalizas",566088.0267934247
+Aceites y subproductos oleaginosos,422126.81084706075
+Productos lácteos,883126.5134070967
+Molienda de trigo y de otros cereales,357238.3971390473
+Alimentos balanceados,103857.91625565616
+Productos de panadería,2077312.1350225392
+Azúcar,279385.4512386779
+"Cacao, chocolate y productos de confitería",315677.803663851
+Pastas alimenticias,388017.75714234344
+Otros productos alimenticios,802582.9124462046
+Bebidas alcohólicas,89151.79945227863
+Producción vitivinícola,631629.3154768541
+Cerveza y malta,372625.9879938047
+"Gaseosas, agua mineral y otras bebidas no alcohólicas",1171972.1568070643
+Productos de tabaco,363489.3561556039
+"Fibras, hilados y tejeduría de productos textiles",790690.272587609
+Acabado de productos textiles,157350.02776457748
+Fabricación de productos textiles,482655.04820309044
+Tejidos de punto,330317.74767682946
+"Prendas de vestir, terminación y teñido de pieles",1462908.4270484508
+Curtido y terminación de cueros,330288.92567769415
+Marroquinería y talabartería,128425.76855492056
+Calzado y sus partes,865105.757929799
+Aserraderos,397033.6773697734
+Madera y sus productos,550176.7314416359
+Celulosa y papel,240298.1004118286
+Papel y cartón ondulado y envases de papel y cartón,503425.38604574616
+Productos de papel y cartón,319051.4502435109
+"Edición de libros, folletos, grabaciones y otras ediciones",274643.68451160577
+Edición de periódicos y revistas,976323.0863665324
+Impresiones y reproducción de grabaciones,1088634.3713928103
+Refinación de petróleo,1155570.037779347
+Química básica,671202.2635058095
+Fertilizantes y plaguicidas,193162.50596447766
+Materias primas plásticas y caucho sintético,408190.31115906965
+Pinturas y barnices,385506.87180339696
+Productos medicinales,1972846.6039840262
+"Jabones, detergentes y cosméticos",896879.1292878767
+Otros productos químicos,556584.8126178939
+Fibras sintéticas manufacturadas,172352.4364547542
+"Cubiertas, cámaras y recauchutado de cubiertas",194356.7766864063
+Productos de caucho,238995.60649740047
+Productos de plástico,1890346.6990940706
+Vidrio y productos de vidrio,328601.9961086176
+Productos de cerámica refractaria y no refractaria para uso no estructural,238394.60535452125
+Arcilla y cerámica no refractaria para uso estructural,410339.36688073294
+"Cemento, cal y yeso",494242.5614970214
+"Artículos de hormigón, cemento y yeso",292740.9398672718
+Industrias básicas de hierro y acero,1474099.784907749
+Metalurgia de no ferrosos,298583.80416987336
+Fundición de metales,395345.8912492563
+"Estructuras metálicas, tanques, depósitos y generadores de vapor",330882.08006915567
+"Forja, laminado y tratamiento de metales",263237.43773261405
+Artículos de cuchillería y ferretería y herramientas de mano,278229.94701238745
+Otros productos metálicos,818593.9327752416
+"Motores, turbinas, bombas y compresores",320990.53511406743
+"Engranajes, hornos, elevadores y otras maquinarias de uso general",438010.7777559031
+Tractores y maquinaria agrícola,385290.5266487694
+Otra maquinaria de uso especial,400509.927565448
+Aparatos de uso doméstico,449952.76027253945
+Máquinas de oficina e informática,129164.10325338878
+"Motores, generadores y transformadores eléctricos",212771.11294098367
+Aparatos de control y distribución de energía eléctrica,131711.63477838176
+Hilos y cables aislados,116968.17099442455
+Acumuladores y pilas,189398.8484883493
+Lámparas eléctricas y equipos de iluminación,128894.86873380648
+"Tubos y transmisores de radio, TV y telefonía",293870.89515687193
+Receptores de radio y TV,229585.78799239197
+"Instrumentos médicos, ópticos y de precisión y relojes",230811.84247199172
+Vehículos automotores,1387007.8536384748
+Carrocerías y remolques,228955.7971151796
+Autopartes,1207683.5447475433
+"Buques, locomotoras y aeronaves",317783.2969040315
+"Motocicletas, bicicletas y otros tipos de transportes",66988.38295591067
+Muebles y colchones,1166541.1956368904
+Otras industrias manufactureras,375488.8625479444
+Electricidad,3263142.9031724064
+Gas,651665.3790105972
+Agua,871289.032095894
+Construcción,14816626.023302019
+Comercio mayorista,9816575.79567033
+Comercio minorista,20358149.4649402
+Hoteles,1841694.2357563884
+Restaurantes,4079236.6199075216
+Transporte terrestre de pasajeros,4993622.872882986
+Transporte terrestre de carga,5317322.833141254
+Transporte por tuberías,578088.1603622003
+Transporte marítimo,141846.49783918078
+Transporte aéreo,756744.354564397
+Actividades de transporte complementarias,2139817.9158108807
+Correos,573875.5696529446
+Telecomunicaciones,5435088.205687413
+Instituciones Financieras,8140441.32827504
+Seguros,1504547.0472446072
+Servicios a las empresas y profesionales,11576541.659396723
+Actividades inmobiliarias,32453891.396806736
+Administración pública y defensa y planes de la seguridad social de afiliación obligatoria,16497696.516568616
+Enseñanza pública,8092043.248969675
+Enseñanza privada,3676834.957777776
+Salud humana pública,3417049.0362589518
+Salud humana privada,6275683.452759449
+Servicios veterinarios,63581.5310326122
+Servicios sociales,442901.60223523836
+Servicios de saneamiento,1269524.2553260368
+Actividad de asociaciones,1895725.6891058101
+"Servicios de cine, radio y televisión",1338373.6443289986
+"Servicios personales, de reparación, actividades deportivas y de esparcimiento",8519599.468562078
+Servicio doméstico,4530446.892972108
