@@ -1,0 +1,5 @@
+estacion,facturas_nuevas_mes,productividad_mes_por_persona,descripcion
+Recepción,10000,900,Carga de la factura (OCR + control manual)
+Validación,0,650,"Matching a 3 vías: OC, remito y factura"
+Aprobación,0,1100,Circuito de aprobación por monto
+Pago,0,1400,Generación del pago y conciliación bancaria

@@ -1,0 +1,7 @@
+centro,tipo,costo_directo_mensual,volumen_mensual
+IT,soporte,4800000,0
+RRHH,soporte,2400000,0
+Facilities,soporte,1800000,0
+P2P,operativo,9500000,48000
+OTC,operativo,11200000,62000
+R2R,operativo,6300000,1200

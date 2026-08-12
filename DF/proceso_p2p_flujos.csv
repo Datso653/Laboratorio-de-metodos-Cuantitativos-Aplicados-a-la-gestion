@@ -1,0 +1,8 @@
+origen,destino,proporcion
+Recepción,Validación,1.0
+Validación,Recepción,0.18
+Validación,Aprobación,0.82
+Aprobación,Validación,0.12
+Aprobación,Pago,0.88
+Pago,Aprobación,0.04
+Pago,Completado,0.96
