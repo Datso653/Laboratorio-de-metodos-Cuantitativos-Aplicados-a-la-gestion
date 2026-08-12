@@ -18,16 +18,16 @@ Leyenda: ✅ listo · 🔄 hay que adaptarlo · ❌ falta crearlo
 | 06 | 04-sep | Variables relevantes, filtrado y muestreo | Rita | — | ❌ |
 | 07 | 08-sep | Sistemas de ecuaciones lineales | **Juan** | `07_Sistemas_de_ecuaciones_lineales.ipynb` | ✅ |
 | 08 | 11-sep | Programación lineal | Rita | `07- Programación lineal en Python.ipynb` + `08- Modelización...` | 🔄 fusionar |
-| 09 | 15-sep | La derivada y las métricas organizacionales | Manu | `09- Derivada y variaciones...ipynb` | 🔄 rutas |
-| 10 | 18-sep | Marginales y elasticidades | Manu | `10_CasoElasticidades.ipynb` | 🔄 rutas |
+| 09 | 15-sep | La derivada y las métricas organizacionales | Manu | `09- Derivada y variaciones...ipynb` | ✅ |
+| 10 | 18-sep | Marginales y elasticidades | Manu | `10_CasoElasticidades.ipynb` | ✅ |
 | 11 | 22-sep | Optimización de funciones | Manu | `11- Optimización de funciones...ipynb` | ✅ |
-| 12 | 25-sep | Casos de aplicación en organizaciones | Manu | `12- Optimización...` + `Complemento/12_1_Caso_Duopolio_` | 🔄 elegir uno |
+| 12 | 25-sep | Casos de aplicación en organizaciones | Manu | `12- Optimización...` + `Complemento/12_1_Caso_Duopolio_` | ✅ (falta elegir uno) |
 | — | **29-sep** | **PRIMER PARCIAL** | — | — | — |
 | 13 | 02-oct | Herramientas de análisis financiero | Rita | `15-Aplicaciones para el análisis de inversiones.ipynb` | 🔄 rutas + cambia de docente |
-| 14 | 06-oct | Aplicaciones financieras para inversiones | **Juan** | `17-Aplicaciones_..._inversiones_II.ipynb` | 🔄 borrar el `16-` duplicado |
+| 14 | 06-oct | Aplicaciones financieras para inversiones | **Juan** | `17-Aplicaciones_..._inversiones_II.ipynb` | ✅ |
 | 15 | 09-oct | Intro a procesos organizacionales y análisis de datos | Rita | — | ❌ |
 | 16 | 13-oct | Funciones totales a partir de marginales | **Juan** | `13_Integrales_Indefinidas1.ipynb` | ✅ |
-| 17 | 16-oct | Integrales y valores acumulados (excedentes) | **Juan** | `14_Integrales Definidas.ipynb` | 🔄 título interno |
+| 17 | 16-oct | Integrales y valores acumulados (excedentes) | **Juan** | `14_Integrales Definidas.ipynb` | ✅ |
 | 18 | 20-oct | Aplicaciones económicas de la integración | **Juan** | `18_Aplicaciones_economicas_integrales.ipynb` | ✅ |
 | 19 | 23-oct | Simulación de datos y aplicaciones | Manu | — | ❌ |
 | 20 | 27-oct | Aplicaciones económicas (U5) | Manu | — | ❌ |
@@ -146,3 +146,30 @@ clase nuestra. Lo integrado hasta ahora:
 
 **Pendiente** (clases de Rita): 02 Visualización (C21, C23, C24), 06 Filtrado y muestreo
 (C15, C16, C19, C25-C29), 08 Programación lineal (C44-C48).
+
+---
+
+## Verificación
+
+Todos los notebooks tocados se ejecutan de punta a punta con `nbclient` antes de commitear, en un
+**sandbox**: se copia `DF/` a una carpeta temporal y el notebook corre ahí, así ninguna celda de
+escritura puede tocar los datos del repositorio.
+
+> ⚠️ **Por qué importa:** varios notebooks tienen celdas `to_csv` / `to_excel`. Si se ejecutan
+> apuntando a `DF/`, **sobrescriben el dataset original**. Ya pasó una vez con `avocado.csv`.
+
+Estado al 2026-08-12 — 16 notebooks verificados: 00, 01, 03, 04, 05, 07, 09, 10, 11, 12, 13, 14,
+17, 18, 21, 22.
+
+### Arreglos de fondo encontrados al verificar
+
+| Notebook | Qué estaba roto |
+|---|---|
+| `09-` | `/content/YPF.xlsx` — el archivo no existía en esa ruta (se subió a `DF/`) |
+| `10_` | Montaba Google Drive y leía de una carpeta personal; el `to_excel` de 18.249 filas colgaba |
+| `12-` | Una celda tenía `f = dsajajsda` — un placeholder sin terminar que cortaba la ejecución |
+| `17-` | Usaba `yfinance` sin instalarlo: en Colab se caía en la primera celda |
+| `05-` | Dos rutas absolutas a la PC de un docente |
+| `07_` | El texto decía "90 sillas y 20 mesas"; la solución real es 30 y 40 |
+| `00_` | Había quedado un `ME QUEDE ACA` en el título de una sección |
+| `16-` | Duplicado de `17-` sin el punto de Fisher → movido a `Backup/` |
