@@ -9,12 +9,12 @@ Leyenda: ✅ listo · 🔄 hay que adaptarlo · ❌ falta crearlo
 
 | # | Fecha | Tema | Docente | Notebook | Estado |
 |---|-------|------|---------|----------|--------|
-| 00 | 14-ago | Introducción a Colab, sintaxis y tipos de datos | Todos | `00_intro_python_y_datos.ipynb` | 🔄 |
+| 00 | 14-ago | Introducción a Colab, sintaxis y tipos de datos | Todos | `00_intro_python_y_datos.ipynb` | ✅ |
 | 01 | 18-ago | Manejo de archivos y obtención de datos | **Juan** | `01_Manejo_de_archivos_y_obtencion_de_datos.ipynb` | ✅ |
 | 02 | 21-ago | Visualización de datos | Rita | `02_Manipulación_de_datos_organizacionales_y_visualización.ipynb` | 🔄 |
 | 03 | 25-ago | Funciones de oferta, demanda, costo, beneficio | Manu | `03_Modelización_de_funciones_económicas.ipynb` | ✅ |
 | 04 | 28-ago | Puntos de equilibrio y ecuaciones | Manu | `04_Puntos_de_equilibrio_y_sistemas_de_ecuaciones.ipynb` | ✅ |
-| 05 | 01-sep | Vectores y matrices | **Juan** | `05-Matrices y Leontief.ipynb` | 🔄 sacarle Leontief |
+| 05 | 01-sep | Vectores y matrices | **Juan** | `05-Matrices y Leontief.ipynb` | ✅ (Leontief ya salió) |
 | 06 | 04-sep | Variables relevantes, filtrado y muestreo | Rita | — | ❌ |
 | 07 | 08-sep | Sistemas de ecuaciones lineales | **Juan** | `07_Sistemas_de_ecuaciones_lineales.ipynb` | ✅ |
 | 08 | 11-sep | Programación lineal | Rita | `07- Programación lineal en Python.ipynb` + `08- Modelización...` | 🔄 fusionar |
@@ -127,3 +127,22 @@ Después se abre un PR contra la rama del docente responsable de esa clase.
 > ⚠️ **Los notebooks son archivos JSON**: si dos personas tocan el mismo, el conflicto de git es
 > horrible de resolver. Por eso **una rama por clase** y avisar en el grupo antes de empezar a
 > tocar un notebook que no sea tuyo.
+
+---
+
+## Material de Sebastián
+
+Sebastián compartió sus **48 mini-notebooks** (`C01` a `C48`) más un mapeo de qué tomar para cada
+clase nuestra. Lo integrado hasta ahora:
+
+| Nuestra clase | De Sebastián | Qué se tomó |
+|---|---|---|
+| 00 Intro | C01, C03, C04, C10 | Anatomía del notebook y **orden de ejecución**, formateo de números, resumir listas, el *groupby manual* con diccionario |
+| 01 Archivos | C18 | Rutas en Windows, `sep`/`decimal`/`encoding` con la tabla de síntomas, inventario mínimo |
+| 03 Funciones | C37, C38 | `math` vs `numpy`, la trampa del `nan`, el log en economía, costo fijo/variable/medio/marginal, **óptimo sin derivadas** |
+| 04 Equilibrio | C39 | Exacto vs aproximado, verificar con `.subs()`, `lambdify`, elasticidad, estática comparativa |
+| 05 Matrices | C13, C14, C32 | Vectorización, `dtype`, **`axis=0` vs `axis=1`**, `*` vs `@`, matrices especiales con significado económico |
+| 07 Sistemas | C36 | Por qué no la inversa, **número de condición**, `lstsq` y el residuo, checklist de defensa |
+
+**Pendiente** (clases de Rita): 02 Visualización (C21, C23, C24), 06 Filtrado y muestreo
+(C15, C16, C19, C25-C29), 08 Programación lineal (C44-C48).
