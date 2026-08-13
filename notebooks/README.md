@@ -14,7 +14,7 @@ Leyenda: ✅ listo · 🔄 hay que adaptarlo · ❌ falta crearlo
 | 02 | 21-ago | Visualización de datos | Rita | `02_Manipulación_de_datos_organizacionales_y_visualización.ipynb` | 🔄 |
 | 03 | 25-ago | Funciones de oferta, demanda, costo, beneficio | Manu | `03_Modelización_de_funciones_económicas.ipynb` | ✅ |
 | 04 | 28-ago | Puntos de equilibrio y ecuaciones | Manu | `04_Puntos_de_equilibrio_y_sistemas_de_ecuaciones.ipynb` | ✅ |
-| 05 | 01-sep | Vectores y matrices | **Juan** | `05-Matrices y Leontief.ipynb` | ✅ (Leontief ya salió) |
+| 05 | 01-sep | Vectores y matrices | **Juan** | `05_Vectores_y_matrices.ipynb` | ✅ |
 | 06 | 04-sep | Variables relevantes, filtrado y muestreo | Rita | — | ❌ |
 | 07 | 08-sep | Sistemas de ecuaciones lineales | **Juan** | `07_Sistemas_de_ecuaciones_lineales.ipynb` | ✅ |
 | 08 | 11-sep | Programación lineal | Rita | `07- Programación lineal en Python.ipynb` + `08- Modelización...` | 🔄 fusionar |
@@ -26,8 +26,8 @@ Leyenda: ✅ listo · 🔄 hay que adaptarlo · ❌ falta crearlo
 | 13 | 02-oct | Herramientas de análisis financiero | Rita | `15-Aplicaciones para el análisis de inversiones.ipynb` | 🔄 rutas + cambia de docente |
 | 14 | 06-oct | Aplicaciones financieras para inversiones | **Juan** | `17-Aplicaciones_..._inversiones_II.ipynb` | ✅ |
 | 15 | 09-oct | Intro a procesos organizacionales y análisis de datos | Rita | — | ❌ |
-| 16 | 13-oct | Funciones totales a partir de marginales | **Juan** | `13_Integrales_Indefinidas1.ipynb` | ✅ |
-| 17 | 16-oct | Integrales y valores acumulados (excedentes) | **Juan** | `14_Integrales Definidas.ipynb` | ✅ |
+| 16 | 13-oct | Funciones totales a partir de marginales | **Juan** | `13_Integrales_Indefinidas1.ipynb` (Parte 1) | ✅ |
+| 17 | 16-oct | Integrales y valores acumulados (excedentes) | **Juan** | `13_Integrales_Indefinidas1.ipynb` (Parte 2) | ✅ fusionada con la 16 |
 | 18 | 20-oct | Aplicaciones económicas de la integración | **Juan** | `18_Aplicaciones_economicas_integrales.ipynb` | ✅ |
 | 19 | 23-oct | Simulación de datos y aplicaciones | Manu | — | ❌ |
 | 20 | 27-oct | Aplicaciones económicas (U5) | Manu | — | ❌ |

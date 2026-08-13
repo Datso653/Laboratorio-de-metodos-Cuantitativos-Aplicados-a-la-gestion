@@ -16,35 +16,54 @@ Repositorio académico con notebooks, datasets y material práctico para el estu
 ## Estructura del repositorio
 
 ```
-├── notebooks/        # Clases en formato Jupyter Notebook (ordenadas por número)
-├── Integradoras/     # Trabajos prácticos integradores
-├── DF/               # Datasets utilizados en las clases
-└── PPT's/            # Material de apoyo
+├── notebooks/            # Clases en formato Jupyter Notebook
+│   ├── Complemento/      # Material de apoyo, organizado por tema
+│   └── Backup/           # Versiones previas de notebooks reemplazados
+├── Integradoras/         # Trabajos prácticos integradores
+├── DF/                   # Datasets utilizados en las clases
+├── PPT's/                # Presentaciones de apoyo
+└── CuestionesAdministrativas/   # Cronograma, pautas de examen y plan del cuatrimestre
 ```
+
+> 🧭 **El mapa detallado de qué archivo corresponde a cada clase está en
+> [`notebooks/README.md`](notebooks/README.md)**, con fechas y docente a cargo.
 
 ---
 
-## Contenido de las clases
+## Contenido de las clases (2C-2026)
 
-| N° | Tema |
-|----|------|
-| 00 | Introducción a Python y datos |
-| 01 | Introducción a Python para el manejo de datos organizacionales |
-| 02 | Manipulación de datos organizacionales y visualización |
-| 03 | Modelización de funciones económicas |
-| 04 | Puntos de equilibrio y sistemas de ecuaciones |
-| 05 | Matrices y Leontief |
-| 06 | Manipulación de datos estructurados y Leontief |
-| 07 | Programación lineal en Python |
-| 08 | Modelización de problemas de optimización |
-| 09 | Derivada y variaciones de funciones organizacionales |
-| 10 | Caso Elasticidades |
-| 11 | Optimización de funciones aplicado a la gestión |
-| 12 | Optimización de funciones aplicado a la gestión (continuación) |
-| 13 | Integrales indefinidas en el análisis económico |
-| 15 | Integrales definidas |
-| 16 | Aplicaciones para el análisis de inversiones I |
-| 17 | Aplicaciones para el análisis de inversiones II |
+| N° | Fecha | Tema | Unidad |
+|----|-------|------|--------|
+| 00 | 14-ago | Introducción a Google Colab, sintaxis y tipos de datos | U1 |
+| 01 | 18-ago | Manejo de archivos y obtención de datos organizacionales | U1 |
+| 02 | 21-ago | Visualización de datos aplicada a procesos organizacionales | U1 |
+| 03 | 25-ago | Modelización de funciones de oferta, demanda, costo y beneficio | U1 |
+| 04 | 28-ago | Puntos de equilibrio y sistemas de ecuaciones | U1 |
+| 05 | 01-sep | Vectores y matrices: operaciones para transformar datos | U2 |
+| 06 | 04-sep | Creación de variables relevantes, filtrado y muestreo | U2 |
+| 07 | 08-sep | Modelado mediante sistemas de ecuaciones lineales | U2 |
+| 08 | 11-sep | Modelos de programación lineal | U2 |
+| 09 | 15-sep | La derivada y la variación de métricas organizacionales | U3 |
+| 10 | 18-sep | Funciones marginales y elasticidades | U3 |
+| 11 | 22-sep | Optimización de funciones y objetivos organizacionales | U3 |
+| 12 | 25-sep | Casos de aplicación en organizaciones | U3 |
+| — | **29-sep** | **Primer parcial** | — |
+| 13 | 02-oct | Herramientas de análisis financiero | U4 |
+| 14 | 06-oct | Aplicaciones financieras para las inversiones | U4 |
+| 15 | 09-oct | Introducción a los procesos organizacionales | U4 |
+| 16 | 13-oct | Funciones económicas totales a partir de marginales | U4 |
+| 17 | 16-oct | Integrales para estimar valores acumulados | U4 |
+| 18 | 20-oct | Aplicaciones económicas de la integración | U4 |
+| 19 | 23-oct | Simulación de datos y aplicaciones | U5 |
+| 20 | 27-oct | Aplicaciones económicas | U5 |
+| 21 | 30-oct | Métricas estadísticas aplicadas a procesos organizacionales | U5 |
+| 22 | 03-nov | SQL y manejo de tablas | U5 |
+| 23 | 06-nov | Anonimización de datos y ética en el uso de datos | U5 |
+| 24 | 10-nov | Repaso e integración | — |
+| — | **13-nov** | **Presentación del TP** | — |
+| — | **17-nov** | **Segundo parcial** | — |
+| — | **24-nov** | **Recuperatorios** | — |
+| — | **01-dic** | **Final** | — |
 
 ---
 
