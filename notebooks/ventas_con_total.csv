@@ -1,0 +1,201 @@
+Fecha,Producto,Vendedor,Ciudad,Cantidad,Precio_Unitario,Total
+2024-01-01,Monitor,Juan,Mendoza,6,23030,138180
+2024-01-02,Notebook,Lucía,La Plata,7,87838,614866
+2024-01-03,Teclado,Juan,Córdoba,3,89717,269151
+2024-01-04,Notebook,Juan,Mendoza,7,43638,305466
+2024-01-05,Notebook,María,Córdoba,3,72067,216201
+2024-01-06,Mouse,Lucía,Rosario,2,123033,246066
+2024-01-07,Teclado,Lucía,Buenos Aires,4,110977,443908
+2024-01-08,Teclado,María,Rosario,8,93869,750952
+2024-01-09,Teclado,Pedro,Mendoza,9,110186,991674
+2024-01-10,Notebook,Juan,Córdoba,7,39674,277718
+2024-01-11,Monitor,Sofía,Córdoba,1,51271,51271
+2024-01-12,Teclado,Juan,La Plata,3,78688,236064
+2024-01-13,Impresora,Juan,Córdoba,9,116076,1044684
+2024-01-14,Notebook,Pedro,La Plata,1,146339,146339
+2024-01-15,Mouse,Juan,Buenos Aires,9,6062,54558
+2024-01-16,Monitor,María,Mendoza,8,55448,443584
+2024-01-17,Impresora,María,La Plata,1,100462,100462
+2024-01-18,Impresora,Lucía,Buenos Aires,6,142301,853806
+2024-01-19,Mouse,Sofía,Córdoba,5,52915,264575
+2024-01-20,Monitor,Juan,Córdoba,6,9632,57792
+2024-01-21,Notebook,Juan,Buenos Aires,5,109592,547960
+2024-01-22,Auriculares,Pedro,Córdoba,6,139668,838008
+2024-01-23,Monitor,María,Buenos Aires,5,114779,573895
+2024-01-24,Mouse,Sofía,La Plata,5,142240,711200
+2024-01-25,Impresora,Lucía,La Plata,4,113099,452396
+2024-01-26,Notebook,María,Buenos Aires,3,12561,37683
+2024-01-27,Monitor,Lucía,La Plata,3,87152,261456
+2024-01-28,Auriculares,Pedro,La Plata,4,130036,520144
+2024-01-29,Auriculares,Pedro,La Plata,9,129049,1161441
+2024-01-30,Teclado,Juan,Rosario,2,31734,63468
+2024-01-31,Teclado,Sofía,Mendoza,9,142443,1281987
+2024-02-01,Mouse,Lucía,Córdoba,1,31069,31069
+2024-02-02,Monitor,María,Rosario,1,17910,17910
+2024-02-03,Monitor,Pedro,La Plata,5,78479,392395
+2024-02-04,Impresora,Juan,Buenos Aires,6,86264,517584
+2024-02-05,Impresora,Juan,La Plata,6,28275,169650
+2024-02-06,Impresora,Lucía,Mendoza,3,77274,231822
+2024-02-07,Teclado,Pedro,La Plata,7,105776,740432
+2024-02-08,Monitor,Sofía,Buenos Aires,9,53447,481023
+2024-02-09,Monitor,Pedro,Mendoza,8,131394,1051152
+2024-02-10,Auriculares,Lucía,La Plata,6,80703,484218
+2024-02-11,Teclado,Lucía,Mendoza,8,81090,648720
+2024-02-12,Notebook,Pedro,Córdoba,5,22260,111300
+2024-02-13,Teclado,Lucía,Córdoba,8,117581,940648
+2024-02-14,Notebook,Pedro,La Plata,4,8812,35248
+2024-02-15,Auriculares,María,Mendoza,8,121148,969184
+2024-02-16,Mouse,Pedro,Buenos Aires,2,121421,242842
+2024-02-17,Monitor,Pedro,La Plata,5,6605,33025
+2024-02-18,Auriculares,Lucía,Córdoba,9,77303,695727
+2024-02-19,Monitor,Lucía,Córdoba,4,81125,324500
+2024-02-20,Impresora,Juan,La Plata,6,149990,899940
+2024-02-21,Mouse,Juan,Mendoza,1,129040,129040
+2024-02-22,Mouse,María,Córdoba,9,149118,1342062
+2024-02-23,Auriculares,Juan,Mendoza,1,9324,9324
+2024-02-24,Mouse,Pedro,Córdoba,5,81323,406615
+2024-02-25,Notebook,Lucía,Córdoba,4,14111,56444
+2024-02-26,Mouse,Juan,Rosario,3,21389,64167
+2024-02-27,Monitor,Juan,Córdoba,6,127177,763062
+2024-02-28,Monitor,María,Buenos Aires,2,46427,92854
+2024-02-29,Monitor,María,La Plata,3,127883,383649
+2024-03-01,Monitor,Pedro,La Plata,5,136189,680945
+2024-03-02,Notebook,Lucía,Mendoza,9,130808,1177272
+2024-03-03,Teclado,María,Córdoba,2,117221,234442
+2024-03-04,Impresora,Juan,Buenos Aires,8,18234,145872
+2024-03-05,Auriculares,Lucía,Mendoza,2,58441,116882
+2024-03-06,Monitor,Lucía,Rosario,5,5846,29230
+2024-03-07,Mouse,Juan,Mendoza,7,15954,111678
+2024-03-08,Monitor,María,Mendoza,8,84239,673912
+2024-03-09,Mouse,Juan,Córdoba,1,51514,51514
+2024-03-10,Impresora,Lucía,Rosario,6,93236,559416
+2024-03-11,Impresora,Sofía,Mendoza,1,102579,102579
+2024-03-12,Impresora,Sofía,Buenos Aires,2,142541,285082
+2024-03-13,Mouse,Pedro,Buenos Aires,1,47101,47101
+2024-03-14,Monitor,Juan,La Plata,5,69323,346615
+2024-03-15,Impresora,Juan,Rosario,9,96922,872298
+2024-03-16,Notebook,Pedro,Rosario,6,132534,795204
+2024-03-17,Mouse,Pedro,La Plata,1,72584,72584
+2024-03-18,Mouse,Pedro,Mendoza,1,109537,109537
+2024-03-19,Monitor,Lucía,Rosario,2,83477,166954
+2024-03-20,Mouse,Juan,Buenos Aires,9,47533,427797
+2024-03-21,Mouse,Lucía,Buenos Aires,3,6828,20484
+2024-03-22,Impresora,Pedro,Córdoba,1,6917,6917
+2024-03-23,Monitor,Juan,Rosario,5,25618,128090
+2024-03-24,Impresora,Lucía,Mendoza,7,37254,260778
+2024-03-25,Impresora,Lucía,La Plata,6,110292,661752
+2024-03-26,Monitor,Pedro,La Plata,1,52362,52362
+2024-03-27,Auriculares,Juan,Mendoza,5,25128,125640
+2024-03-28,Impresora,Pedro,Córdoba,5,128781,643905
+2024-03-29,Notebook,Juan,La Plata,6,70545,423270
+2024-03-30,Notebook,Sofía,Rosario,3,87180,261540
+2024-03-31,Mouse,María,Córdoba,5,92958,464790
+2024-04-01,Notebook,María,Rosario,7,145937,1021559
+2024-04-02,Mouse,María,Buenos Aires,5,138291,691455
+2024-04-03,Auriculares,Pedro,Córdoba,5,44809,224045
+2024-04-04,Monitor,Sofía,La Plata,5,121748,608740
+2024-04-05,Monitor,Juan,Córdoba,3,10287,30861
+2024-04-06,Monitor,Lucía,Córdoba,1,13512,13512
+2024-04-07,Notebook,Juan,Córdoba,5,137414,687070
+2024-04-08,Auriculares,Lucía,Córdoba,9,113872,1024848
+2024-04-09,Notebook,Juan,Rosario,1,98070,98070
+2024-04-10,Notebook,Sofía,Buenos Aires,3,84767,254301
+2024-04-11,Auriculares,Lucía,Mendoza,4,102829,411316
+2024-04-12,Auriculares,Pedro,Córdoba,1,47078,47078
+2024-04-13,Auriculares,Juan,La Plata,1,111288,111288
+2024-04-14,Auriculares,Juan,Córdoba,8,88524,708192
+2024-04-15,Monitor,Lucía,La Plata,2,17219,34438
+2024-04-16,Teclado,Pedro,Rosario,8,5235,41880
+2024-04-17,Teclado,Pedro,La Plata,7,47929,335503
+2024-04-18,Auriculares,Sofía,Mendoza,2,132309,264618
+2024-04-19,Teclado,Pedro,Buenos Aires,6,72444,434664
+2024-04-20,Teclado,Pedro,La Plata,6,144639,867834
+2024-04-21,Auriculares,Pedro,La Plata,3,106834,320502
+2024-04-22,Teclado,María,Buenos Aires,2,89555,179110
+2024-04-23,Notebook,Sofía,Mendoza,1,78698,78698
+2024-04-24,Mouse,Juan,Córdoba,6,129450,776700
+2024-04-25,Mouse,Lucía,La Plata,5,141487,707435
+2024-04-26,Auriculares,Juan,Buenos Aires,9,48925,440325
+2024-04-27,Monitor,Sofía,Rosario,1,142023,142023
+2024-04-28,Auriculares,Lucía,Buenos Aires,7,92388,646716
+2024-04-29,Monitor,Sofía,Rosario,5,13007,65035
+2024-04-30,Mouse,Pedro,Mendoza,5,63596,317980
+2024-05-01,Auriculares,Lucía,Córdoba,2,126101,252202
+2024-05-02,Impresora,Pedro,Buenos Aires,3,93861,281583
+2024-05-03,Notebook,Juan,La Plata,7,91740,642180
+2024-05-04,Teclado,Juan,Mendoza,6,20524,123144
+2024-05-05,Monitor,Lucía,Buenos Aires,2,136149,272298
+2024-05-06,Impresora,Lucía,La Plata,6,130501,783006
+2024-05-07,Teclado,Sofía,Buenos Aires,2,25611,51222
+2024-05-08,Teclado,Sofía,Rosario,2,19060,38120
+2024-05-09,Auriculares,Pedro,Buenos Aires,2,48303,96606
+2024-05-10,Teclado,Lucía,Buenos Aires,3,44711,134133
+2024-05-11,Notebook,Juan,Buenos Aires,2,148026,296052
+2024-05-12,Impresora,Sofía,Mendoza,4,78340,313360
+2024-05-13,Teclado,Sofía,Buenos Aires,9,107974,971766
+2024-05-14,Auriculares,Juan,La Plata,6,145256,871536
+2024-05-15,Notebook,Sofía,Rosario,1,72728,72728
+2024-05-16,Mouse,Pedro,Rosario,8,16246,129968
+2024-05-17,Impresora,Lucía,Buenos Aires,7,132796,929572
+2024-05-18,Teclado,Juan,Mendoza,3,97263,291789
+2024-05-19,Auriculares,Lucía,Mendoza,1,140090,140090
+2024-05-20,Mouse,Sofía,La Plata,5,16302,81510
+2024-05-21,Mouse,Sofía,Buenos Aires,4,72506,290024
+2024-05-22,Monitor,Juan,Rosario,8,46157,369256
+2024-05-23,Notebook,Pedro,Mendoza,1,59917,59917
+2024-05-24,Teclado,María,Buenos Aires,1,101646,101646
+2024-05-25,Auriculares,Juan,Mendoza,4,88122,352488
+2024-05-26,Monitor,María,Mendoza,8,29519,236152
+2024-05-27,Notebook,María,Rosario,5,85910,429550
+2024-05-28,Monitor,Pedro,Córdoba,2,125430,250860
+2024-05-29,Impresora,María,La Plata,6,76324,457944
+2024-05-30,Notebook,María,La Plata,5,10408,52040
+2024-05-31,Notebook,Pedro,Rosario,2,64379,128758
+2024-06-01,Teclado,María,Mendoza,3,30053,90159
+2024-06-02,Notebook,María,Buenos Aires,9,145518,1309662
+2024-06-03,Monitor,María,Mendoza,7,136994,958958
+2024-06-04,Notebook,Juan,Rosario,7,103723,726061
+2024-06-05,Teclado,Juan,La Plata,6,56356,338136
+2024-06-06,Teclado,Juan,Mendoza,8,15789,126312
+2024-06-07,Impresora,Pedro,La Plata,4,102720,410880
+2024-06-08,Monitor,Sofía,Buenos Aires,8,71656,573248
+2024-06-09,Mouse,María,La Plata,4,49028,196112
+2024-06-10,Mouse,María,La Plata,8,69484,555872
+2024-06-11,Notebook,Pedro,Córdoba,9,37154,334386
+2024-06-12,Impresora,María,Córdoba,3,7336,22008
+2024-06-13,Auriculares,Juan,Córdoba,3,108677,326031
+2024-06-14,Notebook,Sofía,La Plata,2,72779,145558
+2024-06-15,Impresora,Lucía,Rosario,3,24029,72087
+2024-06-16,Monitor,María,La Plata,3,64201,192603
+2024-06-17,Monitor,Juan,Rosario,5,37265,186325
+2024-06-18,Monitor,Lucía,Rosario,5,107916,539580
+2024-06-19,Monitor,Sofía,Córdoba,2,51197,102394
+2024-06-20,Monitor,Lucía,Mendoza,6,130733,784398
+2024-06-21,Impresora,Juan,Buenos Aires,5,76907,384535
+2024-06-22,Impresora,Lucía,Córdoba,6,133876,803256
+2024-06-23,Teclado,Pedro,Córdoba,1,69435,69435
+2024-06-24,Mouse,Lucía,Mendoza,5,45631,228155
+2024-06-25,Monitor,María,Buenos Aires,9,134038,1206342
+2024-06-26,Auriculares,María,La Plata,2,25103,50206
+2024-06-27,Impresora,Pedro,La Plata,1,69772,69772
+2024-06-28,Auriculares,Juan,Córdoba,9,131108,1179972
+2024-06-29,Auriculares,María,Buenos Aires,9,19382,174438
+2024-06-30,Auriculares,Sofía,Córdoba,9,89291,803619
+2024-07-01,Teclado,María,Rosario,6,106195,637170
+2024-07-02,Impresora,María,Córdoba,8,139828,1118624
+2024-07-03,Auriculares,Juan,Córdoba,1,25609,25609
+2024-07-04,Monitor,Lucía,La Plata,4,80683,322732
+2024-07-05,Notebook,María,La Plata,1,129714,129714
+2024-07-06,Auriculares,Pedro,La Plata,8,135330,1082640
+2024-07-07,Teclado,Lucía,Rosario,1,76315,76315
+2024-07-08,Impresora,Sofía,La Plata,3,82834,248502
+2024-07-09,Teclado,Juan,Buenos Aires,4,131205,524820
+2024-07-10,Auriculares,Sofía,Mendoza,8,19153,153224
+2024-07-11,Impresora,Lucía,Buenos Aires,6,81325,487950
+2024-07-12,Notebook,Lucía,Buenos Aires,7,149071,1043497
+2024-07-13,Auriculares,Lucía,La Plata,8,60318,482544
+2024-07-14,Teclado,Sofía,Mendoza,2,136886,273772
+2024-07-15,Mouse,Lucía,Mendoza,8,120033,960264
+2024-07-16,Monitor,Sofía,Mendoza,3,81077,243231
+2024-07-17,Teclado,Lucía,Rosario,7,95474,668318
+2024-07-18,Impresora,Pedro,La Plata,3,138515,415545
