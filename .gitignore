@@ -6,3 +6,6 @@ CuestionesAdministrativas/Plan_*.md
 
 # Archivos que generan los notebooks al ejecutarse
 notebooks/*.csv
+
+# Paper teorico: material de trabajo de Juan, no del repo de la materia
+Paper Teorico/
