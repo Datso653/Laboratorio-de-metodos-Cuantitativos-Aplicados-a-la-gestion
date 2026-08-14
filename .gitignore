@@ -1,0 +1,8 @@
+
+
+# Documentos de trabajo interno del equipo docente (viven en el Cerebro, no acá)
+CuestionesAdministrativas/Kanban_*.md
+CuestionesAdministrativas/Plan_*.md
+
+# Archivos que generan los notebooks al ejecutarse
+notebooks/*.csv

@@ -15,7 +15,6 @@ Los alumnos lo abren en **Google Colab** desde GitHub.
 | Archivo | Para qué |
 |---|---|
 | [`notebooks/README.md`](notebooks/README.md) | Mapa clase → notebook + convenciones de escritura |
-| [`CuestionesAdministrativas/Plan_2C2026.md`](CuestionesAdministrativas/Plan_2C2026.md) | Plan de migración al cronograma nuevo |
 
 ## Reglas al escribir o editar notebooks
 

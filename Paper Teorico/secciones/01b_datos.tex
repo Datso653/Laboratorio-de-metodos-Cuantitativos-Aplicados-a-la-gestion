@@ -1,0 +1,81 @@
+\chapter{Datos, variables y visualización}
+\label{cap:datos}
+
+\section{Antes de la teoría: los datos}
+
+La economía cuantitativa de la gestión arranca, en la práctica, con un archivo de datos: una planilla de ventas, un registro de afiliados, un histórico de precios. Antes de modelar nada, hay que entender qué tenemos entre manos. Este capítulo presenta el vocabulario mínimo del análisis de datos —qué es una variable, de qué tipo, cómo resumirla y cómo mostrarla— que después usaremos para alimentar todos los modelos económicos del libro. Fue, además, uno de los temas que los estudiantes más valoraron del curso, porque es el más cercano al trabajo real con datos.
+
+\section{La estructura de un conjunto de datos}
+
+Un \textbf{conjunto de datos} (o \emph{dataset}) se organiza como una tabla:
+\begin{itemize}
+  \item Cada \textbf{fila} es una \emph{observación} o unidad de análisis (un cliente, un día, una sucursal, un producto).
+  \item Cada \textbf{columna} es una \emph{variable}: una característica medida de esas observaciones (precio, cantidad, región, fecha).
+\end{itemize}
+Esta forma «ordenada» —una observación por fila, una variable por columna— es la que permite calcular, agrupar y graficar con comodidad.
+
+\section{Tipos de variables}
+
+Saber con qué tipo de variable trabajamos determina qué cálculos y qué gráficos tienen sentido. La distinción básica es:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{3.2cm} p{4.0cm} p{5.0cm}}
+\toprule
+\textbf{Tipo} & \textbf{Subtipo} & \textbf{Ejemplo} \\
+\midrule
+\multirow{2}{*}{\textbf{Cuantitativa}} & Continua (mide) & precio, peso, ingreso \\
+ & Discreta (cuenta) & cantidad de unidades, n.\textsuperscript{o} de clientes \\
+\midrule
+\multirow{2}{*}{\textbf{Cualitativa}} & Nominal (sin orden) & región, rubro, color \\
+ & Ordinal (con orden) & nivel de satisfacción (1 a 5), categoría A/B/C \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Con una variable \emph{cuantitativa} tiene sentido calcular un promedio; con una \emph{cualitativa nominal}, no (el «promedio» de las regiones no significa nada), pero sí contar frecuencias. Confundir estos tipos es uno de los errores más comunes al empezar.
+
+\section{Calidad de los datos: faltantes y limpieza}
+
+Los datos reales vienen «sucios»: valores faltantes, errores de carga, duplicados. Antes de analizar hay que \textbf{limpiar}. El problema más frecuente son los \emph{valores faltantes} (celdas vacías). Hay dos caminos: descartar las filas afectadas (si son pocas) o \textbf{imputar} un valor razonable.
+
+\begin{ideabox}
+\textbf{Regla práctica útil.} Para imputar una variable \emph{ordinal} en escala (por ejemplo, una encuesta de satisfacción de 1 a 5), conviene usar la \textbf{mediana} antes que la media: es robusta a valores extremos y no devuelve un número fuera de la escala (un 3, no un 3{,}47). Para variables continuas, la media suele ser adecuada si no hay valores atípicos marcados.
+\end{ideabox}
+
+\section{Medidas de resumen}
+
+Para describir una variable cuantitativa con pocos números usamos:
+\begin{itemize}
+  \item \textbf{Tendencia central:} la \emph{media} (promedio) y la \emph{mediana} (el valor del medio). Cuando difieren mucho, hay asimetría o valores extremos.
+  \item \textbf{Dispersión:} el \emph{desvío estándar} mide cuánto se alejan los datos de la media; el \emph{rango} y los \emph{cuartiles} describen cómo se reparten.
+\end{itemize}
+La mediana y los cuartiles son más \emph{robustos} que la media: un solo valor disparatado (un precio cargado con un cero de más) arrastra a la media pero casi no mueve a la mediana. En gestión, donde los errores de carga son comunes, esa robustez importa.
+
+\section{Visualización: mostrar para entender}
+
+Un gráfico bien elegido comunica en un vistazo lo que una tabla esconde. Los parciales del curso suelen pedir «al menos tres gráficos de distinta naturaleza», justamente para practicar esta elección. Los cuatro básicos:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{3.4cm} p{4.2cm} p{4.8cm}}
+\toprule
+\textbf{Gráfico} & \textbf{Sirve para} & \textbf{Variable(s)} \\
+\midrule
+Histograma & ver la \emph{distribución} de una variable & 1 cuantitativa \\
+Boxplot (caja) & ver mediana, dispersión y \emph{atípicos} & 1 cuantitativa (por grupos) \\
+Barras & comparar \emph{categorías} & 1 cualitativa + 1 medida \\
+Dispersión (scatter) & ver la \emph{relación} entre dos variables & 2 cuantitativas \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+La regla de oro: \textbf{el tipo de variable manda sobre el tipo de gráfico}. Una variable cuantitativa pide histograma o boxplot; una cualitativa, barras; una relación entre dos cuantitativas, un diagrama de dispersión (que, no por casualidad, es el primer paso para intuir las funciones de demanda y costo de los próximos capítulos). Todo gráfico debe llevar título y ejes rotulados: sin eso, no comunica.
+
+\begin{labbox}
+Este capítulo es el reino de \texttt{pandas} y \texttt{matplotlib}. Con \texttt{pandas} se carga la tabla (\texttt{read\_csv}), se la inspecciona (\texttt{info()}, \texttt{describe()}), se cuentan faltantes (\texttt{isna().sum()}), se imputan (\texttt{fillna(...)}) y se agrupan categorías (\texttt{groupby(...).mean()}). Con \texttt{matplotlib} se construyen los cuatro gráficos de la tabla anterior. Es el bloque más práctico del curso y la puerta de entrada a todo lo demás: sin datos limpios y bien entendidos, los modelos económicos no se sostienen.
+\end{labbox}
+
+\section{Síntesis del capítulo}
+
+Antes de modelar hay que conocer los datos: su estructura (filas y columnas), el tipo de cada variable, su calidad (faltantes, limpieza), sus medidas de resumen y su visualización adecuada. Con este lenguaje básico, en el próximo capítulo damos el primer paso económico: representar la actividad de una organización mediante funciones.

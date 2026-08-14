@@ -3,7 +3,7 @@
 Esta tabla es **la brújula del repo**: dice qué archivo corresponde a cada clase del cronograma.
 Si vas a tocar una clase, buscala acá primero.
 
-Plan completo de migración: [`CuestionesAdministrativas/Plan_2C2026.md`](../CuestionesAdministrativas/Plan_2C2026.md)
+Cronograma oficial: [`CuestionesAdministrativas/Pautas/Cronograma/`](../CuestionesAdministrativas/Pautas/Cronograma/)
 
 > 📌 **Los archivos están numerados según el cronograma**, no según el orden histórico del repo.
 > El número del archivo, el título de adentro del notebook y el número de clase son **el mismo**.
