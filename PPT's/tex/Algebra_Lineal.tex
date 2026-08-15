@@ -425,40 +425,65 @@ necesitás productos en las columnas para multiplicar, transponés.
 
 \begin{frame}{¿Se pueden dividir matrices?}
 
-\begin{alertblock}{La respuesta corta: no}
-\textbf{La división de matrices no existe.} No hay ninguna operación $A / B$.
-\end{alertblock}
+\begin{center}
+\textbf{Hay que distinguir dos casos, y la respuesta es distinta en cada uno.}
+\end{center}
 
-\vspace{0.3cm}
-Lo que sí existe es la \textbf{matriz inversa}, que cumple el papel del recíproco:
-
+\vspace{0.25cm}
 \begin{columns}[T]
-\column{0.46\textwidth}
-\begin{center}
-\textbf{Con números}
-$$5 \times \tfrac{1}{5} = 1$$
-$$\tfrac{1}{5} = 5^{-1}$$
-\end{center}
+\column{0.47\textwidth}
+\begin{exampleblock}{Dividir por un ESCALAR: sí}
+Se divide cada elemento, igual que en la multiplicación por escalar.
+$$\frac{1}{2}\begin{pmatrix} 100 & 250 \\ 80 & 60 \end{pmatrix}
+= \begin{pmatrix} 50 & 125 \\ 40 & 30 \end{pmatrix}$$
+Es lo mismo que multiplicar por $\tfrac{1}{2}$.
+\end{exampleblock}
 
-\column{0.46\textwidth}
-\begin{center}
-\textbf{Con matrices}
-$$A \times A^{-1} = I$$
-$$I \text{ hace el papel del } 1$$
-\end{center}
+\column{0.47\textwidth}
+\begin{alertblock}{Dividir por otra MATRIZ: no}
+\textbf{La operación $A / B$ no existe.}
+
+No está definida: no hay ninguna regla que divida una matriz por otra.
+\end{alertblock}
 \end{columns}
 
-\vspace{0.4cm}
+\vspace{0.15cm}
+Para el segundo caso existe la \textbf{matriz inversa}, que cumple el papel del recíproco:
+
+\begin{center}
+\begin{tabular}{ccc}
+\textbf{Con números} & \qquad & \textbf{Con matrices} \\
+$5 \times \tfrac{1}{5} = 1$ & & $A \times A^{-1} = I$ \\
+\end{tabular}
+\end{center}
+
+\begin{center}
+\textit{En vez de ``dividir por $B$'', se multiplica por $B^{-1}$.}
+\end{center}
+\end{frame}
+
+\begin{frame}{La inversa: cuándo existe}
+
 \begin{block}{Dos condiciones}
 \begin{itemize}
     \item Solo las matrices \textbf{cuadradas} pueden tener inversa.
-    \item No todas la tienen: si su determinante es cero, no existe (matriz \textit{singular}).
+    \item No todas la tienen: si su determinante es cero, no existe. Se dice que la matriz es
+          \textbf{singular}.
 \end{itemize}
 \end{block}
 
+\vspace{0.3cm}
+\begin{alertblock}{Qué significa que no tenga inversa}
+Que la información de la matriz está \textbf{repetida}: alguna fila (o columna) se puede obtener a
+partir de las otras y no aporta nada nuevo.
+
+Si en una tabla tenés ``precio en pesos'' y ``precio en miles de pesos'', la segunda columna no
+agrega información: es la primera dividida por mil. Esa matriz es singular.
+\end{alertblock}
+
 \vspace{0.2cm}
 \begin{center}
-\textit{Por eso, en vez de ``dividir'', se multiplica por la inversa.}
+\textit{Por eso, antes de invertir, siempre se chequea el determinante.}
 \end{center}
 \end{frame}
 
@@ -550,13 +575,28 @@ $$= 1.100 + 1.040 + 375 = 2.515 \text{ USD}$$
 \end{frame}
 
 % ===================== SECCION: FUTBOL =====================
-\begin{frame}
+% La foto va en tex/imagenes/bochini.jpg — si todavia no esta, la slide
+% compila igual con un marcador de posicion.
+\begin{frame}[plain]
 \begin{center}
-\vspace{1.5cm}
-\Huge \textbf{Fútbol y Álgebra}
+% Las dos fotos alineadas por altura: una es apaisada y la otra vertical
+\IfFileExists{imagenes/bochini.jpg}{%
+    \includegraphics[height=0.46\paperheight]{imagenes/bochini.jpg}%
+    \hspace{0.4em}%
+    \includegraphics[height=0.46\paperheight]{imagenes/gallardo.jpg}
+}{%
+    \begin{tikzpicture}
+      \draw[violet!30,fill=violet!5,rounded corners,thick] (0,0) rectangle (12,4.4);
+      \node[violetaOscuro,font=\Large\bfseries] at (6,2.4) {[ fotos ]};
+      \node[violet!70,font=\small] at (6,1.6) {guardar en tex/imagenes/};
+    \end{tikzpicture}
+}
 
-\vspace{0.5cm}
-\Large Cuando cada jugador es un vector
+\vspace{0.35cm}
+{\Huge \textbf{\color{violetaOscuro} Fútbol y Álgebra}}
+
+\vspace{0.15cm}
+{\large Cuando cada jugador es un vector}
 \end{center}
 \end{frame}
 
@@ -675,33 +715,20 @@ proveedores o empleados.
 \end{center}
 \end{frame}
 
-% ===================== LEONTIEF (SOLO LA NOCION) =====================
-\section{Nota final}
+% ===================== PREGUNTA DISPARADORA =====================
+\begin{frame}[plain]
+\vspace{1.6cm}
+\begin{center}
+{\Huge \textbf{\color{violetaOscuro} ¿Por qué elegimos este año}}
 
-\begin{frame}{Una nota: el modelo de Leontief}
-
-\begin{block}{Para que sepan que existe}
-El \textbf{modelo insumo-producto} de Wassily Leontief (Premio Nobel 1973) usa exactamente esta
-matemática para describir \textbf{cómo los sectores de una economía dependen unos de otros}.
-\end{block}
-
-\vspace{0.3cm}
-La idea, en una línea: cada sector necesita insumos de los demás para producir, y eso se escribe
-
-$$X = AX + H \qquad \Longrightarrow \qquad X = (I - A)^{-1} H$$
-
-donde $A$ es la matriz de coeficientes técnicos y $H$ la demanda final.
-
-\vspace{0.3cm}
-\begin{alertblock}{Por qué aparece acá}
-Es \textbf{la} aplicación clásica del álgebra lineal a la economía, y muestra para qué sirve la
-inversa que vimos recién: para \textbf{despejar} en un sistema donde todo depende de todo.
-
-\textbf{No entra en el programa de este cuatrimestre}, pero vale conocer la noción.
-\end{alertblock}
+\vspace{0.4cm}
+{\Huge \textbf{\color{violetaOscuro} y no 2020?}}
+\end{center}
 \end{frame}
 
 % ===================== CIERRE =====================
+\section{Cierre}
+
 \begin{frame}{Cierre}
 
 \vspace{0.5cm}
@@ -771,6 +798,46 @@ Datos $\longrightarrow$ Vectores y matrices $\longrightarrow$ Operaciones $\long
 \small
 Materiales educativos con fines académicos.
 \end{center}
+\end{frame}
+
+% =====================================================================
+%  APENDICE — material fuera de programa
+% =====================================================================
+\appendix
+
+\begin{frame}[plain]
+\begin{center}
+\vspace{1.5cm}
+\Huge \textbf{\color{violetaOscuro} Apéndice}
+
+\vspace{0.5cm}
+\Large Material fuera de programa
+\end{center}
+\end{frame}
+
+\section{Apéndice}
+
+\begin{frame}{El modelo de Leontief}
+
+\begin{block}{Para que sepan que existe}
+El \textbf{modelo insumo-producto} de Wassily Leontief (Premio Nobel 1973) usa exactamente esta
+matemática para describir \textbf{cómo los sectores de una economía dependen unos de otros}.
+\end{block}
+
+\vspace{0.3cm}
+La idea, en una línea: cada sector necesita insumos de los demás para producir, y eso se escribe
+
+$$X = AX + H \qquad \Longrightarrow \qquad X = (I - A)^{-1} H$$
+
+donde $A$ es la matriz de coeficientes técnicos y $H$ la demanda final.
+
+\vspace{0.3cm}
+\begin{alertblock}{Por qué vale conocerlo}
+Es \textbf{la} aplicación clásica del álgebra lineal a la economía, y muestra para qué sirve la
+inversa: para \textbf{despejar} en un sistema donde todo depende de todo.
+
+\textbf{No entra en el programa de este cuatrimestre.}
+\end{alertblock}
 \end{frame}
 
 \end{document}
