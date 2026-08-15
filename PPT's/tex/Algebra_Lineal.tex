@@ -1,0 +1,776 @@
+% =====================================================================
+%  Laboratorio de Metodos Cuantitativos Aplicados a la Gestion - FCE UBA
+%  Clase 05 - Algebra lineal: vectores y matrices
+%  Joaquin Romano y Juan da Torre - 2do cuatrimestre 2026
+%
+%  REGLAS DE ESTA PRESENTACION:
+%   - Paleta VIOLETA (todo el material con Joaquin va en violeta)
+%   - SIN CODIGO: la teoria va aca, el codigo va en el notebook de Colab
+%   - La PPT y el notebook se recorren EN PARALELO
+% =====================================================================
+\documentclass[aspectratio=169,10pt]{beamer}
+
+% ============================================================
+% CONFIGURACION VISUAL (Paleta VIOLETA)
+% ============================================================
+\usetheme{CambridgeUS}
+\usecolortheme{seahorse}
+
+\definecolor{violetaBase}{HTML}{6A1B9A}
+\definecolor{violetaOscuro}{HTML}{4A148C}
+
+\setbeamercolor{structure}{fg=violetaBase}
+\setbeamercolor{palette primary}{bg=violet!15,fg=black}
+\setbeamercolor{palette secondary}{bg=violet!20,fg=black}
+\setbeamercolor{palette tertiary}{bg=violet!25,fg=black}
+
+\setbeamercolor{title}{fg=white,bg=violetaOscuro}
+\setbeamercolor{author}{fg=black}
+\setbeamercolor{institute}{fg=black}
+\setbeamercolor{date}{fg=black}
+
+\setbeamercolor{frametitle}{bg=violet!8,fg=violetaOscuro}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+
+\setbeamercolor{block title}{bg=violet!15,fg=violetaOscuro}
+\setbeamercolor{block body}{bg=violet!5,fg=black}
+\setbeamercolor{block title alerted}{bg=violetaBase,fg=white}
+\setbeamercolor{block body alerted}{bg=violet!5,fg=black}
+\setbeamercolor{block title example}{bg=violetaOscuro,fg=white}
+\setbeamercolor{block body example}{bg=violet!5,fg=black}
+\setbeamercolor{itemize item}{fg=violetaBase}
+\setbeamercolor{itemize subitem}{fg=violetaBase}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{booktabs}
+
+% ============================================================
+% INFORMACION DEL DOCUMENTO
+% ============================================================
+\title{Álgebra Lineal Aplicada al Análisis de Datos}
+\subtitle{Vectores, matrices y transformación de datos}
+\author{Joaquín Romano \and Juan Ignacio da Torre}
+\institute{
+    Laboratorio de Métodos Cuantitativos Aplicados a la Gestión \\
+    Universidad de Buenos Aires
+}
+\date{Segundo cuatrimestre 2026}
+
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+% ===================== PORTADA =====================
+\begin{frame}
+\titlepage
+\vspace{-0.5cm}
+\begin{center}
+\textbf{Objetivo:} Comprender cómo el álgebra lineal transforma datos en \textbf{decisiones organizacionales}
+\end{center}
+\end{frame}
+
+% ===================== COMO TRABAJAMOS =====================
+\begin{frame}{Cómo vamos a trabajar}
+
+\begin{block}{Esta presentación va acompañada de un notebook}
+Las dos cosas se recorren \textbf{en paralelo}: acá vemos el concepto y la matemática,
+y en el notebook lo hacemos correr sobre datos reales.
+\end{block}
+
+\vspace{0.4cm}
+
+\begin{columns}[T]
+\column{0.47\textwidth}
+\begin{exampleblock}{En estas slides}
+\begin{itemize}
+    \item Qué es y para qué sirve
+    \item La definición y la notación
+    \item Las cuentas hechas a mano
+    \item La interpretación organizacional
+\end{itemize}
+\end{exampleblock}
+
+\column{0.47\textwidth}
+\begin{alertblock}{En el notebook de Colab}
+\begin{itemize}
+    \item El código que lo ejecuta
+    \item Los datos de verdad
+    \item Los gráficos
+    \item Los ejercicios
+\end{itemize}
+\end{alertblock}
+\end{columns}
+
+\vspace{0.4cm}
+\begin{center}
+\textit{Si entendés el concepto acá, el código de allá se vuelve obvio.}
+\end{center}
+\end{frame}
+
+% ===================== OBJETIVO =====================
+\begin{frame}{Objetivo de la clase}
+\begin{block}{¿Qué vamos a ver hoy?}
+\begin{itemize}
+    \item Entender \textbf{vectores y matrices} como representación de datos organizacionales.
+    \item Dominar las \textbf{operaciones} fundamentales: suma, producto escalar y producto matricial.
+    \item Ver las matrices como \textbf{transformaciones}: agregar, convertir, reexpresar.
+    \item Aplicarlo a un caso concreto: \textbf{datos de fútbol}.
+\end{itemize}
+\end{block}
+\vspace{0.3cm}
+\begin{center}
+\textit{``Una matriz es más que números: es la estructura de las relaciones''}
+\end{center}
+\end{frame}
+
+% ===================== SECCION =====================
+\begin{frame}
+\begin{center}
+\vspace{1.5cm}
+\Huge \textbf{¿Por qué Álgebra Lineal?}
+
+\vspace{0.5cm}
+\Large Del dato aislado a las relaciones estructurales
+\end{center}
+\end{frame}
+
+\section{Motivación}
+
+\begin{frame}{El álgebra lineal en la gestión de datos}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Los datos de una organización son multidimensionales:}
+\begin{itemize}
+    \item Ventas de múltiples productos
+    \item Precios en distintos mercados
+    \item Personal por área y por turno
+    \item Costos por planta y por insumo
+\end{itemize}
+
+\column{0.48\textwidth}
+\begin{alertblock}{El poder de las matrices}
+Nos permiten:
+\begin{itemize}
+    \item Representar relaciones complejas
+    \item Operar sobre muchas variables a la vez
+    \item Modelar interdependencias
+\end{itemize}
+\end{alertblock}
+\end{columns}
+
+\vspace{0.5cm}
+\begin{center}
+\textit{Una tabla de Excel ya es una matriz: solo falta saber operarla.}
+\end{center}
+\end{frame}
+
+% ===================== SECCION =====================
+\begin{frame}
+\begin{center}
+\vspace{1.5cm}
+\Huge \textbf{Vectores y Matrices}
+
+\vspace{0.5cm}
+\Large Los bloques fundamentales
+\end{center}
+\end{frame}
+
+\section{Vectores y Matrices}
+
+\begin{frame}{Vectores: una lista ordenada de números}
+
+\begin{block}{Definición}
+Un vector es una colección \textbf{ordenada} de números que representa magnitudes relacionadas.
+El orden importa: si lo cambiás, cambia lo que significa.
+\end{block}
+
+\vspace{0.3cm}
+\textbf{Ejemplos organizacionales:}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Precios de productos:}
+$$\vec{p} = \begin{pmatrix} 100 \\ 250 \\ 80 \end{pmatrix}$$
+
+\column{0.48\textwidth}
+\textbf{Cantidades vendidas:}
+$$\vec{q} = \begin{pmatrix} 50 \\ 30 \\ 120 \end{pmatrix}$$
+\end{columns}
+
+\vspace{0.4cm}
+\begin{center}
+\textit{Cada posición es siempre el mismo producto en los dos vectores.}
+\end{center}
+\end{frame}
+
+\begin{frame}{Matrices: tablas de números con estructura}
+
+\begin{block}{Definición}
+Una matriz es un arreglo \textbf{bidimensional} de números organizados en filas y columnas.
+\end{block}
+
+\vspace{0.3cm}
+\textbf{Ejemplo: ventas por producto y región}
+
+$$A = \begin{pmatrix}
+100 & 150 & 200 \\
+80 & 90 & 110 \\
+120 & 130 & 140
+\end{pmatrix}$$
+
+\begin{itemize}
+    \item \textbf{Filas:} productos (1, 2, 3)
+    \item \textbf{Columnas:} regiones (Norte, Centro, Sur)
+    \item Elemento $a_{ij}$: ventas del producto $i$ en la región $j$
+\end{itemize}
+
+\vspace{0.2cm}
+\begin{center}
+\textit{Antes de operar, siempre preguntate: ¿qué es una fila y qué es una columna?}
+\end{center}
+\end{frame}
+
+\begin{frame}{Dimensiones y notación}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Dimensión de una matriz:}
+\begin{itemize}
+    \item Una matriz $m \times n$ tiene:
+    \begin{itemize}
+        \item $m$ filas
+        \item $n$ columnas
+    \end{itemize}
+    \item Se lee \textbf{siempre} filas $\times$ columnas
+    \item Elemento en posición $(i,j)$: $a_{ij}$
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Tipos especiales:}
+\begin{itemize}
+    \item \textbf{Matriz cuadrada:} $m = n$
+    \item \textbf{Matriz identidad:} $I_n$
+    $$I_3 = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{pmatrix}$$
+    \item \textbf{Matriz diagonal:} solo tiene valores fuera de cero en la diagonal
+\end{itemize}
+\end{columns}
+
+\vspace{0.4cm}
+\begin{center}
+\textit{La dimensión determina qué operaciones son posibles.}
+\end{center}
+\end{frame}
+
+% ===================== SECCION =====================
+\begin{frame}
+\begin{center}
+\vspace{1.5cm}
+\Huge \textbf{Operaciones}
+
+\vspace{0.5cm}
+\Large Las cuentas, paso a paso
+\end{center}
+\end{frame}
+
+\section{Operaciones}
+
+\begin{frame}{Suma y resta}
+
+\begin{block}{Regla}
+Solo se pueden sumar o restar matrices de \textbf{la misma dimensión}, elemento por elemento.
+\end{block}
+
+\vspace{0.3cm}
+\textbf{Ejemplo: ventas de dos trimestres}
+
+$$Q_1 = \begin{pmatrix} 100 & 150 \\ 80 & 90 \end{pmatrix}, \quad
+Q_2 = \begin{pmatrix} 120 & 160 \\ 85 & 95 \end{pmatrix}$$
+
+$$Q_1 + Q_2 = \begin{pmatrix} 100+120 & 150+160 \\ 80+85 & 90+95 \end{pmatrix}
+= \begin{pmatrix} 220 & 310 \\ 165 & 185 \end{pmatrix}$$
+
+\vspace{0.3cm}
+\begin{alertblock}{Por qué la dimensión tiene que coincidir}
+Cada posición representa \textbf{lo mismo} en las dos matrices: producto $i$, región $j$.
+Sumar matrices de distinta forma sería sumar peras con manzanas.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Multiplicación por un escalar}
+
+\begin{block}{Regla}
+Se multiplica \textbf{cada} elemento por el mismo número.
+\end{block}
+
+\vspace{0.3cm}
+\textbf{Ejemplo: aumento del 10\% en todos los precios}
+
+$$1{,}10 \times \begin{pmatrix} 100 \\ 250 \\ 80 \end{pmatrix}
+= \begin{pmatrix} 1{,}10 \times 100 \\ 1{,}10 \times 250 \\ 1{,}10 \times 80 \end{pmatrix}
+= \begin{pmatrix} 110 \\ 275 \\ 88 \end{pmatrix}$$
+
+\vspace{0.4cm}
+\begin{center}
+\textit{Sirve para escenarios donde todo se mueve igual: inflación pareja, ajuste general, cambio de unidad.}
+\end{center}
+
+\vspace{0.3cm}
+\begin{block}{¿Y si cada producto aumenta distinto?}
+Ahí ya no alcanza un escalar: hace falta una \textbf{matriz diagonal}, que veremos en un rato.
+\end{block}
+\end{frame}
+
+\begin{frame}{Producto escalar: la operación más útil de todas}
+
+\begin{block}{Definición}
+El \textbf{producto escalar} (o producto punto) entre dos vectores multiplica posición con
+posición y \textbf{suma todo}. El resultado es \textbf{un solo número}.
+$$\vec{p} \cdot \vec{q} = \sum_{i=1}^{n} p_i \, q_i$$
+\end{block}
+
+\vspace{0.3cm}
+\textbf{Demostración con precios y cantidades:}
+
+$$\vec{p} = \begin{pmatrix} 100 \\ 250 \\ 80 \end{pmatrix}, \quad
+\vec{q} = \begin{pmatrix} 50 \\ 30 \\ 120 \end{pmatrix}$$
+
+$$\vec{p} \cdot \vec{q} = \underbrace{100 \times 50}_{5.000} + \underbrace{250 \times 30}_{7.500}
++ \underbrace{80 \times 120}_{9.600} = 22.100$$
+
+\vspace{0.2cm}
+\begin{center}
+\textbf{Ese número es la facturación total.} Toda una tabla resumida en una cuenta.
+\end{center}
+\end{frame}
+
+\begin{frame}{Producto de matrices}
+
+\begin{block}{Regla fundamental}
+Para multiplicar $A_{m \times n}$ por $B_{n \times p}$:
+\begin{itemize}
+    \item Las \textbf{columnas de $A$} deben ser tantas como las \textbf{filas de $B$}
+    \item El resultado es una matriz $C_{m \times p}$
+\end{itemize}
+$$c_{ij} = \sum_{k=1}^{n} a_{ik} \cdot b_{kj}$$
+\end{block}
+
+\vspace{0.2cm}
+\begin{center}
+\textit{Cada elemento del resultado es un \textbf{producto escalar}: la fila $i$ de $A$ con la columna $j$ de $B$.}
+\end{center}
+
+\vspace{0.3cm}
+$$\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix} \times
+\begin{pmatrix} 5 & 6 \\ 7 & 8 \end{pmatrix} =
+\begin{pmatrix} 1{\cdot}5 + 2{\cdot}7 & 1{\cdot}6 + 2{\cdot}8 \\
+3{\cdot}5 + 4{\cdot}7 & 3{\cdot}6 + 4{\cdot}8 \end{pmatrix} =
+\begin{pmatrix} 19 & 22 \\ 43 & 50 \end{pmatrix}$$
+\end{frame}
+
+\begin{frame}{El orden importa: $AB \neq BA$}
+
+\begin{alertblock}{El producto de matrices NO es conmutativo}
+Cambiar el orden cambia el resultado. Y a veces ni siquiera se puede multiplicar al revés.
+\end{alertblock}
+
+\vspace{0.3cm}
+\textbf{Con las matrices anteriores, dadas vuelta:}
+
+$$\begin{pmatrix} 5 & 6 \\ 7 & 8 \end{pmatrix} \times
+\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix} =
+\begin{pmatrix} 5{\cdot}1 + 6{\cdot}3 & 5{\cdot}2 + 6{\cdot}4 \\
+7{\cdot}1 + 8{\cdot}3 & 7{\cdot}2 + 8{\cdot}4 \end{pmatrix} =
+\begin{pmatrix} 23 & 34 \\ 31 & 46 \end{pmatrix}$$
+
+\vspace{0.3cm}
+\begin{center}
+$\begin{pmatrix} 19 & 22 \\ 43 & 50 \end{pmatrix} \neq \begin{pmatrix} 23 & 34 \\ 31 & 46 \end{pmatrix}$
+\end{center}
+
+\vspace{0.3cm}
+\begin{center}
+\textit{Tiene sentido: ``aplicar precios a cantidades'' no es lo mismo que ``aplicar cantidades a precios''.}
+\end{center}
+\end{frame}
+
+\begin{frame}{Transpuesta: dar vuelta la tabla}
+
+\begin{block}{Definición}
+La transpuesta $A^T$ intercambia filas por columnas: lo que estaba en $(i,j)$ pasa a $(j,i)$.
+\end{block}
+
+\vspace{0.3cm}
+$$A = \begin{pmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{pmatrix}
+\qquad \Longrightarrow \qquad
+A^T = \begin{pmatrix} 1 & 4 \\ 2 & 5 \\ 3 & 6 \end{pmatrix}$$
+
+\vspace{0.3cm}
+\begin{center}
+Una matriz de $2 \times 3$ se convierte en una de $3 \times 2$.
+\end{center}
+
+\vspace{0.3cm}
+\begin{block}{Para qué se usa en la práctica}
+Para \textbf{acomodar los datos} y que las dimensiones cierren. Si tenés productos en las filas y
+necesitás productos en las columnas para multiplicar, transponés.
+\end{block}
+\end{frame}
+
+\begin{frame}{¿Se pueden dividir matrices?}
+
+\begin{alertblock}{La respuesta corta: no}
+\textbf{La división de matrices no existe.} No hay ninguna operación $A / B$.
+\end{alertblock}
+
+\vspace{0.3cm}
+Lo que sí existe es la \textbf{matriz inversa}, que cumple el papel del recíproco:
+
+\begin{columns}[T]
+\column{0.46\textwidth}
+\begin{center}
+\textbf{Con números}
+$$5 \times \tfrac{1}{5} = 1$$
+$$\tfrac{1}{5} = 5^{-1}$$
+\end{center}
+
+\column{0.46\textwidth}
+\begin{center}
+\textbf{Con matrices}
+$$A \times A^{-1} = I$$
+$$I \text{ hace el papel del } 1$$
+\end{center}
+\end{columns}
+
+\vspace{0.4cm}
+\begin{block}{Dos condiciones}
+\begin{itemize}
+    \item Solo las matrices \textbf{cuadradas} pueden tener inversa.
+    \item No todas la tienen: si su determinante es cero, no existe (matriz \textit{singular}).
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+\begin{center}
+\textit{Por eso, en vez de ``dividir'', se multiplica por la inversa.}
+\end{center}
+\end{frame}
+
+% ===================== SECCION =====================
+\begin{frame}
+\begin{center}
+\vspace{1.5cm}
+\Huge \textbf{Transformación de Datos}
+
+\vspace{0.5cm}
+\Large Las matrices como operadores
+\end{center}
+\end{frame}
+
+\section{Transformación de Datos}
+
+\begin{frame}{Matrices como transformaciones}
+
+\begin{block}{Concepto clave}
+Multiplicar un vector por una matriz lo \textbf{transforma} en otro vector: cambia lo que el dato
+representa.
+\end{block}
+
+\vspace{0.3cm}
+\textbf{De cantidades a ingresos, producto por producto:}
+
+$$\underbrace{\begin{pmatrix} 100 & 0 & 0 \\ 0 & 250 & 0 \\ 0 & 0 & 80 \end{pmatrix}}_{\text{precios (matriz diagonal)}}
+\times
+\underbrace{\begin{pmatrix} 50 \\ 30 \\ 120 \end{pmatrix}}_{\text{cantidades}}
+=
+\underbrace{\begin{pmatrix} 5.000 \\ 7.500 \\ 9.600 \end{pmatrix}}_{\text{ingresos}}$$
+
+\vspace{0.3cm}
+\begin{center}
+\textit{Acá está la respuesta a la pregunta de antes: la matriz diagonal aplica \textbf{un precio
+distinto a cada producto}.}
+\end{center}
+\end{frame}
+
+\begin{frame}{Agregación: sumar con una multiplicación}
+
+\textbf{Problema:} obtener el total vendido por región.
+
+\vspace{0.3cm}
+$$\underbrace{\begin{pmatrix} 1 & 1 & 1 \end{pmatrix}}_{\text{vector de unos}}
+\times
+\underbrace{\begin{pmatrix} 100 & 150 & 200 \\ 80 & 90 & 110 \\ 120 & 130 & 140 \end{pmatrix}}_{\text{ventas por producto y región}}
+=
+\underbrace{\begin{pmatrix} 300 & 370 & 450 \end{pmatrix}}_{\text{total por región}}$$
+
+\vspace{0.4cm}
+\begin{block}{Lo que hay que ver acá}
+Multiplicar por un \textbf{vector de unos} equivale a \textbf{sumar}. Y según de qué lado lo pongas,
+sumás filas o columnas:
+\begin{itemize}
+    \item Unos \textbf{a la izquierda} $\Rightarrow$ suma cada columna (total por región)
+    \item Unos \textbf{a la derecha} $\Rightarrow$ suma cada fila (total por producto)
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Cambio de unidades}
+
+\textbf{Ejemplo:} ventas en tres monedas, expresadas en una sola.
+
+\vspace{0.3cm}
+\begin{columns}[T]
+\column{0.44\textwidth}
+\textbf{Tipos de cambio a USD:}
+\begin{itemize}
+    \item 1 EUR = 1{,}10
+    \item 1 GBP = 1{,}30
+    \item 1 JPY = 0{,}0075
+\end{itemize}
+
+\column{0.52\textwidth}
+$$\begin{pmatrix} 1{,}10 & 1{,}30 & 0{,}0075 \end{pmatrix}
+\times
+\begin{pmatrix} 1.000 \\ 800 \\ 50.000 \end{pmatrix}$$
+\end{columns}
+
+\vspace{0.3cm}
+$$= 1.100 + 1.040 + 375 = 2.515 \text{ USD}$$
+
+\vspace{0.4cm}
+\begin{center}
+\textit{Otra vez un producto escalar: tres monedas distintas resumidas en un número comparable.}
+\end{center}
+\end{frame}
+
+% ===================== SECCION: FUTBOL =====================
+\begin{frame}
+\begin{center}
+\vspace{1.5cm}
+\Huge \textbf{Fútbol y Álgebra}
+
+\vspace{0.5cm}
+\Large Cuando cada jugador es un vector
+\end{center}
+\end{frame}
+
+\section{Fútbol y Álgebra}
+
+\begin{frame}{Once jugadores, once vectores}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.62]
+  % cancha
+  \fill[green!45!black!70] (0,0) rectangle (16,10);
+  \draw[white,very thick] (0.3,0.3) rectangle (15.7,9.7);
+  \draw[white,very thick] (8,0.3) -- (8,9.7);
+  \draw[white,very thick] (8,5) circle (1.7);
+  \draw[white,very thick] (0.3,2.7) rectangle (2.6,7.3);
+  \draw[white,very thick] (13.4,2.7) rectangle (15.7,7.3);
+  % jugadores (4-3-3)
+  \foreach \x/\y/\n in {1.2/5/1, 3.6/1.8/2, 3.6/3.9/3, 3.6/6.1/4, 3.6/8.2/5,
+                        6.2/3/6, 6.2/5/7, 6.2/7/8, 9.4/2.6/9, 9.4/5/10, 9.4/7.4/11}
+    {\fill[violet!85] (\x,\y) circle (0.42);
+     \node[white,font=\bfseries\scriptsize] at (\x,\y) {\n};}
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.1cm}
+\begin{center}
+\textit{Cada círculo va a ser una fila de nuestra tabla. Cada cosa que midamos de él, una columna.}
+\end{center}
+\end{frame}
+
+\begin{frame}{El equipo como matriz}
+
+\begin{block}{La convención de siempre}
+\textbf{Una fila = un jugador.} \quad \textbf{Una columna = una variable medida.}
+\end{block}
+
+\vspace{0.3cm}
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Jugador} & \textbf{Goles} & \textbf{Asist.} & \textbf{Pases} & \textbf{Km} & \textbf{Minutos} \\
+\midrule
+Jugador 9  & 12 & 4  & 380  & 8{,}1  & 2.250 \\
+Jugador 10 & 7  & 11 & 920  & 10{,}4 & 2.700 \\
+Jugador 6  & 1  & 2  & 1.150 & 11{,}2 & 2.880 \\
+Jugador 2  & 0  & 5  & 640  & 10{,}8 & 2.520 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.4cm}
+\begin{columns}[T]
+\column{0.47\textwidth}
+\textbf{Una fila} es el \textbf{vector} de un jugador:
+$$\vec{j}_{10} = \begin{pmatrix} 7 & 11 & 920 & 10{,}4 & 2.700 \end{pmatrix}$$
+
+\column{0.47\textwidth}
+\textbf{Una columna} es una variable de todo el plantel:
+$$\vec{goles} = \begin{pmatrix} 12 & 7 & 1 & 0 \end{pmatrix}^T$$
+\end{columns}
+\end{frame}
+
+\begin{frame}{Operar sobre el plantel}
+
+Con lo que ya vimos, estas preguntas se contestan con \textbf{una sola operación}:
+
+\vspace{0.3cm}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\begin{block}{Producto escalar}
+¿Cuánto \textbf{aportó} un jugador, si un gol vale 4 puntos y una asistencia 2?
+$$\vec{j} \cdot \begin{pmatrix} 4 \\ 2 \end{pmatrix}$$
+Jugador 9: $12{\cdot}4 + 4{\cdot}2 = \mathbf{56}$ \\
+Jugador 10: $7{\cdot}4 + 11{\cdot}2 = \mathbf{50}$
+\end{block}
+
+\column{0.48\textwidth}
+\begin{block}{Escalar y suma}
+¿Y por cada 90 minutos jugados?
+
+Dividir cada fila por sus minutos \textbf{normaliza}: recién ahí se puede comparar a un titular con
+alguien que entra poco.
+\end{block}
+\end{columns}
+
+\vspace{0.4cm}
+\begin{alertblock}{La idea que se lleva a cualquier tabla}
+Ponderar variables con un vector de pesos es \textbf{exactamente} lo mismo que hicimos con precios y
+cantidades. Cambia el nombre de las columnas, no la matemática.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Qué preguntas se abren}
+
+\begin{block}{Con la matriz de un plantel se puede}
+\begin{enumerate}
+    \item \textbf{Rankear} jugadores según un criterio elegido (el vector de pesos).
+    \item \textbf{Comparar} equipos: sumar filas y obtener el vector del equipo.
+    \item \textbf{Normalizar} por minutos, por partidos o por posesión.
+    \item \textbf{Detectar perfiles}: qué jugadores se parecen entre sí.
+\end{enumerate}
+\end{block}
+
+\vspace{0.4cm}
+\begin{alertblock}{Y acá está el punto de la clase}
+El vector de pesos \textbf{no lo dice la matemática}: lo elige quien analiza. Cambiar los pesos
+cambia el ranking.
+
+\textbf{La técnica es objetiva; el criterio, no.} Lo mismo pasa cuando se rankean sucursales,
+proveedores o empleados.
+\end{alertblock}
+
+\vspace{0.2cm}
+\begin{center}
+\small Los datos y el análisis completo, en el notebook de la clase.
+\end{center}
+\end{frame}
+
+% ===================== LEONTIEF (SOLO LA NOCION) =====================
+\section{Nota final}
+
+\begin{frame}{Una nota: el modelo de Leontief}
+
+\begin{block}{Para que sepan que existe}
+El \textbf{modelo insumo-producto} de Wassily Leontief (Premio Nobel 1973) usa exactamente esta
+matemática para describir \textbf{cómo los sectores de una economía dependen unos de otros}.
+\end{block}
+
+\vspace{0.3cm}
+La idea, en una línea: cada sector necesita insumos de los demás para producir, y eso se escribe
+
+$$X = AX + H \qquad \Longrightarrow \qquad X = (I - A)^{-1} H$$
+
+donde $A$ es la matriz de coeficientes técnicos y $H$ la demanda final.
+
+\vspace{0.3cm}
+\begin{alertblock}{Por qué aparece acá}
+Es \textbf{la} aplicación clásica del álgebra lineal a la economía, y muestra para qué sirve la
+inversa que vimos recién: para \textbf{despejar} en un sistema donde todo depende de todo.
+
+\textbf{No entra en el programa de este cuatrimestre}, pero vale conocer la noción.
+\end{alertblock}
+\end{frame}
+
+% ===================== CIERRE =====================
+\begin{frame}{Cierre}
+
+\vspace{0.5cm}
+\begin{center}
+\Large
+Datos $\longrightarrow$ Vectores y matrices $\longrightarrow$ Operaciones $\longrightarrow$ Decisiones
+\end{center}
+
+\vspace{0.7cm}
+\textbf{Lo que nos llevamos:}
+\begin{itemize}
+    \item Una tabla de datos \textbf{ya es} una matriz: filas y columnas con significado.
+    \item El \textbf{producto escalar} resume una tabla en un número: facturación, puntaje, total.
+    \item Multiplicar por una matriz \textbf{transforma} el dato: agrega, convierte, pondera.
+    \item No existe la división: se multiplica por la \textbf{inversa}.
+    \item Antes de operar, \textbf{mirá las dimensiones}. La mitad de los errores son de forma.
+\end{itemize}
+
+\vspace{0.5cm}
+\begin{center}
+\textit{El álgebra lineal no es solo matemática: es el lenguaje de las relaciones entre datos.}
+\end{center}
+\end{frame}
+
+\begin{frame}{Actividad propuesta}
+
+\textbf{En el notebook de la clase:}
+
+\begin{enumerate}
+    \item Armar la matriz de un plantel con al menos 5 jugadores y 4 variables.
+    \item Definir un \textbf{vector de pesos} que refleje qué valora tu club.
+    \item Calcular el puntaje de cada jugador con un producto escalar.
+    \item \textbf{Normalizar} por minutos jugados y volver a rankear.
+    \item Comparar los dos rankings: ¿cambió el orden? ¿Por qué?
+    \item Escribir en una línea a quién contratarías \textbf{y con qué criterio}.
+\end{enumerate}
+
+\vspace{0.4cm}
+\begin{center}
+\textbf{Formato:} notebook de Google Colab documentado.
+\end{center}
+\end{frame}
+
+\begin{frame}{Preguntas}
+\vspace{2cm}
+\begin{center}
+\Huge ¿Preguntas?
+\end{center}
+\vspace{1cm}
+\begin{center}
+\large
+\textit{``Una buena pregunta sobre matrices vale más que mil operaciones sin sentido''}
+\end{center}
+\end{frame}
+
+\begin{frame}{Fuentes y bibliografía}
+
+\begin{itemize}
+    \item Fraquelli, A. D. \& Gache, A. L. (2019). \textit{Notas de álgebra teórico-prácticas}. FCE-UBA.
+    \item Strang, G. (2016). \textit{Introduction to Linear Algebra} (5th ed.). Wellesley-Cambridge Press.
+    \item Miller, R. E. \& Blair, P. D. (2009). \textit{Input-Output Analysis: Foundations and Extensions}. Cambridge University Press.
+    \item Leontief, W. (1986). \textit{Input-Output Economics} (2nd ed.). Oxford University Press.
+\end{itemize}
+
+\vspace{0.6cm}
+\begin{center}
+\small
+Materiales educativos con fines académicos.
+\end{center}
+\end{frame}
+
+\end{document}
