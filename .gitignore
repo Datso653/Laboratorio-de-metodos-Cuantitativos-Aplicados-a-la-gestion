@@ -9,3 +9,11 @@ notebooks/*.csv
 
 # Paper teorico: material de trabajo de Juan, no del repo de la materia
 Paper Teorico/
+
+# Artefactos de compilacion de LaTeX
+*.aux
+*.nav
+*.snm
+*.out
+*.toc
+*.log

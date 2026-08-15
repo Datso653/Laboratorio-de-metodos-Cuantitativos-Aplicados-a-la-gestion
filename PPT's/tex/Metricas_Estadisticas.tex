@@ -1,0 +1,662 @@
+% =====================================================================
+%  Laboratorio de Metodos Cuantitativos Aplicados a la Gestion - FCE UBA
+%  Clase 21 - Metricas estadisticas aplicadas a los procesos organizacionales
+%  Joaquin Romano y Juan da Torre - 2do cuatrimestre 2026
+% =====================================================================
+\documentclass[aspectratio=169,10pt]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noquoting]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
+\usetheme{Boadilla}
+
+% ---------------------------------------------------------------------
+%  Paleta violeta
+% ---------------------------------------------------------------------
+\definecolor{violetaOscuro}{HTML}{4A148C}
+\definecolor{violeta}{HTML}{6A1B9A}
+\definecolor{violetaMedio}{HTML}{9C4DCC}
+\definecolor{violetaClaro}{HTML}{F3E5F5}
+\definecolor{violetaSuave}{HTML}{E1BEE7}
+\definecolor{grisTexto}{HTML}{37474F}
+
+\setbeamercolor{structure}{fg=violeta}
+\setbeamercolor{title}{fg=white,bg=violeta}
+\setbeamercolor{frametitle}{fg=violetaOscuro,bg=white}
+\setbeamercolor{section in head/foot}{fg=white,bg=violeta}
+\setbeamercolor{subsection in head/foot}{fg=violetaOscuro,bg=violetaSuave}
+\setbeamercolor{block title}{fg=violetaOscuro,bg=violetaSuave}
+\setbeamercolor{block body}{fg=grisTexto,bg=violetaClaro}
+\setbeamercolor{block title alerted}{fg=white,bg=violetaMedio}
+\setbeamercolor{block body alerted}{fg=grisTexto,bg=violetaClaro}
+\setbeamercolor{block title example}{fg=white,bg=violetaOscuro}
+\setbeamercolor{block body example}{fg=grisTexto,bg=violetaClaro}
+\setbeamercolor{itemize item}{fg=violeta}
+\setbeamercolor{itemize subitem}{fg=violetaMedio}
+\setbeamercolor{alerted text}{fg=violetaOscuro}
+\setbeamercolor{author in head/foot}{fg=white,bg=violetaOscuro}
+\setbeamercolor{title in head/foot}{fg=white,bg=violeta}
+\setbeamercolor{date in head/foot}{fg=white,bg=violetaOscuro}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamerfont{frametitle}{series=\bfseries}
+\setbeamerfont{title}{series=\bfseries}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamertemplate{itemize item}{\textbullet}
+
+% Barra superior con la seccion
+\setbeamertemplate{headline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.6ex,dp=1ex,center]{section in head/foot}%
+    \usebeamerfont{section in head/foot}\small\insertsectionhead%
+  \end{beamercolorbox}%
+}
+
+% ---------------------------------------------------------------------
+\title[Métricas estadísticas]{Métricas estadísticas aplicadas a los procesos organizacionales}
+\subtitle{Describir, detectar y decidir con datos}
+\author[Romano · da Torre]{Joaquín Romano \and Juan da Torre}
+\institute[FCE-UBA]{Laboratorio de Métodos Cuantitativos Aplicados a la Gestión\\Universidad de Buenos Aires}
+\date{Segundo cuatrimestre 2026}
+
+\begin{document}
+
+% ===================== 1 =====================
+{\setbeamertemplate{headline}{}
+\begin{frame}[plain]
+  \titlepage
+  \vspace{-0.7em}
+  \begin{center}
+  \small\textbf{Objetivo:} describir un proceso con números, detectar cuándo algo se salió de lo normal
+  y saber \emph{qué preguntar} antes de informar un resultado.
+  \end{center}
+\end{frame}}
+
+% ===================== 2 =====================
+\begin{frame}{Objetivo de la clase}
+  \begin{block}{¿Qué vamos a ver hoy?}
+    \begin{itemize}
+      \item El promedio y sus trampas: media, mediana y asimetría.
+      \item Dispersión: el número que nadie mira y que define el riesgo.
+      \item Cuartiles, boxplot y detección de \emph{outliers}.
+      \item Datos faltantes: qué hacer cuando la celda está vacía.
+      \item Correlación: qué mide, qué \textbf{no} mide y sus tres trampas.
+      \item Un caso completo: ¿el proceso está bajo control?
+    \end{itemize}
+  \end{block}
+  \begin{center}
+  \small Todo se implementa en Python con \texttt{pandas}, sobre datos de una organización.
+  \end{center}
+\end{frame}
+
+% ===================== 3 =====================
+\begin{frame}{Por qué esto importa en una organización}
+  Una métrica estadística no es un ejercicio: es \textbf{la forma de contestar preguntas de gestión}
+  cuando los datos son demasiados para mirarlos de a uno.
+
+  \vspace{0.6em}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{La pregunta del negocio}
+        \begin{itemize}
+          \item ¿Cómo nos fue este mes?
+          \item ¿Es parejo entre sucursales?
+          \item ¿Esta venta es rara o normal?
+          \item ¿El proceso está estable?
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{La herramienta}
+        \begin{itemize}
+          \item Media y mediana
+          \item Desvío y coeficiente de variación
+          \item Cuartiles y regla del IQR
+          \item Gráfico de control
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vspace{0.4em}
+  \begin{center}\emph{Un número sin interpretación no resuelve nada.}\end{center}
+\end{frame}
+
+\section{El promedio y sus trampas}
+
+% ===================== 4 =====================
+{\setbeamertemplate{headline}{}
+\begin{frame}[plain]
+  \begin{center}
+    {\Huge\bfseries\color{violetaOscuro} El promedio y sus trampas}\\[0.6em]
+    {\large Media, mediana y asimetría}
+  \end{center}
+\end{frame}}
+
+% ===================== 5 =====================
+\begin{frame}{Las tres medidas de tendencia central}
+  \begin{block}{Definiciones}
+    \begin{description}
+      \item[Media] El promedio: $\bar{x} = \dfrac{1}{n}\sum_{i=1}^{n} x_i$. Usa \textbf{todos} los valores.
+      \item[Mediana] El valor del medio cuando se ordenan los datos. Deja 50\% a cada lado.
+      \item[Moda] El valor que más se repite. Es la única que sirve para variables de texto.
+    \end{description}
+  \end{block}
+  \vspace{0.3em}
+  \begin{alertblock}{La diferencia clave}
+    La \textbf{media} se mueve con cada dato extremo. La \textbf{mediana} no: hay que mover la mitad
+    de los datos para correrla.
+  \end{alertblock}
+\end{frame}
+
+% ===================== 6 =====================
+\begin{frame}{Cuando el promedio miente}
+  \textbf{Sueldos de un área de 10 personas} (en miles de pesos):
+  \vspace{0.4em}
+  \begin{center}
+  \small
+  \begin{tabular}{cccccccccc}
+    \toprule
+    800 & 850 & 900 & 900 & 950 & 1000 & 1050 & 1100 & 1200 & \textbf{9500} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{0.6em}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Media}
+        \[ \bar{x} = 1825 \]
+        \textbf{Nadie} gana eso: ni el que menos ni la mayoría.
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Mediana}
+        \[ Me = 975 \]
+        Describe bien al empleado \emph{típico}.
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vspace{0.5em}
+  \begin{center}
+  \emph{Un solo dato (el gerente) movió el promedio un 87\%.}
+  \end{center}
+\end{frame}
+
+% ===================== 7 =====================
+\begin{frame}{Asimetría: el número que avisa}
+  La \textbf{asimetría} (\emph{skewness}) mide hacia qué lado se estira la distribución.
+
+  \vspace{0.5em}
+  \begin{center}
+  \begin{tabular}{lcl}
+    \toprule
+    \textbf{Si...} & \textbf{Forma} & \textbf{Qué significa} \\
+    \midrule
+    Asimetría $\approx 0$   & simétrica       & Media y mediana coinciden \\
+    Asimetría $> 0$         & cola a la derecha & Pocos valores muy altos tiran la media \\
+    Asimetría $< 0$         & cola a la izquierda & Pocos valores muy bajos tiran la media \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.6em}
+  \begin{exampleblock}{En Python}
+    \texttt{ventas["Total"].skew()}
+  \end{exampleblock}
+
+  \begin{center}
+  \small Casi todas las variables de plata (ventas, sueldos, patrimonios) son \textbf{asimétricas a la derecha}.
+  \end{center}
+\end{frame}
+
+% ===================== 8 =====================
+\begin{frame}{La regla práctica}
+  \begin{block}{¿Media o mediana?}
+    \begin{enumerate}
+      \item Calculá las dos.
+      \item \textbf{Si se parecen}, la distribución es simétrica: usá la media.
+      \item \textbf{Si difieren mucho}, hay valores extremos: informá la \textbf{mediana}
+            y aclarálo.
+    \end{enumerate}
+  \end{block}
+  \vspace{0.4em}
+  \begin{alertblock}{Para la reunión}
+    Cuando alguien presenta ``el promedio'' de algo, la pregunta correcta es siempre la misma:
+    \textbf{¿cuánto da la mediana?} Si no la calculó, no sabe si su promedio representa algo.
+  \end{alertblock}
+\end{frame}
+
+\section{Dispersión}
+
+% ===================== 9 =====================
+{\setbeamertemplate{headline}{}
+\begin{frame}[plain]
+  \begin{center}
+    {\Huge\bfseries\color{violetaOscuro} Dispersión}\\[0.6em]
+    {\large El número que nadie mira}
+  \end{center}
+\end{frame}}
+
+% ===================== 10 =====================
+\begin{frame}{Medir cuánto se mueven los datos}
+  \begin{block}{Las tres medidas}
+    \begin{description}
+      \item[Rango] $\max - \min$. Simple, pero lo define un solo dato.
+      \item[Varianza] $s^2 = \dfrac{1}{n-1}\sum (x_i - \bar{x})^2$. Queda en unidades \emph{al cuadrado}.
+      \item[Desvío estándar] $s = \sqrt{s^2}$. Vuelve a las unidades originales: \textbf{es el que se informa}.
+    \end{description}
+  \end{block}
+  \vspace{0.4em}
+  \begin{center}
+  \emph{La media dice dónde está el centro. El desvío dice cuánto se puede confiar en ese centro.}
+  \end{center}
+\end{frame}
+
+% ===================== 11 =====================
+\begin{frame}{El desvío estándar, en criollo}
+  \begin{block}{Cómo se lee}
+    El desvío es \textbf{la distancia típica de un dato al promedio}.
+
+    Si las ventas promedian \$100.000 con un desvío de \$8.000, la venta habitual anda
+    \textbf{entre \$92.000 y \$108.000}.
+  \end{block}
+
+  \vspace{0.4em}
+  \begin{exampleblock}{La regla empírica (distribución simétrica)}
+    \begin{center}
+    \begin{tabular}{ll}
+      $\bar{x} \pm 1s$ & contiene $\approx 68\%$ de los datos \\
+      $\bar{x} \pm 2s$ & contiene $\approx 95\%$ \\
+      $\bar{x} \pm 3s$ & contiene $\approx 99{,}7\%$ \\
+    \end{tabular}
+    \end{center}
+  \end{exampleblock}
+  \begin{center}
+  \small Esa última fila es la base del \textbf{gráfico de control} que vemos al final.
+  \end{center}
+\end{frame}
+
+% ===================== 12 =====================
+\begin{frame}{Coeficiente de variación}
+  ¿Cómo comparo la variabilidad de cosas medidas en unidades distintas?
+
+  \[ CV = \frac{s}{\bar{x}} \times 100 \]
+
+  \begin{block}{Para qué sirve}
+    Es el desvío expresado \textbf{como porcentaje del promedio}. Al no tener unidades, permite
+    comparar la estabilidad de una sucursal grande contra una chica, o de las ventas contra los costos.
+  \end{block}
+
+  \vspace{0.3em}
+  \begin{center}
+  \begin{tabular}{lcc}
+    \toprule
+    & \textbf{Sucursal Centro} & \textbf{Sucursal Norte} \\
+    \midrule
+    Venta promedio  & \$ 480.000 & \$ 95.000 \\
+    Desvío          & \$  48.000 & \$ 19.000 \\
+    \textbf{CV}     & \textbf{10\%} & \textbf{20\%} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{0.3em}
+  \begin{center}\small Norte vende menos \textbf{y} es el doble de impredecible.\end{center}
+\end{frame}
+
+% ===================== 13 =====================
+\begin{frame}{El mismo promedio, dos realidades}
+  Dos sucursales facturan, en promedio, exactamente lo mismo:
+
+  \vspace{0.5em}
+  \begin{center}
+  \begin{tikzpicture}[scale=0.85]
+    \draw[->,gray] (0,0) -- (10,0) node[right,black]{\small día};
+    \draw[->,gray] (0,0) -- (0,3.2) node[above,black]{\small \$};
+    \draw[dashed,violetaMedio,thick] (0,1.6) -- (9.6,1.6) node[right,black]{\scriptsize media};
+    % Sucursal estable
+    \draw[violetaOscuro,very thick] (0.4,1.5) -- (1.6,1.7) -- (2.8,1.55) -- (4,1.65) -- (5.2,1.6)
+      -- (6.4,1.7) -- (7.6,1.5) -- (8.8,1.6);
+    % Sucursal volatil
+    \draw[violetaMedio,very thick,dash pattern=on 3pt off 2pt]
+      (0.4,0.4) -- (1.6,2.9) -- (2.8,0.6) -- (4,2.7) -- (5.2,0.5) -- (6.4,2.8) -- (7.6,0.7) -- (8.8,2.6);
+    \node[violetaOscuro] at (7.2,1.15) {\scriptsize A: desvío bajo};
+    \node[violetaMedio] at (3.1,3.0) {\scriptsize B: desvío alto};
+  \end{tikzpicture}
+  \end{center}
+
+  \begin{alertblock}{La pregunta de gestión}
+    ¿Cuál de las dos sucursales preferís? La \textbf{A} se puede planificar: stock, personal y caja.
+    La \textbf{B} obliga a estar preparado para el peor día. \textbf{Mismo promedio, riesgo distinto.}
+  \end{alertblock}
+\end{frame}
+
+\section{Cuartiles y boxplot}
+
+% ===================== 14 =====================
+{\setbeamertemplate{headline}{}
+\begin{frame}[plain]
+  \begin{center}
+    {\Huge\bfseries\color{violetaOscuro} Cuartiles y boxplot}\\[0.6em]
+    {\large Ver la distribución de un vistazo}
+  \end{center}
+\end{frame}}
+
+% ===================== 15 =====================
+\begin{frame}{Percentiles y cuartiles}
+  \begin{block}{Definición}
+    El \textbf{percentil} $p$ es el valor que deja por debajo al $p\%$ de los datos.
+    Los \textbf{cuartiles} son los percentiles 25, 50 y 75.
+  \end{block}
+  \vspace{0.3em}
+  \begin{center}
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Cuartil} & \textbf{Es el...} & \textbf{Significa} \\
+    \midrule
+    $Q_1$ & percentil 25 & El 25\% de los datos está por debajo \\
+    $Q_2$ & percentil 50 & \textbf{Es la mediana} \\
+    $Q_3$ & percentil 75 & El 75\% está por debajo \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{0.5em}
+  \begin{exampleblock}{En Python}
+    \texttt{total.quantile(0.25)} \quad · \quad \texttt{total.describe()}
+  \end{exampleblock}
+\end{frame}
+
+% ===================== 16 =====================
+\begin{frame}{El rango intercuartílico}
+  \[ IQR = Q_3 - Q_1 \]
+  \begin{block}{Qué mide}
+    El ancho del \textbf{50\% central} de los datos. Es una medida de dispersión que
+    \textbf{ignora los extremos}: por eso no se deja arrastrar por un dato raro.
+  \end{block}
+  \vspace{0.4em}
+  \begin{center}
+  \begin{tabular}{lll}
+    \toprule
+    & \textbf{Se ve afectado por extremos} & \textbf{Cuándo usarlo} \\
+    \midrule
+    Desvío estándar & Sí                 & Distribución simétrica \\
+    IQR             & \textbf{No}        & Hay outliers o asimetría \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{0.4em}
+  \begin{center}\small Misma lógica que media vs. mediana: uno es sensible, el otro es robusto.\end{center}
+\end{frame}
+
+% ===================== 17 =====================
+\begin{frame}{Cómo se lee un boxplot}
+  \begin{center}
+  \begin{tikzpicture}[scale=0.9]
+    \draw[->,gray] (-0.3,0) -- (11,0) node[right,black]{\small \$};
+    % bigote inferior
+    \draw[violetaOscuro,thick] (1.5,1.2) -- (3,1.2);
+    \draw[violetaOscuro,thick] (1.5,0.8) -- (1.5,1.6);
+    % caja
+    \draw[fill=violetaClaro,draw=violetaOscuro,thick] (3,0.6) rectangle (7,1.8);
+    \draw[violetaOscuro,ultra thick] (4.8,0.6) -- (4.8,1.8);
+    % bigote superior
+    \draw[violetaOscuro,thick] (7,1.2) -- (8.6,1.2);
+    \draw[violetaOscuro,thick] (8.6,0.8) -- (8.6,1.6);
+    % outliers
+    \fill[violetaMedio] (9.8,1.2) circle (2.4pt);
+    \fill[violetaMedio] (10.4,1.2) circle (2.4pt);
+    % etiquetas
+    \node[below,font=\scriptsize] at (1.5,0.7) {mínimo};
+    \node[below,font=\scriptsize] at (3,0.5)   {$Q_1$};
+    \node[below,font=\scriptsize] at (4.8,0.5) {mediana};
+    \node[below,font=\scriptsize] at (7,0.5)   {$Q_3$};
+    \node[below,font=\scriptsize] at (8.6,0.7) {máximo};
+    \node[above,font=\scriptsize,violetaMedio] at (10.1,1.4) {outliers};
+    \draw[<->,violetaOscuro] (3,2.1) -- (7,2.1) node[midway,above,font=\scriptsize]{IQR = 50\% central};
+  \end{tikzpicture}
+  \end{center}
+  \vspace{0.2em}
+  \begin{block}{Lo que hay que mirar}
+    \textbf{Si la mediana no está en el centro de la caja, la distribución es asimétrica.}
+    Y si un bigote es mucho más largo que el otro, hay cola de ese lado.
+  \end{block}
+\end{frame}
+
+\section{Outliers}
+
+% ===================== 18 =====================
+{\setbeamertemplate{headline}{}
+\begin{frame}[plain]
+  \begin{center}
+    {\Huge\bfseries\color{violetaOscuro} Outliers}\\[0.6em]
+    {\large Los casos raros}
+  \end{center}
+\end{frame}}
+
+% ===================== 19 =====================
+\begin{frame}{La regla del 1,5 · IQR}
+  Un dato es \textbf{outlier} si cae fuera de estos límites:
+  \[ \text{Límite inferior} = Q_1 - 1{,}5 \cdot IQR \qquad
+     \text{Límite superior} = Q_3 + 1{,}5 \cdot IQR \]
+
+  \begin{block}{De dónde sale el 1,5}
+    Es una \textbf{convención}, no una ley. Con datos simétricos, esos límites dejan afuera
+    aproximadamente el 0,7\% de las observaciones. Se puede usar 3 en lugar de 1,5 para marcar
+    solo los casos extremos.
+  \end{block}
+
+  \begin{exampleblock}{En Python}
+    \texttt{iqr = q3 - q1} \\
+    \texttt{outliers = serie[(serie < q1 - 1.5*iqr) | (serie > q3 + 1.5*iqr)]}
+  \end{exampleblock}
+\end{frame}
+
+% ===================== 20 =====================
+\begin{frame}{Un outlier NO se borra automáticamente}
+  \begin{alertblock}{El error más caro de la clase}
+    Borrar los outliers ``porque ensucian el análisis'' es, muchas veces, \textbf{borrar
+    justo la información más valiosa}.
+  \end{alertblock}
+  \vspace{0.3em}
+  \begin{block}{Las tres preguntas, en orden}
+    \begin{enumerate}
+      \item \textbf{¿Es un error de carga?} Una venta de \$0 o una edad de 200 años se corrige o se saca.
+      \item \textbf{¿Es un caso real y relevante?} El cliente que compra 50 veces más que el resto
+            \textbf{existe} y probablemente sea el más importante.
+      \item \textbf{¿Qué pasa con y sin él?} Corré el análisis de las dos formas e informá la diferencia.
+    \end{enumerate}
+  \end{block}
+  \begin{center}\small El fraude, las fallas y los mejores clientes \textbf{son} outliers.\end{center}
+\end{frame}
+
+\section{Datos faltantes}
+
+% ===================== 21 =====================
+{\setbeamertemplate{headline}{}
+\begin{frame}[plain]
+  \begin{center}
+    {\Huge\bfseries\color{violetaOscuro} Datos faltantes}\\[0.6em]
+    {\large Cuando la celda está vacía}
+  \end{center}
+\end{frame}}
+
+% ===================== 22 =====================
+\begin{frame}{Que falte un dato también es un dato}
+  \begin{block}{Lo primero: contarlos}
+    \texttt{df.isnull().sum()} \quad · \quad \texttt{df.info()}
+  \end{block}
+  \vspace{0.4em}
+  \begin{block}{Y lo segundo, más importante: ¿por qué faltan?}
+    \begin{description}
+      \item[Al azar] Se perdieron por un problema técnico. Son los menos peligrosos.
+      \item[Con patrón] \textbf{Faltan por una razón}, y esa razón suele importar.
+    \end{description}
+  \end{block}
+  \vspace{0.3em}
+  \begin{alertblock}{El ejemplo que lo explica todo}
+    En una base de créditos, la relación deuda/ingreso falta más seguido en los clientes que
+    \textbf{terminaron en default}. El dato faltante \emph{predice} el resultado:
+    borrar esas filas elimina el patrón más informativo de la base.
+  \end{alertblock}
+\end{frame}
+
+% ===================== 23 =====================
+\begin{frame}{Qué hacer con los faltantes}
+  \begin{center}
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Estrategia} & \textbf{Cuándo} & \textbf{Riesgo} \\
+    \midrule
+    Borrar filas    & Faltan pocas y al azar    & Perder información y sesgar \\
+    Imputar (media/mediana) & Variable numérica, pocos faltantes & Reduce la variabilidad real \\
+    Categoría ``sin dato''  & Variable de texto         & Ninguno grande \\
+    \textbf{Marcar con una bandera} & \textbf{Siempre que se sospeche patrón} & Ninguno \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{0.6em}
+  \begin{exampleblock}{La bandera: dos líneas que salvan un análisis}
+    \texttt{df["falta\_ingreso"] = df["ingreso"].isnull()} \\
+    \texttt{df["ingreso"] = df["ingreso"].fillna(df["ingreso"].median())}
+  \end{exampleblock}
+  \begin{center}\small Así imputás \textbf{y} conservás la información de que ese dato faltaba.\end{center}
+\end{frame}
+
+\section{Correlación}
+
+% ===================== 24 =====================
+{\setbeamertemplate{headline}{}
+\begin{frame}[plain]
+  \begin{center}
+    {\Huge\bfseries\color{violetaOscuro} Correlación}\\[0.6em]
+    {\large Qué mide y qué no}
+  \end{center}
+\end{frame}}
+
+% ===================== 25 =====================
+\begin{frame}{El coeficiente de correlación}
+  Mide la fuerza y el sentido de la relación \textbf{lineal} entre dos variables. Va de $-1$ a $1$.
+
+  \vspace{0.5em}
+  \begin{center}
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Valor} & \textbf{Qué indica} \\
+    \midrule
+    $r \approx  1$ & Cuando una sube, la otra sube \\
+    $r \approx  0$ & No hay relación \emph{lineal} \\
+    $r \approx -1$ & Cuando una sube, la otra baja \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.5em}
+  \begin{exampleblock}{En Python}
+    \texttt{df[["Cantidad", "Precio", "Total"]].corr()}
+  \end{exampleblock}
+  \begin{center}\small Como referencia: por encima de $0{,}7$ se considera una relación fuerte.\end{center}
+\end{frame}
+
+% ===================== 26 =====================
+\begin{frame}{Las tres trampas de la correlación}
+  \begin{block}{1. Correlación no es causalidad}
+    Que dos cosas se muevan juntas no significa que una cause la otra. Puede haber una
+    \textbf{tercera variable} moviendo a las dos, o ser pura coincidencia.
+  \end{block}
+  \begin{block}{2. Solo detecta relaciones lineales}
+    Una relación \textbf{perfecta} pero curva puede dar correlación cero.
+  \end{block}
+  \begin{block}{3. Un solo outlier la distorsiona}
+    Un punto extremo puede crear una correlación que no existe, o tapar una que sí.
+  \end{block}
+  \vspace{0.2em}
+  \begin{center}
+  \textbf{Por eso la regla es siempre la misma: graficá antes de creerle al número.}
+  \end{center}
+\end{frame}
+
+% ===================== 27 =====================
+\begin{frame}{Correlación cero, relación perfecta}
+  \begin{center}
+  \begin{tikzpicture}[scale=0.85]
+    \draw[->,gray] (-0.2,0) -- (5,0) node[right,black]{\scriptsize x};
+    \draw[->,gray] (0,-0.2) -- (0,3) node[above,black]{\scriptsize y};
+    \draw[violetaOscuro,very thick,domain=0.3:4.5,samples=60] plot (\x, {0.45*(\x-2.4)*(\x-2.4)+0.3});
+    \foreach \x in {0.5,1.0,...,4.5}
+      \fill[violetaMedio] (\x,{0.45*(\x-2.4)*(\x-2.4)+0.3}) circle (2pt);
+    \node[font=\small,violetaOscuro] at (3.6,2.6) {$r \approx 0$};
+  \end{tikzpicture}
+  \hspace{1.2em}
+  \begin{minipage}{0.44\textwidth}
+    \begin{alertblock}{Lo que pasa acá}
+      La relación es \textbf{perfecta y evidente}: es una parábola. Pero como no es una recta,
+      el coeficiente de correlación da prácticamente \textbf{cero}.
+
+      \vspace{0.3em}
+      Si solo mirabas el número, concluías que ``no hay relación''.
+    \end{alertblock}
+  \end{minipage}
+  \end{center}
+  \vspace{0.2em}
+  \begin{center}
+  \emph{El coeficiente responde ``¿hay relación lineal?'', no ``¿hay relación?''.}
+  \end{center}
+\end{frame}
+
+\section{¿El proceso está bajo control?}
+
+% ===================== 28 =====================
+{\setbeamertemplate{headline}{}
+\begin{frame}[plain]
+  \begin{center}
+    {\Huge\bfseries\color{violetaOscuro} ¿El proceso está bajo control?}\\[0.6em]
+    {\large Todo junto, en un caso}
+  \end{center}
+\end{frame}}
+
+% ===================== 29 =====================
+\begin{frame}{El gráfico de control}
+  \begin{center}
+  \begin{tikzpicture}[scale=0.82]
+    \fill[violetaClaro] (0,1.0) rectangle (10,2.6);
+    \draw[->,gray] (0,0) -- (10.4,0) node[right,black]{\scriptsize período};
+    \draw[->,gray] (0,0) -- (0,3.4);
+    \draw[violetaOscuro,thick] (0,1.8) -- (10,1.8) node[right,font=\scriptsize,black]{$\bar{x}$};
+    \draw[violetaMedio,dashed,thick] (0,2.6) -- (10,2.6) node[right,font=\scriptsize,black]{$+3s$};
+    \draw[violetaMedio,dashed,thick] (0,1.0) -- (10,1.0) node[right,font=\scriptsize,black]{$-3s$};
+    \draw[violetaOscuro,very thick]
+      (0.5,1.7) -- (1.4,1.9) -- (2.3,1.75) -- (3.2,2.0) -- (4.1,1.6)
+      -- (5.0,1.85) -- (5.9,1.7) -- (6.8,3.05) -- (7.7,1.8) -- (8.6,1.75) -- (9.5,1.9);
+    \fill[red!70!violet] (6.8,3.05) circle (3pt);
+    \node[font=\scriptsize,red!70!violet] at (6.8,3.35) {¡fuera de control!};
+  \end{tikzpicture}
+  \end{center}
+  \begin{block}{Cómo se arma}
+    Se dibuja la \textbf{media} del proceso y dos límites en $\bar{x} \pm 3s$. Mientras los puntos
+    caigan adentro, la variación es \textbf{la normal del proceso}. Un punto afuera avisa que
+    \textbf{algo cambió} y hay que ir a buscar la causa.
+  \end{block}
+\end{frame}
+
+% ===================== 30 =====================
+\begin{frame}{Ideas clave de la clase}
+  \begin{block}{Para llevarse}
+    \begin{enumerate}
+      \item \textbf{Nunca informes una media sola.} Sin la mediana y el desvío, un promedio no
+            describe nada.
+      \item \textbf{La dispersión es el riesgo.} Dos procesos con la misma media pueden ser
+            negocios completamente distintos.
+      \item \textbf{Un outlier es una pregunta, no un estorbo.} Antes de borrarlo, averiguá qué es.
+      \item \textbf{Que falte un dato es información.} Marcá el faltante antes de imputarlo.
+      \item \textbf{Graficá antes de creerle a un coeficiente.}
+    \end{enumerate}
+  \end{block}
+  \vspace{0.4em}
+  \begin{center}
+  \emph{La estadística descriptiva no adorna el informe: es la que decide qué se puede afirmar.}
+  \end{center}
+\end{frame}
+
+\end{document}
