@@ -75,6 +75,19 @@ Se relaciona con la sección de **ROI de proyectos de IA** de la clase 17.
 
 ---
 
+## 🎯 [Optimización](Optimizacion/)
+
+| Archivo | Qué tiene | De dónde salió |
+|---|---|---|
+| `complemento-clase08-modelizacion-de-problemas-de-optimizacion.ipynb` | Riesgo moral resuelto con PL, distribución de paquetes (Mercado Libre), análisis y asignación óptima de personal con la base `Wage`, y tres trucos de modelado —restricciones de proporción, lógica condicional con binarias y tarifas por tramos— con un ejercicio integrador sobre la base `Carseats` | Era el `08b`, segundo notebook de la clase **08** (2C-2026) |
+
+**Por qué salió:** la clase 08 tenía **dos** notebooks (`08` y `08b`) y el cronograma le da una sola
+clase. El `08` quedó como la clase (linprog, PuLP y los casos), y todo lo que excedía el tiempo de
+cursada pasó acá como profundización. Los trucos de modelado y el integrador de `Carseats` los
+agregó **Agustín** en septiembre de 2026.
+
+---
+
 ## 🗂️ Cómo agregar un complemento nuevo
 
 1. Poné el archivo en la subcarpeta del **tema** que corresponda (o creá una nueva si no existe).
