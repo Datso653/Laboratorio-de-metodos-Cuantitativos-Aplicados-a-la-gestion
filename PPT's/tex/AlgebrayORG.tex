@@ -1,0 +1,1108 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+
+%NODEJACOMPILAR MAS SEGUIR PAPERS EN PAPEERIA.COM pedir share a Juan
+
+
+% ============================================================
+% CONFIGURACIÓN VISUAL (Paleta ROJA)
+% ============================================================
+\usetheme{CambridgeUS}
+\usecolortheme{seahorse}
+
+% Colores rojos suaves y mejor contraste
+\setbeamercolor{structure}{fg=red!70!black}
+\setbeamercolor{palette primary}{bg=red!15,fg=black}
+\setbeamercolor{palette secondary}{bg=red!20,fg=black}
+\setbeamercolor{palette tertiary}{bg=red!25,fg=black}
+
+% Título principal (portada) - fondo rojo suave
+\setbeamercolor{title}{fg=white,bg=red!60!black}
+\setbeamercolor{author}{fg=black}
+\setbeamercolor{institute}{fg=black}
+\setbeamercolor{date}{fg=black}
+
+% Títulos de frames - fondo MUY suave rojo
+\setbeamercolor{frametitle}{bg=red!8,fg=red!80!black}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+
+% Bloques y alertas en rojo
+\setbeamercolor{block title}{bg=red!15,fg=red!80!black}
+\setbeamercolor{block body}{bg=red!5,fg=black}
+
+% Paquetes
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+\graphicspath{{imagenes/}{tex/imagenes/}}
+\usepackage{hyperref}
+\usepackage{booktabs}
+
+% Configuración de listings para Python
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{red!70!black},
+    stringstyle=\color{red!80!black},
+    commentstyle=\color{green!50!black},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny\color{gray}
+}
+
+% ============================================================
+% INFORMACIÓN DEL DOCUMENTO
+% ============================================================
+\title{Programación Lineal Aplicada}
+\subtitle{Optimización de recursos en organizaciones}
+\author{Juan Ignacio da Torre}
+\institute{
+    Laboratorio de Métodos Cuantitativos Aplicados a la Gestión \\
+    Universidad de Buenos Aires
+}
+\date{Primer cuatrimestre 2026}
+
+% Configurar numeración
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+% ============================================================
+% SLIDE 1: PORTADA
+% ============================================================
+\begin{frame}
+\titlepage
+\vspace{-0.5cm}
+\begin{center}
+\textbf{Objetivo:} Resolver problemas reales de asignación óptima de recursos usando programación lineal
+\end{center}
+\end{frame}
+
+% ============================================================
+% SLIDE 2: OBJETIVO
+% ============================================================
+\begin{frame}{Objetivo de la charla}
+\begin{block}{¿Qué vamos a ver hoy?}
+\begin{itemize}
+    \item Entender problemas organizacionales como sistemas de ecuaciones.
+    \item Fundamentos de programación lineal (PL).
+    \item Formular modelos de optimización para problemas reales.
+    \item Resolver con Python: \texttt{linprog} y \texttt{PuLP}.
+    \item Analizar casos prácticos: producción, logística, personal.
+\end{itemize}
+\end{block}
+\end{frame}
+
+% ============================================================
+% SLIDE SECCIÓN: ¿POR QUÉ OPTIMIZAR?
+% ============================================================
+\begin{frame}
+\begin{center}
+\vspace{1.5cm}
+\Huge \textbf{¿Por qué Optimizar?}
+
+\vspace{0.5cm}
+\Large De decisiones intuitivas a decisiones óptimas
+\end{center}
+\end{frame}
+
+% ============================================================
+% SECCIÓN 1: MOTIVACIÓN
+% ============================================================
+\section{Motivación}
+
+% ============================================================
+% SLIDE: MOTIVACIÓN - EL COSTO DE DECIDIR A OJO
+% ============================================================
+\begin{frame}{¿Cuánto cuesta decidir a ojo?}
+
+\begin{columns}[T]
+\column{0.55\textwidth}
+\small
+Una planta tiene \textbf{100 horas de máquina} y \textbf{80 kg de materia prima} para fabricar
+dos artículos. El artículo 1 consume 2 horas y 1 kg por unidad; el artículo 2, 1 hora y 1 kg.
+
+\vspace{0.2cm}
+
+\begin{block}{Decisión intuitiva: ``mitad y mitad''}
+33 y 33 unidades $\rightarrow$ \textbf{66 unidades}. Sobran 1 hora y 14 kg.
+\end{block}
+
+\begin{exampleblock}{Decisión óptima}
+0 y 80 unidades $\rightarrow$ \textbf{80 unidades}. La materia prima queda al límite.
+\end{exampleblock}
+
+\vspace{0.1cm}
+
+Misma planta, mismos recursos, \textbf{21\% más de producción}: la diferencia no la hace el
+esfuerzo, la hace el método.
+
+\column{0.41\textwidth}
+\begin{center}
+\includegraphics[width=\linewidth]{puerto_contenedores.jpg}
+
+\vspace{0.1cm}
+{\scriptsize Toda organización decide con recursos limitados. La pregunta nunca es \textit{si}
+alcanza, sino \textit{cómo} repartirlo.}
+\end{center}
+\end{columns}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: MOTIVACIÓN
+% ============================================================
+\begin{frame}{La optimización en las organizaciones}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Problemas cotidianos:}
+\begin{itemize}
+    \item ¿Cuánto producir de cada producto?
+    \item ¿Cómo distribuir la mercadería?
+    \item ¿Cuántos empleados contratar?
+    \item ¿Cómo asignar turnos?
+    \item ¿Qué mezcla minimiza costos?
+\end{itemize}
+
+\column{0.48\textwidth}
+\begin{alertblock}{Común denominador}
+Todos buscan:
+\begin{itemize}
+    \item Maximizar ganancias
+    \item Minimizar costos
+    \item Cumplir restricciones
+    \item Usar recursos limitados
+\end{itemize}
+\end{alertblock}
+\end{columns}
+
+\vspace{0.5cm}
+\begin{center}
+\textit{``Los recursos son limitados, las necesidades son infinitas''}
+\end{center}
+\end{frame}
+
+% ============================================================
+% SLIDE: SISTEMAS DE ECUACIONES
+% ============================================================
+\begin{frame}{Modelado mediante sistemas de ecuaciones}
+
+\textbf{Caso simple:} Una panadería produce pan y medialunas.
+
+\vspace{0.3cm}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Recursos limitados:}
+\begin{itemize}
+    \item 160 horas de horno
+    \item 90 horas de mano de obra
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Consumo por unidad:}
+\begin{itemize}
+    \item Pan: 1h horno + 0.5h trabajo
+    \item Medialuna: 2h horno + 1h trabajo
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Variables de decisión:}
+\begin{itemize}
+    \item $x_1$ = unidades de pan a producir
+    \item $x_2$ = unidades de medialunas a producir
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Sistema de ecuaciones:}
+$$\begin{cases}
+x_1 + 2x_2 \leq 160 \text{ (horno)}\\
+0.5x_1 + x_2 \leq 90 \text{ (trabajo)}\\
+x_1, x_2 \geq 0
+\end{cases}$$
+
+\vspace{0.3cm}
+
+\textbf{Objetivo:}
+$$\max Z = 50x_1 + 80x_2$$
+\end{columns}
+
+\vspace{0.3cm}
+\begin{center}
+\textit{Este es un problema de programación lineal}
+\end{center}
+
+\end{frame}
+
+% ============================================================
+% SLIDE SECCIÓN: FUNDAMENTOS DE PL
+% ============================================================
+\begin{frame}
+\begin{center}
+\vspace{1.5cm}
+\Huge \textbf{Programación Lineal}
+
+\vspace{0.5cm}
+\Large Fundamentos matemáticos
+\end{center}
+\end{frame}
+
+% ============================================================
+% SECCIÓN 2: FUNDAMENTOS
+% ============================================================
+\section{Programación Lineal}
+
+% ============================================================
+% SLIDE: QUÉ ES PL
+% ============================================================
+\begin{frame}{¿Qué es la Programación Lineal?}
+
+\begin{block}{Definición}
+Técnica matemática para asignar recursos limitados entre actividades competitivas de manera óptima.
+\end{block}
+
+\vspace{0.3cm}
+
+\textbf{Componentes esenciales:}
+
+\begin{enumerate}
+    \item \textbf{Variables de decisión:} Lo que podemos controlar ($x_1, x_2, \ldots, x_n$)
+    \item \textbf{Función objetivo:} Lo que queremos maximizar o minimizar
+    $$\max/\min \quad Z = c_1x_1 + c_2x_2 + \cdots + c_nx_n$$
+    \item \textbf{Restricciones:} Limitaciones y condiciones
+    $$a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n \leq b_1$$
+    \item \textbf{No negatividad:} $x_i \geq 0$ (típicamente)
+\end{enumerate}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: FORMA ESTÁNDAR
+% ============================================================
+\begin{frame}{Forma estándar de un problema de PL}
+
+\textbf{Problema general:}
+
+\begin{align*}
+\text{Maximizar/Minimizar} \quad & Z = \mathbf{c}^T\mathbf{x} \\
+\text{Sujeto a:} \quad & \mathbf{Ax} \leq \mathbf{b} \\
+& \mathbf{x} \geq \mathbf{0}
+\end{align*}
+
+Donde:
+\begin{itemize}
+    \item $\mathbf{x} = (x_1, x_2, \ldots, x_n)^T$: vector de variables
+    \item $\mathbf{c} = (c_1, c_2, \ldots, c_n)^T$: coeficientes de la función objetivo
+    \item $\mathbf{A}$: matriz de coeficientes de las restricciones ($m \times n$)
+    \item $\mathbf{b} = (b_1, b_2, \ldots, b_m)^T$: términos independientes
+\end{itemize}
+
+\vspace{0.3cm}
+
+\begin{alertblock}{Linealidad}
+Todas las relaciones son \textbf{lineales}: no hay exponentes, productos entre variables, logaritmos, etc.
+\end{alertblock}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: REGIÓN FACTIBLE
+% ============================================================
+\begin{frame}{Región factible y solución óptima}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Conceptos clave:}
+\begin{itemize}
+    \item \textbf{Solución factible:} Cualquier solución que cumple todas las restricciones
+    \item \textbf{Región factible:} Conjunto de todas las soluciones factibles
+    \item \textbf{Solución óptima:} Solución factible que optimiza la función objetivo
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Propiedad fundamental:}
+La solución óptima siempre está en un vértice de la región factible.
+
+\column{0.48\textwidth}
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    % Ejes
+    \draw[->] (0,0) -- (5,0) node[right] {$x_1$};
+    \draw[->] (0,0) -- (0,5) node[above] {$x_2$};
+
+    % Región factible
+    \fill[red!10] (0,0) -- (0,3) -- (2,3) -- (4,1) -- (4,0) -- cycle;
+    \draw[thick] (0,0) -- (0,3) -- (2,3) -- (4,1) -- (4,0) -- cycle;
+
+    % Puntos vértices
+    \filldraw[red] (0,0) circle (2pt);
+    \filldraw[red] (0,3) circle (2pt);
+    \filldraw[red] (2,3) circle (2pt);
+    \filldraw[red] (4,1) circle (2pt);
+    \filldraw[red] (4,0) circle (2pt);
+
+    % Punto óptimo
+    \filldraw[red!70!black] (2,3) circle (3pt);
+    \node[above right] at (2,3) {Óptimo};
+
+    % Etiqueta
+    \node at (2,1.5) {\small Región factible};
+\end{tikzpicture}
+\end{center}
+\end{columns}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: ANALOGÍA CON LA FRONTERA DE POSIBILIDADES DE PRODUCCIÓN
+% ============================================================
+\begin{frame}{Analogía: la frontera de posibilidades de producción}
+
+\begin{columns}[T]
+\column{0.52\textwidth}
+\small
+La \textbf{región factible} de la programación lineal ya la conocemos de economía: es el
+\textbf{conjunto de producción}, y su borde es la \textbf{frontera de posibilidades de
+producción (FPP)}.
+
+\vspace{0.15cm}
+
+\begin{itemize}
+    \item \textbf{Dentro} ($B$): se puede, pero \textbf{se desperdicia}. Recursos ociosos
+    $\rightarrow$ \textit{holguras positivas}.
+    \item \textbf{Sobre} la frontera ($A$): \textbf{eficiencia}. No hay más de un bien sin
+    resignar el otro $\rightarrow$ \textit{restricciones activas}.
+    \item \textbf{Fuera} ($C$): \textbf{inalcanzable} hoy $\rightarrow$ \textit{infactible}.
+\end{itemize}
+
+\vspace{0.1cm}
+
+\begin{alertblock}{La pendiente es el costo de oportunidad}
+Cuánto del bien B hay que resignar para una unidad más del bien A.
+\end{alertblock}
+
+\column{0.44\textwidth}
+\begin{center}
+\begin{tikzpicture}[scale=0.66]
+    \draw[->] (0,0) -- (5.4,0) node[right] {\small Bien A};
+    \draw[->] (0,0) -- (0,5.4) node[above] {\small Bien B};
+
+    \fill[red!8] (0,0) -- (4,0) arc (0:90:4) -- cycle;
+    \draw[very thick, red!70!black] (4,0) arc (0:90:4);
+
+    \filldraw[red!70!black] (2.83,2.83) circle (3pt) node[above right] {\small $A$};
+    \filldraw[gray!50!black] (1.5,1.5) circle (3pt) node[above right] {\small $B$};
+    \filldraw[black] (4.35,3.45) circle (3pt) node[above right] {\small $C$};
+\end{tikzpicture}
+
+{\scriptsize $A$ eficiente $\cdot$ $B$ ineficiente $\cdot$ $C$ inalcanzable}
+
+\vspace{0.2cm}
+{\scriptsize En PL la frontera es \textbf{poligonal} (de ahí que el óptimo caiga en un
+\textit{vértice}); en micro se dibuja \textbf{cóncava}, porque los recursos no se reconvierten
+uno a uno.}
+\end{center}
+\end{columns}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: PARA QUÉ SIRVE LA FRONTERA
+% ============================================================
+\begin{frame}{¿Para qué sirve pensar en la frontera?}
+
+\begin{columns}[T]
+\column{0.56\textwidth}
+\small
+\begin{enumerate}
+    \item \textbf{Diagnóstico: ¿adentro o en el borde?}\\
+    Si la organización está \textbf{dentro}, hay producción disponible \textbf{sin invertir un
+    peso}: no falta capacidad, falta \textbf{reasignar}.
+
+    \vspace{0.1cm}
+    \item \textbf{Poner precio a lo que se resigna}\\
+    Sobre la frontera no hay almuerzo gratis: toda mejora en un objetivo se paga con el otro, y
+    el modelo dice \textbf{cuánto}.
+
+    \vspace{0.1cm}
+    \item \textbf{Encontrar el cuello de botella}\\
+    Las restricciones \textbf{activas} atan el resultado. Aflojar una que sobra no cambia nada;
+    aflojar la que ata, sí.
+
+    \vspace{0.1cm}
+    \item \textbf{Crecer es mover la frontera}\\
+    Optimizar llega \textbf{hasta} el borde actual. Para ir más allá: más capacidad, mejor
+    tecnología, mejor proceso.
+\end{enumerate}
+
+\column{0.40\textwidth}
+\begin{center}
+\includegraphics[width=\linewidth]{cosecha_trigo.jpg}
+
+\vspace{0.15cm}
+{\scriptsize El mismo gráfico sirve para una empresa que reparte horas de máquina y para un país
+que reparte recursos entre \textbf{agro e industria}: es el puente entre la decisión de la
+organización y la discusión macro.}
+\end{center}
+\end{columns}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: TIPOS DE PROBLEMAS
+% ============================================================
+\begin{frame}{Tipos de problemas de PL}
+
+\begin{enumerate}
+    \item \textbf{Producción:} ¿Cuánto producir de cada producto?
+    \begin{itemize}
+        \item Maximizar ganancia con recursos limitados
+    \end{itemize}
+
+    \vspace{0.2cm}
+
+    \item \textbf{Mezcla:} ¿Qué proporciones usar?
+    \begin{itemize}
+        \item Minimizar costo cumpliendo especificaciones
+    \end{itemize}
+
+    \vspace{0.2cm}
+
+    \item \textbf{Transporte:} ¿Cómo distribuir desde orígenes a destinos?
+    \begin{itemize}
+        \item Minimizar costo de envío
+    \end{itemize}
+
+    \vspace{0.2cm}
+
+    \item \textbf{Asignación:} ¿Quién hace qué?
+    \begin{itemize}
+        \item Maximizar eficiencia en asignación de tareas
+    \end{itemize}
+
+    \vspace{0.2cm}
+
+    \item \textbf{Dieta:} ¿Qué alimentos incluir?
+    \begin{itemize}
+        \item Minimizar costo cumpliendo nutrientes mínimos
+    \end{itemize}
+\end{enumerate}
+
+\end{frame}
+
+% ============================================================
+% SLIDE SECCIÓN: FORMULACIÓN
+% ============================================================
+\begin{frame}
+\begin{center}
+\vspace{1.5cm}
+\Huge \textbf{Formulación de Modelos}
+
+\vspace{0.5cm}
+\Large Del problema real al modelo matemático
+\end{center}
+\end{frame}
+
+% ============================================================
+% SECCIÓN 3: FORMULACIÓN
+% ============================================================
+\section{Formulación}
+
+% ============================================================
+% SLIDE: PASOS PARA FORMULAR
+% ============================================================
+\begin{frame}{Pasos para formular un modelo de PL}
+
+\begin{enumerate}
+    \item \textbf{Identificar las variables de decisión}
+    \begin{itemize}
+        \item ¿Qué cantidades necesitamos determinar?
+        \item Usar símbolos claros: $x_1, x_2$, etc.
+    \end{itemize}
+
+    \vspace{0.2cm}
+
+    \item \textbf{Definir la función objetivo}
+    \begin{itemize}
+        \item ¿Qué queremos maximizar o minimizar?
+        \item Expresarla como combinación lineal de las variables
+    \end{itemize}
+
+    \vspace{0.2cm}
+
+    \item \textbf{Establecer las restricciones}
+    \begin{itemize}
+        \item ¿Qué limitaciones tenemos?
+        \item Recursos, demandas, capacidades, etc.
+    \end{itemize}
+
+    \vspace{0.2cm}
+
+    \item \textbf{Agregar restricciones de no negatividad}
+    \begin{itemize}
+        \item Típicamente $x_i \geq 0$
+    \end{itemize}
+
+    \vspace{0.2cm}
+
+    \item \textbf{Verificar linealidad}
+    \begin{itemize}
+        \item Todas las ecuaciones deben ser lineales
+    \end{itemize}
+\end{enumerate}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: EJEMPLO COMPLETO
+% ============================================================
+\begin{frame}{Ejemplo: Producción de una fábrica}
+
+\textbf{Situación:} Una fábrica produce dos productos ($x_1$ y $x_2$).
+
+\vspace{0.3cm}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Datos:}
+\begin{itemize}
+    \item Máquina A: 100 horas disponibles
+    \begin{itemize}
+        \item $x_1$: 2 horas
+        \item $x_2$: 1 hora
+    \end{itemize}
+    \item Máquina B: 80 horas disponibles
+    \begin{itemize}
+        \item $x_1$: 1 hora
+        \item $x_2$: 1 hora
+    \end{itemize}
+    \item Ganancia:
+    \begin{itemize}
+        \item $x_1$: \$1
+        \item $x_2$: \$1
+    \end{itemize}
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Modelo:}
+\begin{align*}
+\max Z &= x_1 + x_2 \\
+\text{s.a.:} \quad 2x_1 + x_2 &\leq 100 \\
+x_1 + x_2 &\leq 80 \\
+x_1, x_2 &\geq 0
+\end{align*}
+
+\vspace{0.5cm}
+
+\textbf{Variables:}
+\begin{itemize}
+    \item $x_1$: unidades de producto 1
+    \item $x_2$: unidades de producto 2
+\end{itemize}
+\end{columns}
+
+\end{frame}
+
+% ============================================================
+% SECCIÓN 4: PYTHON
+% ============================================================
+\section{Python}
+
+% ============================================================
+% SLIDE: COMPARACIÓN
+% ============================================================
+\begin{frame}{Comparación: linprog vs PuLP}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Aspecto} & \textbf{linprog} & \textbf{PuLP} \\
+\midrule
+Sintaxis & Algebraica & Declarativa \\
+Objetivo & Solo minimiza & Max o Min \\
+Legibilidad & Menos intuitiva & Más clara \\
+Instalación & Ya en SciPy & Requiere pip \\
+Restricciones & Matrices & Ecuaciones \\
+Resultados & \texttt{res.x}, \texttt{res.fun} & \texttt{.varValue} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{alertblock}{Recomendación}
+\begin{itemize}
+    \item \textbf{linprog:} Para problemas simples, uso rápido
+    \item \textbf{PuLP:} Para modelos complejos, más legible para compartir código
+\end{itemize}
+\end{alertblock}
+
+\end{frame}
+
+% ============================================================
+% SLIDE SECCIÓN: CASOS PRÁCTICOS
+% ============================================================
+\begin{frame}
+\begin{center}
+\vspace{0.6cm}
+\Huge \textbf{Casos Prácticos}
+
+\vspace{0.35cm}
+\Large Aplicaciones en organizaciones reales
+
+\vspace{0.6cm}
+\normalsize
+\begin{minipage}{0.44\textwidth}
+\centering
+\includegraphics[height=3.1cm]{panaderia.jpg}\\
+{\scriptsize \textbf{Caso 1:} qué producir con horno y horas contados}
+\end{minipage}\hfill
+\begin{minipage}{0.44\textwidth}
+\centering
+\includegraphics[height=3.1cm]{refineria.jpg}\\
+{\scriptsize \textbf{Caso 2:} qué mezcla de crudos cuesta menos}
+\end{minipage}
+\end{center}
+\end{frame}
+
+% ============================================================
+% SECCIÓN 5: CASOS
+% ============================================================
+\section{Casos Prácticos}
+
+% ============================================================
+% SLIDE: CASO 1 - PANADERÍA
+% ============================================================
+\begin{frame}{Caso 1: Panadería}
+
+\textbf{Contexto:} Produce pan y medialunas.
+
+\vspace{0.3cm}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Datos:}
+\begin{itemize}
+    \item \textbf{Pan:}
+    \begin{itemize}
+        \item 1h horno, 0.5h trabajo
+        \item Ganancia: \$50
+    \end{itemize}
+    \item \textbf{Medialuna:}
+    \begin{itemize}
+        \item 2h horno, 1h trabajo
+        \item Ganancia: \$80
+    \end{itemize}
+    \item \textbf{Disponibilidad:}
+    \begin{itemize}
+        \item 160h horno
+        \item 90h trabajo
+    \end{itemize}
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Modelo:}
+\begin{align*}
+\max Z &= 50x_1 + 80x_2 \\
+\text{s.a.:} \quad x_1 + 2x_2 &\leq 160 \\
+0.5x_1 + x_2 &\leq 90 \\
+x_1, x_2 &\geq 0
+\end{align*}
+
+\vspace{0.3cm}
+
+\textbf{Pregunta:}
+¿Cuántas unidades de cada uno producir para maximizar ganancia?
+\end{columns}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: CASO 2 - REFINERÍA
+% ============================================================
+\begin{frame}{Caso 2: Refinería de petróleo}
+
+\textbf{Contexto:} Procesa dos tipos de crudo (A y B) para producir gas oil, lubricantes y kerosene.
+
+\vspace{0.3cm}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Demandas mínimas diarias:}
+\begin{itemize}
+    \item Gas oil: 14 ton
+    \item Lubricantes: 10 ton
+    \item Kerosene: 8 ton
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Rendimientos por tonelada:}
+\begin{tabular}{lcc}
+& Crudo A & Crudo B \\
+Gas & 0.60 & 0.30 \\
+Lub & 0.20 & 0.50 \\
+Ker & 0.20 & 0.20 \\
+\end{tabular}
+
+\column{0.48\textwidth}
+\textbf{Costos:}
+\begin{itemize}
+    \item Crudo A: \$6000/ton
+    \item Crudo B: \$8000/ton
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Objetivo:}
+Minimizar costo total cumpliendo demandas.
+
+\vspace{0.3cm}
+
+\textbf{Variables:}
+\begin{itemize}
+    \item $x_1$: ton de crudo A
+    \item $x_2$: ton de crudo B
+\end{itemize}
+\end{columns}
+
+\vspace{0.3cm}
+
+\begin{center}
+$$\min Z = 6000x_1 + 8000x_2$$
+\end{center}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: CASO 3 - RIESGO MORAL
+% ============================================================
+\begin{frame}{Caso 3: Problema de riesgo moral}
+
+\textbf{Contexto:} Empresa diseña esquema de pagos para incentivar esfuerzo alto.
+
+\vspace{0.3cm}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Esfuerzo alto (H):}
+\begin{itemize}
+    \item P(éxito) = 0.8
+    \item P(fracaso) = 0.2
+    \item Costo: 2
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Esfuerzo bajo (L):}
+\begin{itemize}
+    \item P(éxito) = 0.5
+    \item P(fracaso) = 0.5
+    \item Costo: 0
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Variables:}
+\begin{itemize}
+    \item $w_s$: pago si éxito
+    \item $w_f$: pago si fracaso
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Modelo:}
+\begin{align*}
+\min \quad & 0.8w_s + 0.2w_f \\
+\text{s.a.:} \quad & 0.3w_s - 0.3w_f \geq 2 \\
+& 0.8w_s + 0.2w_f \geq 2 \\
+& w_s, w_f \geq 0
+\end{align*}
+\end{columns}
+
+\vspace{0.3cm}
+
+\begin{center}
+\textit{Minimizar salario esperado incentivando esfuerzo alto}
+\end{center}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: CASO 4 - CALL CENTER
+% ============================================================
+\begin{frame}{Caso 4: Asignación en call center}
+
+\textbf{Contexto:} Necesita cubrir horarios con dos tipos de empleados.
+
+\vspace{0.3cm}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Datos:}
+\begin{itemize}
+    \item \textbf{Atención cliente:}
+    \begin{itemize}
+        \item Salario: \$4000/sem
+        \item Eficiencia: 90\%
+    \end{itemize}
+    \item \textbf{Información:}
+    \begin{itemize}
+        \item Salario: \$3500/sem
+        \item Eficiencia: 75\%
+    \end{itemize}
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Restricciones:}
+\begin{itemize}
+    \item Mínimo 50 empleados
+    \item Al menos 20 de información
+    \item Eficiencia promedio $\geq$ 82\%
+\end{itemize}
+
+\column{0.48\textwidth}
+\textbf{Modelo:}
+\begin{align*}
+\min Z &= 4000x_1 + 3500x_2 \\
+\text{s.a.:} \quad x_1 + x_2 &\geq 50 \\
+x_2 &\geq 20 \\
+\frac{90x_1 + 75x_2}{x_1 + x_2} &\geq 82 \\
+x_1, x_2 &\geq 0
+\end{align*}
+
+\vspace{0.3cm}
+
+\textbf{Objetivo:}
+Minimizar costo de nómina cumpliendo requisitos.
+\end{columns}
+
+\end{frame}
+
+% ============================================================
+% SLIDE SECCIÓN: INTEGRACIÓN
+% ============================================================
+\begin{frame}
+\begin{center}
+\vspace{1.5cm}
+\Huge \textbf{Integración}
+
+\vspace{0.5cm}
+\Large Del problema a la solución
+\end{center}
+\end{frame}
+
+% ============================================================
+% SECCIÓN 6: INTEGRACIÓN
+% ============================================================
+\section{Integración}
+
+% ============================================================
+% SLIDE: FLUJO DE TRABAJO
+% ============================================================
+\begin{frame}{Flujo de trabajo completo}
+
+\begin{center}
+\begin{tikzpicture}[
+        node distance=0.7cm,
+        scale=0.7, transform shape,
+        block/.style={rectangle, draw, fill=red!20, text width=5.5em,
+            text centered, rounded corners, minimum height=3em},
+        line/.style={draw, -{Stealth[length=2.6mm]}, thick}
+    ]
+    \node [block] (prob) {Problema real};
+    \node [block, right=of prob] (model) {Modelado matemático};
+    \node [block, right=of model] (code) {Código Python};
+    \node [block, right=of code] (sol) {Solución};
+    \node [block, right=of sol, fill=green!20] (dec) {Decisión};
+
+    \path [line] (prob) -- (model);
+    \path [line] (model) -- (code);
+    \path [line] (code) -- (sol);
+    \path [line] (sol) -- (dec);
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.5cm}
+
+\textbf{Herramientas en cada etapa:}
+\begin{enumerate}
+    \item \textbf{Problema real:} Análisis y comprensión del contexto
+    \item \textbf{Modelado:} Identificar variables, objetivo, restricciones
+    \item \textbf{Código:} linprog (algebraico) o PuLP (declarativo)
+    \item \textbf{Solución:} Interpretación de resultados numéricos
+    \item \textbf{Decisión:} Aplicación práctica en la organización
+\end{enumerate}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: BUENAS PRÁCTICAS
+% ============================================================
+\begin{frame}{Buenas prácticas en PL}
+
+\begin{enumerate}
+    \item \textbf{Definir variables claramente}
+    \begin{itemize}
+        \item Usar nombres descriptivos
+        \item Documentar unidades
+    \end{itemize}
+
+    \vspace{0.2cm}
+
+    \item \textbf{Verificar linealidad}
+    \begin{itemize}
+        \item No productos entre variables
+        \item No exponentes, logaritmos
+    \end{itemize}
+
+    \vspace{0.2cm}
+
+    \item \textbf{Validar restricciones}
+    \begin{itemize}
+        \item ¿Son realistas?
+        \item ¿Faltan restricciones?
+    \end{itemize}
+
+    \vspace{0.2cm}
+
+    \item \textbf{Interpretar resultados}
+    \begin{itemize}
+        \item ¿Tienen sentido económico?
+        \item ¿Son implementables?
+    \end{itemize}
+
+    \vspace{0.2cm}
+
+    \item \textbf{Documentar el modelo}
+    \begin{itemize}
+        \item Explicar variables y restricciones
+        \item Facilita mantenimiento y revisión
+    \end{itemize}
+\end{enumerate}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: LIMITACIONES
+% ============================================================
+\begin{frame}{Limitaciones de la PL}
+
+\begin{alertblock}{Supuestos que deben cumplirse}
+\begin{enumerate}
+    \item \textbf{Proporcionalidad:} Efecto lineal en objetivo y restricciones
+    \item \textbf{Aditividad:} Recursos se suman
+    \item \textbf{Divisibilidad:} Variables continuas (no siempre realista)
+    \item \textbf{Certeza:} Parámetros conocidos con certeza
+\end{enumerate}
+\end{alertblock}
+
+\vspace{0.3cm}
+
+\textbf{¿Qué hacer si no se cumple?}
+
+\begin{itemize}
+    \item \textbf{Variables enteras:} Programación lineal entera (ILP)
+    \item \textbf{No linealidad:} Programación no lineal (NLP)
+    \item \textbf{Incertidumbre:} Programación estocástica
+    \item \textbf{Múltiples objetivos:} Programación multi-objetivo
+\end{itemize}
+
+\vspace{0.3cm}
+
+\begin{center}
+\textit{PL es poderosa, pero no resuelve todo}
+\end{center}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: CIERRE
+% ============================================================
+\begin{frame}{Cierre}
+
+\vspace{0.8cm}
+
+\begin{center}
+\LARGE
+Problema $\xrightarrow{\text{Modelar}}$ Ecuaciones $\xrightarrow{\text{Python}}$ Solución $\xrightarrow{\text{Analizar}}$ Decisión
+\end{center}
+
+\vspace{0.8cm}
+
+\textbf{Lo que aprendimos hoy:}
+\begin{itemize}
+    \item Los problemas organizacionales se modelan como sistemas de ecuaciones
+    \item La programación lineal optimiza recursos limitados
+    \item Python (linprog y PuLP) facilita la resolución
+    \item La interpretación es tan importante como el cálculo
+\end{itemize}
+
+\vspace{0.5cm}
+
+\begin{center}
+\textit{La optimización no reemplaza la decisión humana, la informa}
+\end{center}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: PREGUNTAS
+% ============================================================
+\begin{frame}{Preguntas}
+
+\vspace{2cm}
+
+\begin{center}
+\Huge
+¿Preguntas?
+\end{center}
+
+\vspace{1cm}
+
+\begin{center}
+\large
+\textit{``La optimización matemática es el arte de tomar las mejores decisiones posibles''}
+\end{center}
+
+\end{frame}
+
+% ============================================================
+% SLIDE: FUENTES
+% ============================================================
+\begin{frame}{Fuentes y bibliografía}
+
+\begin{itemize}
+    \item Fraquelli, A. D. \& Gache, A. L. (2019). \textit{Notas de álgebra teórico-prácticas}. FCE-UBA.
+    \item Hilpisch, Y. (2018). \textit{Python for Finance: Mastering Data-Driven Finance} (2nd ed.). O'Reilly Media.
+    \item James, G., et al. (2023). \textit{An Introduction to Statistical Learning: with Applications in Python}. Springer.
+    \item Documentación de SciPy: \url{https://docs.scipy.org/doc/scipy/reference/optimize.html}
+    \item Documentación de PuLP: \url{https://coin-or.github.io/pulp/}
+\end{itemize}
+
+\vspace{0.3cm}
+
+{\scriptsize \textbf{Imágenes} (Wikimedia Commons): puerto de Tánger Med, Bertrand Soubeyrand
+(CC BY-SA 4.0) $\cdot$ cosecha de trigo, Dan Kollmann (CC BY-SA 3.0) $\cdot$ panadería en Borough
+Market (CC BY 2.0) $\cdot$ refinería de Anacortes, Walter Siegmund (CC BY 2.5).}
+
+\vspace{0.3cm}
+
+\begin{center}
+\small
+Materiales educativos con fines académicos.
+\end{center}
+
+\end{frame}
+
+\end{document}
