@@ -15,6 +15,7 @@ cronograma.
 |---|---|---|
 | `complemento-monopolio-y-duopolio.ipynb` | Monopolio del agua potable, monopolio de Coca-Cola, duopolio Coca vs. Manaos (Cournot) y sus ejercicios | Clases **11 y 12** (2C-2026) |
 | `12_1_Caso_Duopolio_.ipynb` | Caso de duopolio desarrollado aparte | Material previo |
+| `complemento-programacion-lineal-y-derivadas.ipynb` | Programación lineal y derivadas juntas: análisis marginal (cuánto vale una hora extra de un recurso), región factible, mínimo de una función con SymPy y reparto óptimo de horas de trabajo y de entrenamiento | Material de **Joaquín**, clases **08 y 09** |
 
 **Por qué salió:** el cronograma 2C-2026 orientó las clases 11 y 12 a **decisiones organizacionales
 y de gobierno** (lote óptimo, precio óptimo, asignación de presupuesto público), no a estructura de
@@ -80,6 +81,7 @@ Se relaciona con la sección de **ROI de proyectos de IA** de la clase 17.
 | Archivo | Qué tiene | De dónde salió |
 |---|---|---|
 | `complemento-clase08-modelizacion-de-problemas-de-optimizacion.ipynb` | Riesgo moral resuelto con PL, distribución de paquetes (Mercado Libre), análisis y asignación óptima de personal con la base `Wage`, y tres trucos de modelado —restricciones de proporción, lógica condicional con binarias y tarifas por tramos— con un ejercicio integrador sobre la base `Carseats` | Era el `08b`, segundo notebook de la clase **08** (2C-2026) |
+| `complemento-clase08-practica-fichajes-programacion-lineal.ipynb` | Bajada a tierra de la PL con datos reales: el Barcelona tiene que cubrir 3 puestos con presupuesto, tope salarial y edad promedio limitados. Método *Definir → Formular → Programar → Resolver → Interpretar*, con PuLP sobre la base de jugadores de FIFA 15 (`DF/players_15.csv`) | Práctica de **Santi**, clase **08** |
 
 **Por qué salió:** la clase 08 tenía **dos** notebooks (`08` y `08b`) y el cronograma le da una sola
 clase. El `08` quedó como la clase (linprog, PuLP y los casos), y todo lo que excedía el tiempo de
