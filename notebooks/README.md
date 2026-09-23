@@ -24,7 +24,8 @@ Leyenda: ✅ listo · 🔄 hay que adaptarlo · ❌ falta crearlo
 | 09 | 15-sep | La derivada y las métricas organizacionales | Manu | `09_Derivada_y_variaciones.ipynb` | ✅ |
 | 10 | 18-sep | Marginales y elasticidades | Manu | `10_Marginales_y_elasticidades.ipynb` | ✅ |
 | 11 | 22-sep | Optimización de funciones | Manu | `11_Optimizacion_de_funciones.ipynb` | ✅ |
-| 12 | 25-sep | Casos de aplicación en organizaciones | Manu | `12_Casos_de_aplicacion_en_organizaciones.ipynb` | ✅ |
+| 12 | 25-sep | **Repaso integrador de cara al 1P** (virtual, 1h30) | Manu + **Juan** | `12_Repaso_integrador_1P.ipynb` | ✅ nueva |
+| 12b | — | Casos de aplicación en organizaciones *(queda disponible, no se da el 25-sep)* | Manu | `12_Casos_de_aplicacion_en_organizaciones.ipynb` | ✅ |
 | — | **29-sep** | **PRIMER PARCIAL** | — | — | — |
 | 13 | 02-oct | Herramientas de análisis financiero | Rita | `13_Herramientas_de_analisis_financiero.ipynb` | 🔄 rutas + cambia de docente |
 | 14 | 06-oct | Aplicaciones financieras para inversiones | **Juan** | `14_Aplicaciones_financieras_para_inversiones.ipynb` | ✅ |
