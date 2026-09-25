@@ -18,9 +18,9 @@ Leyenda: ✅ listo · 🔄 hay que adaptarlo · ❌ falta crearlo
 | 03 | 25-ago | Funciones de oferta, demanda, costo, beneficio | Manu | `03_Modelizacion_de_funciones_economicas.ipynb` | ✅ |
 | 04 | 28-ago | Puntos de equilibrio y ecuaciones | Manu | `04_Puntos_de_equilibrio_y_sistemas_de_ecuaciones.ipynb` | ✅ |
 | 05 | 01-sep | Vectores y matrices | **Juan** | `05_Vectores_y_matrices.ipynb` | ✅ |
-| 06 | 04-sep | Variables relevantes, filtrado y muestreo | Rita | `06_Manipulacion_de_datos_estructurados_y_Leontief.ipynb` | 🔄 sacar Leontief |
+| 06 | 04-sep | Variables relevantes, filtrado y muestreo | Rita | `06_Variables_relevantes_filtrado_y_muestreo.ipynb` | ✅ |
 | 07 | 08-sep | Sistemas de ecuaciones lineales | **Juan** | `07_Sistemas_de_ecuaciones_lineales.ipynb` | ✅ |
-| 08 | 11-sep | Programación lineal | Rita | `08_Programacion_lineal.ipynb` + `08b_Modelizacion_de_problemas_de_optimizacion.ipynb` | 🔄 fusionar los dos |
+| 08 | 11-sep | Programación lineal | Rita | `08_Programacion_lineal.ipynb` | ✅ el 08b pasó a [`Complemento/Optimizacion/`](Complemento/Optimizacion/) |
 | 09 | 15-sep | La derivada y las métricas organizacionales | Manu | `09_Derivada_y_variaciones.ipynb` | ✅ |
 | 10 | 18-sep | Marginales y elasticidades | Manu | `10_Marginales_y_elasticidades.ipynb` | ✅ |
 | 11 | 22-sep | Optimización de funciones | Manu | `11_Optimizacion_de_funciones.ipynb` | ✅ |
@@ -62,12 +62,13 @@ desalineación entre el nombre del archivo, el título de adentro y la clase rea
 | Antes | Ahora | Por qué |
 |---|---|---|
 | `07- Programación lineal en Python` | `08_Programacion_lineal` | Había **dos archivos con el 07**. La programación lineal es la clase 08 |
-| `08- Modelización de problemas de optimización` | `08b_Modelizacion_de_problemas_de_optimizacion` | Segundo candidato a la clase 08, hasta que se fusionen |
+| `08- Modelización de problemas de optimización` | `Complemento/Optimizacion/complemento-clase08-...` | Era el segundo candidato a la clase 08. Pasó a complemento |
 | `15-Aplicaciones para el análisis de inversiones` | `13_Herramientas_de_analisis_financiero` | La U4 se invirtió: finanzas va **antes** que integrales |
 | `17-Aplicaciones_..._inversiones_II` | `14_Aplicaciones_financieras_para_inversiones` | Por dentro ya decía "Clase 14" |
 | `18-Manejo_de_datos_estructurados` | `15_Procesos_organizacionales_y_datos` | Por dentro decía "Clase 17" |
 | `13_Integrales_Indefinidas1` | `16_Integrales_en_el_analisis_economico` | Cubre las clases 16 **y** 17 (fusión de indefinidas + definidas) |
 | `19-Anonimizacion_de_datos` | `23_Anonimizacion_de_datos` | En el cronograma nuevo la anonimización es la clase 23 |
+| `06-Manipulacion_de_datos_estructurados_y_Leontief` | `06_Variables_relevantes_filtrado_y_muestreo` | La clase 06 pasó a ser la de **muestreo**. El notebook anterior (MIP + ejercicios de pandas) quedó en `Backup/` |
 | `05-Matrices y Leontief` | `05_Vectores_y_matrices` | Leontief salió del cronograma |
 
 > ⚠️ **Si tenías un link de Colab guardado a alguno de estos archivos, se rompió.** Buscá el
