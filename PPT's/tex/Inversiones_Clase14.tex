@@ -2,7 +2,7 @@
 %  Laboratorio de Metodos Cuantitativos Aplicados a la Gestion - FCE UBA
 %  Clase 14 - Aplicaciones financieras para las inversiones
 %  Metricas de rentabilidad: ROI, CAGR, payback, IR, ROA/ROE y FTE
-%  Juan Ignacio da Torre y Luca Pistarelli - 2do cuatrimestre 2026
+%  Juan Ignacio da Torre, Manuel Fernandez San Martin y Luca Pistarelli - 2do cuatrimestre 2026
 %
 %  REGLAS DE ESTA PRESENTACION:
 %   - Paleta NARANJA (clase de Juan + Luca Pistarelli)
@@ -61,7 +61,7 @@
 % ============================================================
 \title{Aplicaciones Financieras para las Inversiones}
 \subtitle{Métricas de rentabilidad: ROI, CAGR, payback, IR, ROA/ROE y FTE}
-\author{Juan Ignacio da Torre \and Luca Pistarelli}
+\author{Juan Ignacio da Torre \and Manuel Fernández San Martín \and Luca Pistarelli}
 \institute{
     Laboratorio de Métodos Cuantitativos Aplicados a la Gestión \\
     Universidad de Buenos Aires
@@ -244,7 +244,8 @@ CAGR_B &= \left(\frac{1.500.000}{1.000.000}\right)^{\frac{1}{5}} - 1 \\[2pt]
 A: \textbf{50\%} anual \\
 B: \textbf{8,45\%} anual
 \end{exampleblock}
-\small Es la \textbf{fórmula de equivalencia} de la clase 13: pasar una tasa de todo el período a una tasa anual.
+\small Es la \textbf{fórmula de equivalencia} de la clase 13. Y es la \textbf{TIR} de una inversión con
+una sola entrada y una sola salida: si hay flujos en el medio, se usa la TIR.
 \end{columns}
 \end{frame}
 
@@ -267,6 +268,7 @@ CAGR &= 1{,}616^{\frac{1}{3}} - 1 = 17{,}4\% \text{ anual}
 Es un \textbf{promedio}: no muestra que a fines de 2008 la acción se desplomó con la crisis.
 Dice cuánto rindió, \textbf{no cuánto riesgo} se corrió.
 \end{alertblock}
+\small Ojo: es solo el \textbf{precio}. Sin sumar dividendos, el CAGR \textbf{subestima} lo que ganó el accionista.
 \end{columns}
 \end{frame}
 
@@ -438,8 +440,10 @@ cuesta 20\% anual. Si los flujos vienen un poco peor, el horno deja de convenir.
 \section{ROA y ROE}
 % =====================================================================
 
-\begin{frame}{De un proyecto a la empresa entera: ROA y ROE}
+\begin{frame}{ROA y ROE: evaluar la empresa en la que invierto}
 
+Muchas veces invertir es \textbf{comprar una parte de una empresa} (acciones, o entrar como socio).
+Antes, se mira qué tan rentable es:
 \[
 ROA = \frac{\text{Resultado operativo}}{\text{Activo total}}
 \qquad\qquad
@@ -458,20 +462,18 @@ Cuánto rinde \textbf{la plata de los dueños}.
 \end{block}
 \end{columns}
 
-\vspace{0.3cm}
-La diferencia entre los dos es \textbf{la deuda}:
-\begin{itemize}
-  \item Resultado neto $=$ resultado operativo $-$ intereses
-  \item Patrimonio $=$ activo $-$ deuda
-\end{itemize}
+La diferencia entre los dos es \textbf{la deuda}: resultado neto $=$ operativo $-$ intereses;
+patrimonio $=$ activo $-$ deuda. Si el \textbf{ROE supera lo que exigen los dueños} (clase 13),
+la empresa crea valor.
 
-\small Con Rita vieron el WACC: la empresa se financia con deuda y con capital propio. Acá vemos qué
-le pasa a la rentabilidad de los dueños según cuánto se endeude.
+\begin{alertblock}{No reemplazan al VAN}
+Usan datos \textbf{contables del pasado}, no flujos futuros: diagnostican una empresa, no deciden un proyecto.
+\end{alertblock}
 \end{frame}
 
 \begin{frame}{La panadería, en tres versiones}
 
-Activo de \textbf{\$100 millones}, resultado operativo de \textbf{\$20 millones} $\Rightarrow$ ROA = 20\%.
+Nos ofrecen entrar como socios. Activo de \textbf{\$100 millones}, resultado operativo de \textbf{\$20 millones} $\Rightarrow$ ROA = 20\%.
 Ignoramos impuestos.
 
 \begin{columns}[T]
@@ -584,7 +586,7 @@ Un FTE le cuesta \textbf{\$16,8 millones por año}:
 de ahorro \textbf{potencial} por año.
 
 \vspace{0.2cm}
-El sistema cuesta \textbf{\$12 millones} + \textbf{\$3 millones} de licencia anual.
+El sistema cuesta \textbf{\$12 millones} + \textbf{\$3 millones} de licencia anual, y sirve \textbf{3 años}.
 \end{columns}
 \end{frame}
 
@@ -593,24 +595,30 @@ El sistema cuesta \textbf{\$12 millones} + \textbf{\$3 millones} de licencia anu
 El ahorro solo existe si la empresa \textbf{hace algo} con el tiempo liberado:
 
 \begin{center}
-\begin{tabular}{lccc}
+\small
+\begin{tabular}{lcccc}
 \toprule
-\textbf{Escenario} & \textbf{Se captura} & \textbf{Ahorro (M\$)} & \textbf{ROI año 1} \\
+\textbf{Escenario} & \textbf{Se captura} & \textbf{Ahorro/año (M\$)} & \textbf{ROI 3 años} & \textbf{Payback} \\
 \midrule
-Reasignar a tareas que generan valor & 100\% & 26,25 & \textbf{75\%} \\
-Absorber parcialmente                & 50\%  & 13,13 & \textbf{$-12{,}5\%$} \\
-No capturar (nadie cambia nada)      & 0\%   & 0     & \textbf{$-100\%$} \\
+Reasignar a tareas que generan valor & 100\% & 26,25 & \textbf{275\%}  & \textbf{6 meses} \\
+Absorber parcialmente                & 50\%  & 13,13 & \textbf{87,5\%} & \textbf{14 meses} \\
+No capturar (nadie cambia nada)      & 0\%   & 0     & \textbf{$-100\%$} & \textbf{nunca} \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \[
-ROI_{\text{año 1}} = \frac{\text{Ahorro capturado} - (12 + 3)}{12 + 3}
-\qquad\text{ej.: } \frac{26{,}25 - 15}{15} = 75\%
+ROI_{3\text{ años}} = \frac{3 \times 26{,}25 - 21}{21} = 275\%
+\qquad
+\text{Payback} = \frac{12}{(26{,}25 - 3)/12} \approx 6{,}2 \text{ meses}
 \]
 
+\vspace{-0.2cm}
+\small El ROI se mide sobre la \textbf{vida útil} (3 años), no sobre un solo año.
+
 \begin{alertblock}{La lección}
-El sistema libera 1,56 FTE en los tres casos. Lo que cambia el ROI es \textbf{la decisión de gestión}:
+El sistema libera 1,56 FTE en los tres casos, pero se paga en 6 meses, en 14 o nunca.
+Lo que cambia es \textbf{la decisión de gestión}:
 ¿por qué canal exacto se convierten estas horas en plata?
 \end{alertblock}
 \end{frame}
