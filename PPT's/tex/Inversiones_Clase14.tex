@@ -2,10 +2,10 @@
 %  Laboratorio de Metodos Cuantitativos Aplicados a la Gestion - FCE UBA
 %  Clase 14 - Aplicaciones financieras para las inversiones
 %  Metricas de rentabilidad: ROI, CAGR, payback, IR, ROA/ROE y FTE
-%  Juan Ignacio da Torre - 2do cuatrimestre 2026
+%  Juan Ignacio da Torre y Luca Pistarelli - 2do cuatrimestre 2026
 %
 %  REGLAS DE ESTA PRESENTACION:
-%   - Paleta ROJO/BORDO (la clase la firma Juan solo)
+%   - Paleta NARANJA (clase de Juan + Luca Pistarelli)
 %   - SIN CODIGO: la teoria va aca, el codigo va en el notebook de Colab
 %   - La PPT y el notebook se recorren EN PARALELO
 %     (notebooks/14_Aplicaciones_financieras_para_inversiones.ipynb)
@@ -14,35 +14,35 @@
 \documentclass[aspectratio=169,10pt]{beamer}
 
 % ============================================================
-% CONFIGURACION VISUAL (Paleta ROJO/BORDO)
+% CONFIGURACION VISUAL (Paleta NARANJA)
 % ============================================================
 \usetheme{CambridgeUS}
 \usecolortheme{seahorse}
 
-\definecolor{bordoBase}{HTML}{8B1A1A}
-\definecolor{bordoOscuro}{HTML}{5C0A0A}
+\definecolor{naranjaBase}{HTML}{E65100}
+\definecolor{naranjaOscuro}{HTML}{BF360C}
 
-\setbeamercolor{structure}{fg=bordoBase}
-\setbeamercolor{palette primary}{bg=bordoBase!15,fg=black}
-\setbeamercolor{palette secondary}{bg=bordoBase!20,fg=black}
-\setbeamercolor{palette tertiary}{bg=bordoBase!25,fg=black}
+\setbeamercolor{structure}{fg=naranjaBase}
+\setbeamercolor{palette primary}{bg=naranjaBase!15,fg=black}
+\setbeamercolor{palette secondary}{bg=naranjaBase!20,fg=black}
+\setbeamercolor{palette tertiary}{bg=naranjaBase!25,fg=black}
 
-\setbeamercolor{title}{fg=white,bg=bordoOscuro}
+\setbeamercolor{title}{fg=white,bg=naranjaOscuro}
 \setbeamercolor{author}{fg=black}
 \setbeamercolor{institute}{fg=black}
 \setbeamercolor{date}{fg=black}
 
-\setbeamercolor{frametitle}{bg=bordoBase!8,fg=bordoOscuro}
+\setbeamercolor{frametitle}{bg=naranjaBase!8,fg=naranjaOscuro}
 \setbeamerfont{frametitle}{series=\bfseries,size=\large}
 
-\setbeamercolor{block title}{bg=bordoBase!15,fg=bordoOscuro}
-\setbeamercolor{block body}{bg=bordoBase!5,fg=black}
-\setbeamercolor{block title alerted}{bg=bordoBase,fg=white}
-\setbeamercolor{block body alerted}{bg=bordoBase!5,fg=black}
-\setbeamercolor{block title example}{bg=bordoOscuro,fg=white}
-\setbeamercolor{block body example}{bg=bordoBase!5,fg=black}
-\setbeamercolor{itemize item}{fg=bordoBase}
-\setbeamercolor{itemize subitem}{fg=bordoBase}
+\setbeamercolor{block title}{bg=naranjaBase!15,fg=naranjaOscuro}
+\setbeamercolor{block body}{bg=naranjaBase!5,fg=black}
+\setbeamercolor{block title alerted}{bg=naranjaBase,fg=white}
+\setbeamercolor{block body alerted}{bg=naranjaBase!5,fg=black}
+\setbeamercolor{block title example}{bg=naranjaOscuro,fg=white}
+\setbeamercolor{block body example}{bg=naranjaBase!5,fg=black}
+\setbeamercolor{itemize item}{fg=naranjaBase}
+\setbeamercolor{itemize subitem}{fg=naranjaBase}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}   % sin esto, < y > salen como ¡ y ¿
@@ -61,7 +61,7 @@
 % ============================================================
 \title{Aplicaciones Financieras para las Inversiones}
 \subtitle{Métricas de rentabilidad: ROI, CAGR, payback, IR, ROA/ROE y FTE}
-\author{Juan Ignacio da Torre}
+\author{Juan Ignacio da Torre \and Luca Pistarelli}
 \institute{
     Laboratorio de Métodos Cuantitativos Aplicados a la Gestión \\
     Universidad de Buenos Aires
