@@ -27,7 +27,7 @@ Leyenda: ✅ listo · 🔄 hay que adaptarlo · ❌ falta crearlo
 | 12 | 25-sep | **Repaso integrador de cara al 1P** (virtual, 1h30) | Manu + **Juan** | `12_Repaso_integrador_1P.ipynb` | ✅ |
 | — | **29-sep** | **PRIMER PARCIAL** | — | — | — |
 | 13 | 02-oct | Herramientas de análisis financiero | Rita | `13_Herramientas_de_analisis_financiero.ipynb` | ✅ versión dada en clase; la larga quedó en `Backup/` |
-| 14 | 06-oct | Aplicaciones financieras para inversiones | **Juan** | `14_Aplicaciones_financieras_para_inversiones.ipynb` | ✅ |
+| 14 | 06-oct | Aplicaciones financieras para inversiones: ROI, CAGR, payback, IR, ROA/ROE y FTE | **Juan** | `14_Aplicaciones_financieras_para_inversiones.ipynb` + PPT `Inversiones_Clase14.pdf` | ✅ rehecha 2C (no repite la 13); la del 1C quedó en `Backup/` |
 | 15 | 09-oct | Intro a procesos organizacionales y análisis de datos | Rita | `15_Procesos_organizacionales_y_datos.ipynb` | 🔄 |
 | 16 | 13-oct | Funciones totales a partir de marginales | **Juan** | `16_Integrales_en_el_analisis_economico.ipynb` (Parte 1) | ✅ |
 | 17 | 16-oct | Integrales y valores acumulados (excedentes) | **Juan** | `16_Integrales_en_el_analisis_economico.ipynb` (Parte 2) | ✅ mismo notebook |
