@@ -32,6 +32,9 @@ Repositorio académico con notebooks, datasets y material práctico para el estu
 
 ## Contenido de las clases (2C-2026)
 
+> Cronograma actualizado el 5-oct por el feriado del 10-nov. El **N°** es el número del notebook
+> en `notebooks/` (las clases de integrales 16 y 17 se dan juntas el 13-oct).
+
 | N° | Fecha | Tema | Unidad |
 |----|-------|------|--------|
 | 00 | 14-ago | Introducción a Google Colab, sintaxis y tipos de datos | U1 |
@@ -50,17 +53,17 @@ Repositorio académico con notebooks, datasets y material práctico para el estu
 | — | **29-sep** | **Primer parcial** | — |
 | 13 | 02-oct | Herramientas de análisis financiero | U4 |
 | 14 | 06-oct | Aplicaciones financieras para las inversiones | U4 |
-| 15 | 09-oct | Introducción a los procesos organizacionales | U4 |
-| 16 | 13-oct | Funciones económicas totales a partir de marginales | U4 |
-| 17 | 16-oct | Integrales para estimar valores acumulados | U4 |
-| 18 | 20-oct | Aplicaciones económicas de la integración | U4 |
-| 19 | 23-oct | Simulación de datos y aplicaciones | U5 |
-| 20 | 27-oct | Aplicaciones económicas | U5 |
-| 21 | 30-oct | Métricas estadísticas aplicadas a procesos organizacionales | U5 |
-| 22 | 03-nov | SQL y manejo de tablas | U5 |
-| 23 | 06-nov | Anonimización de datos y ética en el uso de datos | U5 |
-| 24 | 10-nov | Repaso e integración | — |
-| — | **13-nov** | **Presentación del TP** | — |
+| 15 | 09-oct | Introducción a los procesos organizacionales y análisis de datos | U4 |
+| 16 | 13-oct | Marginalidad y totalidad + aplicación económica (integrales) | U4 |
+| 19 | 16-oct | Simulación de datos y aplicaciones | U5 |
+| 20 | 20-oct | Aplicaciones económicas | U5 |
+| 21 | 23-oct | Métricas estadísticas aplicadas a procesos organizacionales | U5 |
+| 22 | 27-oct | SQL y manejo de tablas | U5 |
+| 23 | 30-oct | Anonimización de datos y ética en el uso de datos | U5 |
+| 24 | 03-nov | Repaso e integración | — |
+| — | **06-nov** | **Presentación de trabajos prácticos** (virtual) | — |
+| — | 10-nov | Feriado (visita del Papa) — sin clase | — |
+| — | 13-nov | Clase de consultas previa al segundo parcial (virtual) | — |
 | — | **17-nov** | **Segundo parcial** | — |
 | — | **24-nov** | **Recuperatorios** | — |
 | — | **01-dic** | **Final** | — |

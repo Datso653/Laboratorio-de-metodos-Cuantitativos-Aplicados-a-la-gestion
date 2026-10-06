@@ -1,0 +1,698 @@
+% =====================================================================
+%  Laboratorio de Metodos Cuantitativos Aplicados a la Gestion - FCE UBA
+%  Clase 14 - Aplicaciones financieras para las inversiones
+%  Metricas de rentabilidad: ROI, CAGR, payback, IR, ROA/ROE y FTE
+%  Juan Ignacio da Torre, Manuel Fernandez San Martin y Luca Pistarelli - 2do cuatrimestre 2026
+%
+%  REGLAS DE ESTA PRESENTACION:
+%   - Paleta NARANJA (clase de Juan + Luca Pistarelli)
+%   - SIN CODIGO: la teoria va aca, el codigo va en el notebook de Colab
+%   - La PPT y el notebook se recorren EN PARALELO
+%     (notebooks/14_Aplicaciones_financieras_para_inversiones.ipynb)
+%   - Todos los numeros estan verificados contra el notebook
+% =====================================================================
+\documentclass[aspectratio=169,10pt]{beamer}
+
+% ============================================================
+% CONFIGURACION VISUAL (Paleta NARANJA)
+% ============================================================
+\usetheme{CambridgeUS}
+\usecolortheme{seahorse}
+
+\definecolor{naranjaBase}{HTML}{E65100}
+\definecolor{naranjaOscuro}{HTML}{BF360C}
+
+\setbeamercolor{structure}{fg=naranjaBase}
+\setbeamercolor{palette primary}{bg=naranjaBase!15,fg=black}
+\setbeamercolor{palette secondary}{bg=naranjaBase!20,fg=black}
+\setbeamercolor{palette tertiary}{bg=naranjaBase!25,fg=black}
+
+\setbeamercolor{title}{fg=white,bg=naranjaOscuro}
+\setbeamercolor{author}{fg=black}
+\setbeamercolor{institute}{fg=black}
+\setbeamercolor{date}{fg=black}
+
+\setbeamercolor{frametitle}{bg=naranjaBase!8,fg=naranjaOscuro}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+
+\setbeamercolor{block title}{bg=naranjaBase!15,fg=naranjaOscuro}
+\setbeamercolor{block body}{bg=naranjaBase!5,fg=black}
+\setbeamercolor{block title alerted}{bg=naranjaBase,fg=white}
+\setbeamercolor{block body alerted}{bg=naranjaBase!5,fg=black}
+\setbeamercolor{block title example}{bg=naranjaOscuro,fg=white}
+\setbeamercolor{block body example}{bg=naranjaBase!5,fg=black}
+\setbeamercolor{itemize item}{fg=naranjaBase}
+\setbeamercolor{itemize subitem}{fg=naranjaBase}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}   % sin esto, < y > salen como ¡ y ¿
+\usepackage{lmodern}
+\usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\graphicspath{{imagenes/}}
+
+% ============================================================
+% INFORMACION DEL DOCUMENTO
+% ============================================================
+\title{Aplicaciones Financieras para las Inversiones}
+\subtitle{Métricas de rentabilidad: ROI, CAGR, payback, IR, ROA/ROE y FTE}
+\author{Juan Ignacio da Torre \and Manuel Fernández San Martín \and Luca Pistarelli}
+\institute{
+    Laboratorio de Métodos Cuantitativos Aplicados a la Gestión \\
+    Universidad de Buenos Aires
+}
+\date{Segundo cuatrimestre 2026}
+
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+% ===================== PORTADA =====================
+\begin{frame}
+\titlepage
+\vspace{-0.5cm}
+\begin{center}
+\textbf{Objetivo:} medir si una inversión conviene con métricas simples,
+y saber qué esconde cada una
+\end{center}
+\end{frame}
+
+% ===================== COMO TRABAJAMOS =====================
+\begin{frame}{Cómo vamos a trabajar}
+
+\begin{block}{Esta presentación va acompañada de un notebook}
+Las dos cosas se recorren \textbf{en paralelo}: acá vemos el concepto y la cuenta a mano, y en el
+notebook lo hacemos correr.
+\end{block}
+
+\vspace{0.4cm}
+
+\begin{columns}[T]
+\column{0.47\textwidth}
+\textbf{En la presentación}
+\begin{itemize}
+  \item Qué pregunta responde cada métrica
+  \item La fórmula, paso a paso
+  \item Las cuentas hechas a mano
+\end{itemize}
+
+\column{0.47\textwidth}
+\textbf{En el notebook}
+\begin{itemize}
+  \item Las mismas cuentas en Python
+  \item Datos reales de YPF
+  \item Gráficos y ejercicios con solución
+\end{itemize}
+\end{columns}
+
+\vspace{0.4cm}
+\begin{center}
+\small\texttt{notebooks/14\_Aplicaciones\_financieras\_para\_inversiones.ipynb}
+\end{center}
+\end{frame}
+
+% ===================== DE DONDE VENIMOS =====================
+\begin{frame}{De dónde venimos y a dónde vamos}
+
+\begin{columns}[T]
+\column{0.40\textwidth}
+\begin{block}{Clase 13 (con Rita)}
+\begin{itemize}
+  \item Tasa nominal y efectiva
+  \item Valor presente y futuro
+  \item VAN, TIR y TIRM
+  \item Costo de capital (WACC)
+\end{itemize}
+\end{block}
+
+\column{0.56\textwidth}
+\begin{block}{Hoy: métricas simples y muy usadas}
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Métrica} & \textbf{Pregunta} \\
+\midrule
+ROI     & ¿Cuánto gané por peso invertido? \\
+CAGR    & ¿Cuánto rindió por año? \\
+Payback & ¿En cuánto tiempo recupero la plata? \\
+IR      & ¿Cuánto valor de hoy por peso? \\
+ROA/ROE & ¿Qué tan rentable es la empresa? \\
+FTE     & ¿Cuánto trabajo libera un proyecto? \\
+\bottomrule
+\end{tabular}
+\end{block}
+\end{columns}
+
+\vspace{0.3cm}
+\begin{alertblock}{La idea de la clase}
+Ninguna métrica alcanza sola. Las simples se entienden rápido pero esconden trampas.
+\end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{ROI}
+% =====================================================================
+
+\begin{frame}{ROI: retorno sobre la inversión}
+
+\begin{block}{Definición}
+Compara lo que gané con lo que puse:
+\[
+ROI = \frac{\text{Ganancia} - \text{Inversión}}{\text{Inversión}}
+\]
+\end{block}
+
+\begin{columns}[T]
+\column{0.42\textwidth}
+\textbf{Lectura}
+\begin{itemize}
+  \item $ROI > 0$: gané
+  \item $ROI = 0$: salí hecho
+  \item $ROI < 0$: perdí
+\end{itemize}
+
+\column{0.54\textwidth}
+\textbf{Ejemplo:} pongo \$1.000.000 y recibo \$1.500.000
+\[
+\begin{aligned}
+ROI &= \frac{1.500.000 - 1.000.000}{1.000.000} \\[2pt]
+    &= \frac{500.000}{1.000.000} = 0{,}50 = 50\%
+\end{aligned}
+\]
+\end{columns}
+\end{frame}
+
+\begin{frame}{La trampa del ROI: no mira el tiempo}
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Proyecto} & \textbf{Inversión} & \textbf{Recibo} & \textbf{Cuándo} & \textbf{ROI} \\
+\midrule
+A & \$1.000.000 & \$1.500.000 & en \textbf{1 año}  & 50\% \\
+B & \$1.000.000 & \$1.500.000 & en \textbf{5 años} & 50\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.4cm}
+
+\begin{alertblock}{Mismo ROI, proyectos muy distintos}
+Con el A recupero la plata en un año y la puedo volver a invertir cuatro veces más.
+El ROI \textbf{no sabe cuánto tardó} en llegar la ganancia.
+\end{alertblock}
+
+\vspace{0.2cm}
+\begin{center}
+¿Cómo comparamos rendimientos de plazos distintos? $\Rightarrow$ \textbf{anualizando}
+\end{center}
+\end{frame}
+
+% =====================================================================
+\section{CAGR}
+% =====================================================================
+
+\begin{frame}{CAGR: el ROI anualizado}
+
+\begin{block}{Definición}
+La tasa anual \textbf{constante} que lleva del valor inicial al final en $n$ años:
+\[
+CAGR = \left(\frac{\text{Valor final}}{\text{Valor inicial}}\right)^{\frac{1}{n}} - 1
+\qquad\text{o bien}\qquad
+CAGR = (1 + ROI)^{\frac{1}{n}} - 1
+\]
+\end{block}
+
+\begin{columns}[T]
+\column{0.50\textwidth}
+\textbf{Proyecto B, a mano}
+\[
+\begin{aligned}
+CAGR_B &= \left(\frac{1.500.000}{1.000.000}\right)^{\frac{1}{5}} - 1 \\[2pt]
+       &= 1{,}5^{\,0{,}2} - 1 \\[2pt]
+       &= 1{,}0845 - 1 = 8{,}45\% \text{ anual}
+\end{aligned}
+\]
+
+\column{0.46\textwidth}
+\begin{exampleblock}{Ahora sí se ve la diferencia}
+A: \textbf{50\%} anual \\
+B: \textbf{8,45\%} anual
+\end{exampleblock}
+\small Es la \textbf{fórmula de equivalencia} de la clase 13. Y es la \textbf{TIR} de una inversión con
+una sola entrada y una sola salida: si hay flujos en el medio, se usa la TIR.
+\end{columns}
+\end{frame}
+
+\begin{frame}{Con datos reales: la acción de YPF (2008--2010)}
+
+\begin{columns}[c]
+\column{0.40\textwidth}
+\includegraphics[width=\linewidth]{refineria.jpg}
+
+\column{0.56\textwidth}
+Compro el 2-ene-2008 a \textbf{26,83} y vendo el 31-dic-2010 a \textbf{43,36} (3 años):
+\[
+\begin{aligned}
+ROI  &= \frac{43{,}36 - 26{,}83}{26{,}83} = 61{,}6\% \\[2pt]
+CAGR &= 1{,}616^{\frac{1}{3}} - 1 = 17{,}4\% \text{ anual}
+\end{aligned}
+\]
+
+\begin{alertblock}{Lo que el CAGR esconde}
+Es un \textbf{promedio}: no muestra que a fines de 2008 la acción se desplomó con la crisis.
+Dice cuánto rindió, \textbf{no cuánto riesgo} se corrió.
+\end{alertblock}
+\small Ojo: es solo el \textbf{precio}. Sin sumar dividendos, el CAGR \textbf{subestima} lo que ganó el accionista.
+\end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Payback}
+% =====================================================================
+
+\begin{frame}{El caso de hoy: el horno nuevo de la panadería}
+
+\begin{columns}[c]
+\column{0.38\textwidth}
+\includegraphics[width=\linewidth]{panaderia.jpg}
+
+\column{0.58\textwidth}
+Una panadería evalúa un horno industrial de \textbf{\$10 millones}. Flujos en millones:
+
+\begin{center}
+\begin{tabular}{lcccccc}
+\toprule
+Año   & 0   & 1 & 2   & 3 & 4 & 5 \\
+\midrule
+Flujo & $-10$ & 3 & 3,5 & 4 & 4 & 3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Costo de capital de los dueños: \textbf{20\% anual}.
+
+\[
+ROI = \frac{(3 + 3{,}5 + 4 + 4 + 3) - 10}{10} = \frac{17{,}5 - 10}{10} = 75\%
+\]
+
+\begin{center}
+\textbf{¡75\%!} ¿Negocio bárbaro? Veamos qué dicen las otras métricas.
+\end{center}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Payback simple (PRS)}
+
+\begin{block}{Definición}
+Tiempo hasta que los flujos \textbf{acumulados} cubren la inversión. Mide \textbf{liquidez}, no rentabilidad.
+\end{block}
+
+\begin{columns}[T]
+\column{0.42\textwidth}
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+Año & Flujo & Acumulado \\
+\midrule
+0 & $-10$ & $-10$ \\
+1 & 3     & $-7$ \\
+2 & 3,5   & $-3{,}5$ \\
+3 & 4     & \textbf{+0,5} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\column{0.54\textwidth}
+Al final del año 2 faltaban \textbf{3,5}; el año 3 trae \textbf{4}. Si el flujo llega parejo durante el año:
+\[
+\begin{aligned}
+PRS &= 2 + \frac{3{,}5}{4} \\[2pt]
+    &= 2 + 0{,}875 = 2{,}875 \text{ años}
+\end{aligned}
+\]
+Unos \textbf{2 años y 10 meses y medio}.
+\end{columns}
+\end{frame}
+
+\begin{frame}{Payback descontado (PRD)}
+
+El simple trata igual un peso de hoy que uno de dentro de 5 años. El descontado
+primero lleva cada flujo a valor presente: $VP_t = \dfrac{F_t}{(1+r)^t}$
+
+\begin{columns}[T]
+\column{0.56\textwidth}
+\begin{center}
+\small
+\begin{tabular}{ccccc}
+\toprule
+Año & Flujo & $1{,}2^t$ & VP & VP acum. \\
+\midrule
+0 & $-10$ & 1       & $-10$    & $-10$ \\
+1 & 3     & 1,2     & 2,500    & $-7{,}500$ \\
+2 & 3,5   & 1,44    & 2,431    & $-5{,}069$ \\
+3 & 4     & 1,728   & 2,315    & $-2{,}755$ \\
+4 & 4     & 2,0736  & 1,929    & $-0{,}826$ \\
+5 & 3     & 2,48832 & 1,206    & \textbf{+0,380} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\column{0.40\textwidth}
+\[
+PRD = 4 + \frac{0{,}826}{1{,}206} \approx 4{,}68 \text{ años}
+\]
+
+\begin{alertblock}{De 2,9 a 4,7 años}
+Con el costo del dinero, el horno se paga recién \textbf{en su último año de vida}.
+\end{alertblock}
+\end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Índice de rentabilidad}
+% =====================================================================
+
+\begin{frame}{IR: un ROI que sí descuenta}
+
+\begin{block}{Definición}
+\[
+IR = \frac{\displaystyle\sum_{t=1}^{n} \frac{F_t}{(1+r)^t}}{I_0}
+\qquad
+\begin{cases}
+IR > 1 & \text{conviene} \\
+IR < 1 & \text{no conviene}
+\end{cases}
+\]
+\end{block}
+
+\textbf{Relación con el VAN}, paso a paso. Como $VAN = VP_{\text{flujos}} - I_0$, despejo $VP_{\text{flujos}} = VAN + I_0$:
+\[
+IR = \frac{VP_{\text{flujos}}}{I_0} = \frac{VAN + I_0}{I_0} = \frac{VAN}{I_0} + \frac{I_0}{I_0} = 1 + \frac{VAN}{I_0}
+\]
+
+\begin{center}
+Por eso \textbf{$IR > 1$ es lo mismo que $VAN > 0$}: miden lo mismo, uno en pesos y el otro por peso invertido.
+\end{center}
+\end{frame}
+
+\begin{frame}{IR del horno y balance de las métricas}
+
+\begin{columns}[T]
+\column{0.44\textwidth}
+\textbf{A mano}, con la tabla del payback descontado:
+\[
+\begin{aligned}
+IR &= \frac{2{,}500 + 2{,}431 + 2{,}315 + 1{,}929 + 1{,}206}{10} \\[2pt]
+   &= \frac{10{,}380}{10} = 1{,}038
+\end{aligned}
+\]
+y entonces $VAN = 10{,}380 - 10 = 0{,}380$ millones.
+
+\column{0.52\textwidth}
+\begin{center}
+\begin{tabular}{lcl}
+\toprule
+\textbf{Métrica} & \textbf{Valor} & \textbf{Lectura} \\
+\midrule
+ROI         & 75\%      & ``¡Bárbaro!'' \\
+PRS         & 2,9 años  & ``Se paga rápido'' \\
+PRD         & 4,7 años  & ``Se paga al final'' \\
+IR          & 1,04      & ``Apenas conviene'' \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{columns}
+
+\vspace{0.3cm}
+\begin{alertblock}{Conviene, pero por muy poco}
+El ROI y el payback simple \textbf{inflaban} el proyecto porque ignoran que la plata de los dueños
+cuesta 20\% anual. Si los flujos vienen un poco peor, el horno deja de convenir.
+\end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{ROA y ROE}
+% =====================================================================
+
+\begin{frame}{ROA y ROE: evaluar la empresa en la que invierto}
+
+Muchas veces invertir es \textbf{comprar una parte de una empresa} (acciones, o entrar como socio).
+Antes, se mira qué tan rentable es:
+\[
+ROA = \frac{\text{Resultado operativo}}{\text{Activo total}}
+\qquad\qquad
+ROE = \frac{\text{Resultado neto}}{\text{Patrimonio neto}}
+\]
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\begin{block}{ROA (\emph{Return on Assets})}
+Cuánto rinde \textbf{todo lo que la empresa tiene}, sin importar quién lo financió.
+\end{block}
+
+\column{0.48\textwidth}
+\begin{block}{ROE (\emph{Return on Equity})}
+Cuánto rinde \textbf{la plata de los dueños}.
+\end{block}
+\end{columns}
+
+La diferencia entre los dos es \textbf{la deuda}: resultado neto $=$ operativo $-$ intereses;
+patrimonio $=$ activo $-$ deuda. Si el \textbf{ROE supera lo que exigen los dueños} (clase 13),
+la empresa crea valor.
+
+\begin{alertblock}{No reemplazan al VAN}
+Usan datos \textbf{contables del pasado}, no flujos futuros: diagnostican una empresa, no deciden un proyecto.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{La panadería, en tres versiones}
+
+Nos ofrecen entrar como socios. Activo de \textbf{\$100 millones}, resultado operativo de \textbf{\$20 millones} $\Rightarrow$ ROA = 20\%.
+Ignoramos impuestos.
+
+\begin{columns}[T]
+\column{0.56\textwidth}
+\begin{center}
+\small
+\begin{tabular}{lccc}
+\toprule
+ & \textbf{Sin deuda} & \textbf{Barata} & \textbf{Cara} \\
+\midrule
+Deuda          & 0   & 60 al 10\% & 60 al 30\% \\
+Patrimonio     & 100 & 40 & 40 \\
+Res. operativo & 20  & 20 & 20 \\
+Intereses      & 0   & 6  & 18 \\
+Res. neto      & 20  & 14 & 2  \\
+\midrule
+\textbf{ROA}   & 20\% & 20\% & 20\% \\
+\textbf{ROE}   & \textbf{20\%} & \textbf{35\%} & \textbf{5\%} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\column{0.40\textwidth}
+\textbf{Deuda barata, a mano:}
+\[
+\begin{aligned}
+ROE &= \frac{20 - 0{,}10 \times 60}{100 - 60} \\[2pt]
+    &= \frac{20 - 6}{40} = \frac{14}{40} = 35\%
+\end{aligned}
+\]
+\end{columns}
+
+\vspace{0.2cm}
+\begin{alertblock}{El negocio es el mismo en las tres columnas}
+Lo único que cambia es \textbf{cómo se financia}.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{El efecto palanca, demostrado}
+
+Llamo $A$ al activo, $D$ a la deuda, $E$ al patrimonio ($A = D + E$) e $i$ a la tasa de la deuda.
+El resultado operativo es $ROA \cdot A$:
+\[
+\begin{aligned}
+ROE &= \frac{ROA \cdot A - i \cdot D}{E}
+     = \frac{ROA \cdot (D + E) - i \cdot D}{E}
+     = \frac{ROA \cdot D + ROA \cdot E - i \cdot D}{E} \\[4pt]
+    &= ROA + (ROA - i) \cdot \frac{D}{E}
+\end{aligned}
+\]
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Verificación:}
+\begin{itemize}
+  \item Barata: $20\% + (20\% - 10\%) \cdot \tfrac{60}{40} = 35\%$
+  \item Cara: $20\% + (20\% - 30\%) \cdot \tfrac{60}{40} = 5\%$
+\end{itemize}
+
+\column{0.48\textwidth}
+\begin{exampleblock}{Regla}
+Si $ROA > i$, la deuda \textbf{amplifica} el ROE. \\
+Si $ROA < i$, lo \textbf{destruye}. \\
+Si $ROA = i$, da igual.
+\end{exampleblock}
+\end{columns}
+\end{frame}
+
+% =====================================================================
+\section{FTE}
+% =====================================================================
+
+\begin{frame}{FTE: medir el trabajo que libera un proyecto}
+
+Muchos proyectos hoy (automatizar un proceso, sumar un sistema, incorporar IA) \textbf{no venden más:
+ahorran tiempo}. Para meterlo en un ROI hay que traducir horas a plata.
+
+\begin{block}{FTE (\emph{Full-Time Equivalent})}
+Equivalente a \textbf{una persona trabajando a tiempo completo}:
+\[
+FTE = \frac{\text{Horas de trabajo que requiere la tarea}}{\text{Horas que trabaja una persona en el período}}
+\]
+\end{block}
+
+\textbf{Ejemplo:} una tarea consume 320 horas por mes y una persona trabaja 160 $\Rightarrow$
+\textbf{2 FTE}. Da igual si son 2 personas full-time o 4 part-time: la carga es la misma.
+\end{frame}
+
+\begin{frame}{El caso: automatizar la carga de facturas}
+
+La panadería carga \textbf{3.000 facturas por mes} a \textbf{6 minutos} cada una. Un sistema baja el
+tiempo a \textbf{1 minuto}.
+
+\begin{columns}[T]
+\column{0.50\textwidth}
+\[
+\begin{aligned}
+\text{Horas antes}     &= \frac{3.000 \times 6}{60} = 300 \text{ h/mes} \\[2pt]
+\text{Horas después}   &= \frac{3.000 \times 1}{60} = 50 \text{ h/mes} \\[2pt]
+\text{Horas liberadas} &= 300 - 50 = 250 \text{ h/mes} \\[2pt]
+FTE \text{ liberados}  &= \frac{250}{160} = 1{,}5625
+\end{aligned}
+\]
+
+\column{0.46\textwidth}
+Un FTE le cuesta \textbf{\$16,8 millones por año}:
+\[
+1{,}5625 \times 16{,}8 = 26{,}25 \text{ millones}
+\]
+de ahorro \textbf{potencial} por año.
+
+\vspace{0.2cm}
+El sistema cuesta \textbf{\$12 millones} + \textbf{\$3 millones} de licencia anual, y sirve \textbf{3 años}.
+\end{columns}
+\end{frame}
+
+\begin{frame}{Horas liberadas no es lo mismo que plata ahorrada}
+
+El ahorro solo existe si la empresa \textbf{hace algo} con el tiempo liberado:
+
+\begin{center}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Escenario} & \textbf{Se captura} & \textbf{Ahorro/año (M\$)} & \textbf{ROI 3 años} & \textbf{Payback} \\
+\midrule
+Reasignar a tareas que generan valor & 100\% & 26,25 & \textbf{275\%}  & \textbf{6 meses} \\
+Absorber parcialmente                & 50\%  & 13,13 & \textbf{87,5\%} & \textbf{14 meses} \\
+No capturar (nadie cambia nada)      & 0\%   & 0     & \textbf{$-100\%$} & \textbf{nunca} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\[
+ROI_{3\text{ años}} = \frac{3 \times 26{,}25 - 21}{21} = 275\%
+\qquad
+\text{Payback} = \frac{12}{(26{,}25 - 3)/12} \approx 6{,}2 \text{ meses}
+\]
+
+\vspace{-0.2cm}
+\small El ROI se mide sobre la \textbf{vida útil} (3 años), no sobre un solo año.
+
+\begin{alertblock}{La lección}
+El sistema libera 1,56 FTE en los tres casos, pero se paga en 6 meses, en 14 o nunca.
+Lo que cambia es \textbf{la decisión de gestión}:
+¿por qué canal exacto se convierten estas horas en plata?
+\end{alertblock}
+\end{frame}
+
+% =====================================================================
+\section{Cierre}
+% =====================================================================
+
+\begin{frame}{Resumen: qué pregunta responde cada métrica}
+\small
+\begin{center}
+\begin{tabular}{llccc}
+\toprule
+\textbf{Métrica} & \textbf{Pregunta} & \textbf{Unidad} & \textbf{Umbral} & \textbf{¿Mira el tiempo?} \\
+\midrule
+ROI         & ¿Cuánto gané por peso invertido?        & \%      & $> 0$ & No \\
+CAGR        & ¿Cuánto rindió por año?                 & \% anual & $> r$ & Anualiza \\
+PRS         & ¿Cuándo recupero la plata?              & años    & $<$ máximo & No \\
+PRD         & ¿Cuándo la recupero, en valor de hoy?   & años    & $<$ máximo & Sí \\
+IR          & ¿Cuánto valor de hoy por peso?          & veces   & $> 1$ & Sí \\
+ROA         & ¿Cuánto rinde todo el activo?           & \%      & $>$ costo deuda & -- \\
+ROE         & ¿Cuánto rinde la plata de los dueños?   & \%      & $>$ lo exigido & -- \\
+FTE         & ¿Cuánto trabajo libera o consume?       & personas & -- & -- \\
+\midrule
+\multicolumn{5}{l}{\emph{De la clase 13:} VAN (¿cuánta plata de hoy me deja?) y TIR/TIRM (¿a qué tasa empata?)} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}{Para llevarse}
+\begin{enumerate}
+  \item \textbf{El ROI es el más usado y el más tramposo}: no mira el tiempo.
+        Anualizalo (CAGR) o descontalo (IR).
+  \item \textbf{El payback mide liquidez, no rentabilidad}: un proyecto puede recuperarse rápido
+        y aun así no convenir.
+  \item \textbf{La deuda es una lupa}: agranda lo bueno y lo malo del negocio (ROE vs. ROA).
+  \item \textbf{Horas ahorradas no son plata ahorrada}: el FTE mide capacidad; el ROI depende de
+        qué se haga con ella.
+  \item \textbf{Ninguna métrica alcanza sola}: un buen análisis muestra varias y explica por qué
+        difieren.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Ejercicios (en el notebook, con solución)}
+\begin{enumerate}
+  \item \textbf{ROI vs. CAGR.} Departamento: USD 40.000 $\to$ 58.000 en 7 años. Auto clásico:
+        USD 40.000 $\to$ 50.000 en 2 años. ¿Cuál rindió más?
+  \item \textbf{Payback e IR.} Máquina de \$8 millones, flujos de \$2,5 millones por año durante
+        5 años, costo de capital 25\%. ¿Conviene?
+  \item \textbf{ROE.} Activo \$50 millones, resultado operativo \$9 millones, deuda \$30 millones.
+        ROE con deuda al 12\% y al 25\%. ¿Desde qué tasa conviene no endeudarse?
+  \item \textbf{FTE.} 1.200 consultas por mes a 15 minutos; un asistente resuelve el 40\%.
+        ¿Cuántos FTE libera? ¿Cuánto se ahorra si solo se reasigna la mitad?
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Preguntas}
+\begin{center}
+\Huge ¿Preguntas?
+
+\vspace{0.6cm}
+\normalsize Y ahora: \textbf{hablemos del trabajo práctico}
+\end{center}
+\end{frame}
+
+\begin{frame}{Fuentes y bibliografía}
+\small
+\begin{itemize}
+  \item Brealey, R. A., Myers, S. C., \& Allen, F. (2020). \emph{Principles of Corporate Finance} (13th ed.). McGraw-Hill.
+  \item Ross, S. A., Westerfield, R. W., \& Jaffe, J. (2019). \emph{Corporate Finance} (12th ed.). McGraw-Hill.
+  \item Damodaran, A. (2012). \emph{Investment Valuation} (3rd ed.). Wiley.
+  \item Clase 13 del Laboratorio: \emph{Herramientas de análisis financiero} (tasas, VAN, TIR, TIRM, WACC).
+\end{itemize}
+\end{frame}
+
+\end{document}
