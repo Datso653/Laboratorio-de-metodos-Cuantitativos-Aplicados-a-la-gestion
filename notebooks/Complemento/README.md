@@ -58,11 +58,12 @@ bueno y puede volver a usarse.
 
 ## 💰 [Inversiones](Inversiones/)
 
-| Archivo | Qué tiene |
-|---|---|
-| `YPF.xlsx` | Datos de YPF para los casos de análisis de inversiones |
+| Archivo | Qué tiene | De dónde salió |
+|---|---|---|
+| `complemento-clase14-balances-oficiales-sec.ipynb` | ROE, ROA y EBITDA de Microsoft, Coca-Cola y Apple leídos **directo de los balances oficiales** (10-K) en la API de la SEC, paso a paso: cómo viene el JSON, cómo filtrar un valor por año, la trampa de las etiquetas contables, y la comparación con `yfinance` (ROE y ROA coinciden; el EBITDA no siempre) | Clase **14** (2C-2026): la clase usa `yfinance`; esto es la versión con la fuente primaria |
+| `YPF.xlsx` | Datos de YPF para los casos de análisis de inversiones | Material previo |
 
-Se usa junto con las clases **15 y 17** (análisis de inversiones).
+Se usa junto con las clases **13 y 14** (análisis financiero e inversiones).
 
 ---
 
