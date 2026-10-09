@@ -52,6 +52,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{booktabs}
+\usepackage{array}
 \usepackage{hyperref}
 
 \graphicspath{{imagenes/}}
@@ -442,8 +443,7 @@ cuesta 20\% anual. Si los flujos vienen un poco peor, el horno deja de convenir.
 
 \begin{frame}{ROA y ROE: evaluar la empresa en la que invierto}
 
-Muchas veces invertir es \textbf{comprar una parte de una empresa} (acciones, o entrar como socio).
-Antes, se mira qué tan rentable es:
+Antes de \textbf{comprar una parte de una empresa} (acciones, o entrar como socio), se mira qué tan rentable es:
 \[
 ROA = \frac{\text{Resultado operativo}}{\text{Activo total}}
 \qquad\qquad
@@ -452,19 +452,21 @@ ROE = \frac{\text{Resultado neto}}{\text{Patrimonio neto}}
 
 \begin{columns}[T]
 \column{0.48\textwidth}
-\begin{block}{ROA (\emph{Return on Assets})}
-Cuánto rinde \textbf{todo lo que la empresa tiene}, sin importar quién lo financió.
+\begin{block}{Activo $\to$ ROA (\emph{Return on Assets})}
+\textbf{Todo lo que la empresa tiene}: local, máquinas, mercadería, caja. No importa quién lo
+pagó. El ROA mide cuánto rinde \textbf{el negocio}.
 \end{block}
 
 \column{0.48\textwidth}
-\begin{block}{ROE (\emph{Return on Equity})}
-Cuánto rinde \textbf{la plata de los dueños}.
+\begin{block}{Patrimonio neto $\to$ ROE (\emph{Return on Equity})}
+\textbf{La parte del activo que es de los dueños}: lo que queda después de restar las deudas.
+El ROE mide cuánto rinde \textbf{la plata de los dueños}.
 \end{block}
 \end{columns}
 
-La diferencia entre los dos es \textbf{la deuda}: resultado neto $=$ operativo $-$ intereses;
-patrimonio $=$ activo $-$ deuda. Si el \textbf{ROE supera lo que exigen los dueños} (clase 13),
-la empresa crea valor.
+\begin{center}
+\textbf{Activo = Deudas + Patrimonio neto} \qquad Ej.: activo \$100, deuda \$60 $\Rightarrow$ patrimonio \$40
+\end{center}
 
 \begin{alertblock}{No reemplazan al VAN}
 Usan datos \textbf{contables del pasado}, no flujos futuros: diagnostican una empresa, no deciden un proyecto.
@@ -535,11 +537,103 @@ ROE &= \frac{ROA \cdot A - i \cdot D}{E}
 
 \column{0.48\textwidth}
 \begin{exampleblock}{Regla}
-Si $ROA > i$, la deuda \textbf{amplifica} el ROE. \\
-Si $ROA < i$, lo \textbf{destruye}. \\
+Si $ROA > i$, la deuda \textbf{agranda} el ROE. \\
+Si $ROA < i$, lo \textbf{achica} (y puede volverlo negativo). \\
 Si $ROA = i$, da igual.
 \end{exampleblock}
 \end{columns}
+\end{frame}
+
+\begin{frame}{Los tres casos: ¿la deuda cuesta más o menos de lo que rinde el negocio?}
+
+\small
+La clave es comparar \textbf{$i$, lo que cuesta cada peso prestado}, con \textbf{el ROA, lo que rinde
+ese peso dentro del negocio}. Panadería con ROA = 20\%:
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{5.2cm}cc>{\raggedright\arraybackslash}p{3.4cm}@{}}
+\toprule
+\textbf{Caso} & \textbf{Cada peso prestado (en centavos)} & \textbf{ROE} & \textbf{ROE} & \textbf{Lectura} \\
+ & & \textbf{deuda 60} & \textbf{deuda 80} & \\
+\midrule
+$i < ROA$ & ($i$ = 10\%) Rinde 20, cuesta 10: \textbf{sobran 10} para los dueños & 35\% & 60\% & ROE $>$ ROA: la deuda \textbf{suma} \\
+\addlinespace
+$i = ROA$ & ($i$ = 20\%) Rinde 20, cuesta 20: se lo lleva \textbf{todo el banco} & 20\% & 20\% & ROE $=$ ROA: la deuda \textbf{no cambia nada} \\
+\addlinespace
+$i > ROA$ & ($i$ = 30\%) Rinde 20, cuesta 30: \textbf{faltan 10}, los ponen los dueños & 5\% & $-20\%$ & ROE $<$ ROA: la deuda \textbf{resta} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\begin{block}{Más deuda, efecto más fuerte}
+Con deuda 80 en vez de 60, el ROE se va a 60\% o a $-20\%$: la deuda es una \textbf{lupa}, agranda
+lo bueno y lo malo.
+\end{block}
+
+\column{0.48\textwidth}
+\begin{alertblock}{Ojo con el caso $i > ROA$}
+Con deuda 80 al 30\%, los dueños \textbf{pierden plata} ($-20\%$) con un negocio que \textbf{gana} (ROA 20\%).
+\end{alertblock}
+\end{columns}
+\end{frame}
+
+\begin{frame}{¿Qué significa un ROA o un ROE alto o bajo?}
+
+\small
+\begin{columns}[T]
+\column{0.48\textwidth}
+\begin{block}{ROA: ¿el negocio es bueno?}
+\textbf{Para qué sirve:} medir cuánto rinde todo lo que la empresa tiene, sin importar cómo se financió.\\[3pt]
+\textbf{Alto:} el negocio le saca mucho jugo a sus activos.\\[3pt]
+\textbf{Bajo:} el negocio rinde poco, o tiene activos parados (plata ociosa, máquinas sin usar).\\[3pt]
+\textbf{Se compara con:} la tasa de la deuda ($i$) y con empresas del \textbf{mismo rubro}
+(un supermercado y una empresa de software no se comparan).
+\end{block}
+
+\column{0.48\textwidth}
+\begin{block}{ROE: ¿les conviene a los dueños?}
+\textbf{Para qué sirve:} medir cuánto rinde la plata que pusieron los socios.\\[3pt]
+\textbf{Alto}, puede venir de: un \textbf{buen negocio} (lo sano), \textbf{mucha deuda} (más riesgo)
+o un \textbf{patrimonio chico} (ROE inflado).\\[3pt]
+\textbf{Bajo:} negocio que rinde poco, deuda cara o plata ociosa.\\[3pt]
+\textbf{Se compara con:} lo que \textbf{exigen los dueños} (clase 13) y la \textbf{inflación}.
+\end{block}
+\end{columns}
+
+\vspace{0.2cm}
+\begin{alertblock}{Mirarlos siempre juntos}
+ROE alto \textbf{y} ROA alto $\Rightarrow$ buen negocio. \quad
+ROE alto con ROA bajo $\Rightarrow$ lo explica \textbf{la deuda}, no el negocio.
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Con datos reales: tres historias de ROE alto}
+
+Balances anuales oficiales (el mismo cálculo que hacemos en el notebook):
+
+\begin{center}
+\small
+\begin{tabular}{lcccl}
+\toprule
+\textbf{Empresa} & \textbf{ROE} & \textbf{ROA} & \textbf{Activo/patrim.} & \textbf{Qué lo explica} \\
+\midrule
+Microsoft (jun-2026)  & 30,2\%  & 17,6\% & 1,7x & \textbf{Buen negocio}, poca deuda \\
+Coca-Cola (2025)      & 40,7\%  & 12,5\% & 3,3x & Buen negocio \textbf{más deuda} (palanca) \\
+Apple (sep-2025)      & \textbf{151,9\%} & 31,2\% & 4,9x & \textbf{Patrimonio chico}: recompra sus acciones \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\small Acá el ROA se calcula como resultado neto / activo, que es como se publica en el mercado.
+
+\vspace{0.2cm}
+\begin{exampleblock}{La pregunta para la clase}
+¿Apple es cinco veces mejor negocio que Microsoft porque su ROE es cinco veces más alto?
+\textbf{No}: miren el ROA. El ROE solo no alcanza; hay que mirar de dónde sale.
+\end{exampleblock}
 \end{frame}
 
 % =====================================================================
