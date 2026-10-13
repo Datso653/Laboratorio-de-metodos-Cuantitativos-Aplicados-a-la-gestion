@@ -3,7 +3,7 @@
 Esta tabla es **la brújula del repo**: dice qué archivo corresponde a cada clase del cronograma.
 Si vas a tocar una clase, buscala acá primero.
 
-Cronograma oficial: [`CuestionesAdministrativas/Pautas/Cronograma/`](../CuestionesAdministrativas/Pautas/Cronograma/)
+Cronograma oficial: [`CuestionesAdministrativas/Pautas/Cronograma detallado.xlsx - Sheet1.pdf`](../CuestionesAdministrativas/Pautas/Cronograma%20detallado.xlsx%20-%20Sheet1.pdf)
 
 > 📌 **Los archivos están numerados según el cronograma**, no según el orden histórico del repo.
 > El número del archivo, el título de adentro del notebook y el número de clase son **el mismo**.
@@ -29,16 +29,16 @@ Leyenda: ✅ listo · 🔄 hay que adaptarlo · ❌ falta crearlo
 | 13 | 02-oct | Herramientas de análisis financiero | Rita | `13_Herramientas_de_analisis_financiero.ipynb` | ✅ versión dada en clase; la larga quedó en `Backup/` |
 | 14 | 06-oct | Aplicaciones financieras para inversiones: ROI, CAGR, payback, IR, ROA/ROE y FTE | **Juan** | `14_Aplicaciones_financieras_para_inversiones.ipynb` + PPT `Inversiones_Clase14.pdf` | ✅ rehecha 2C (no repite la 13); la del 1C quedó en `Backup/` |
 | 15 | 09-oct | Intro a procesos organizacionales y análisis de datos | Rita | `15_Procesos_organizacionales_y_datos.ipynb` | 🔄 |
-| 16 | 13-oct | Funciones totales a partir de marginales | **Juan** | `16_Integrales_en_el_analisis_economico.ipynb` (Parte 1) | ✅ |
-| 17 | 16-oct | Integrales y valores acumulados (excedentes) | **Juan** | `16_Integrales_en_el_analisis_economico.ipynb` (Parte 2) | ✅ mismo notebook |
-| 18 | 20-oct | Aplicaciones económicas de la integración | **Juan** | `18_Aplicaciones_economicas_de_la_integracion.ipynb` | ✅ |
-| 19 | 23-oct | Simulación de datos y aplicaciones | Manu | — | ❌ |
-| 20 | 27-oct | Aplicaciones económicas (U5) | Manu | — | ❌ |
-| 21 | 30-oct | Métricas estadísticas | **Juan** | `21_Metricas_estadisticas.ipynb` | ✅ |
-| 22 | 03-nov | SQL y manejo de tablas | **Juan** | `22_SQL_y_manejo_de_tablas.ipynb` | ✅ |
-| 23 | 06-nov | Anonimización y ética | Rita | `23_Anonimizacion_de_datos.ipynb` | 🔄 ampliar |
-| 24 | 10-nov | Repaso e integración | Todos | `Integradoras/` | 🔄 |
-| — | **13-nov** | **PRESENTACIÓN DE TP** | — | — | — |
+| 16 | 13-oct | Marginalidad y totalidad + aplicación económica (integrales) | **Juan** | `16_Integrales_y_aplicaciones_economicas.ipynb` + PPT `Integrales.pdf` | ✅ junta lo que antes eran las clases 16, 17 y 18; las versiones previas quedaron en `Backup/` |
+| 17 | 16-oct | Simulación de datos y aplicaciones | Manu | — | ❌ |
+| 18 | 20-oct | Aplicaciones económicas | Manu | — | ❌ |
+| 19 | 23-oct | Métricas estadísticas | **Juan** | `21_Metricas_estadisticas.ipynb` | 🔄 renombrar a `19_` |
+| 20 | 27-oct | SQL y manejo de tablas | **Juan** | `22_SQL_y_manejo_de_tablas.ipynb` | 🔄 renombrar a `20_` |
+| 21 | 30-oct | Anonimización y ética | Rita | `23_Anonimizacion_de_datos.ipynb` | 🔄 ampliar y renombrar a `21_` |
+| 22 | 03-nov | Repaso e integración | Todos | `Integradoras/` | 🔄 |
+| — | **06-nov** | **PRESENTACIÓN DE TP** | — | — | — |
+| — | 10-nov | Feriado (visita del Papa), sin clase | — | — | — |
+| — | 13-nov | Clase de consultas previa al segundo parcial | — | — | — |
 | — | **17-nov** | **SEGUNDO PARCIAL** | — | — | — |
 | — | **24-nov** | **RECUPERATORIOS** | — | — | — |
 | — | **01-dic** | **FINAL** | — | — | — |
@@ -49,8 +49,8 @@ Leyenda: ✅ listo · 🔄 hay que adaptarlo · ❌ falta crearlo
 
 | # | Fecha | Tema | Docente |
 |---|-------|------|---------|
-| 19 | 23-oct | Simulación de datos y aplicaciones | Manu |
-| 20 | 27-oct | Aplicaciones económicas (U5) | Manu |
+| 17 | 16-oct | Simulación de datos y aplicaciones | Manu |
+| 18 | 20-oct | Aplicaciones económicas | Manu |
 
 ---
 
@@ -67,6 +67,7 @@ desalineación entre el nombre del archivo, el título de adentro y la clase rea
 | `17-Aplicaciones_..._inversiones_II` | `14_Aplicaciones_financieras_para_inversiones` | Por dentro ya decía "Clase 14" |
 | `18-Manejo_de_datos_estructurados` | `15_Procesos_organizacionales_y_datos` | Por dentro decía "Clase 17" |
 | `13_Integrales_Indefinidas1` | `16_Integrales_en_el_analisis_economico` | Cubre las clases 16 **y** 17 (fusión de indefinidas + definidas) |
+| `16_Integrales_en_el_analisis_economico` + `18_Aplicaciones_economicas_de_la_integracion` | `16_Integrales_y_aplicaciones_economicas` | El cronograma pasó integrales a **una sola clase** (13-oct). Los dos anteriores quedaron en `Backup/` |
 | `19-Anonimizacion_de_datos` | `23_Anonimizacion_de_datos` | En el cronograma nuevo la anonimización es la clase 23 |
 | `06-Manipulacion_de_datos_estructurados_y_Leontief` | `06_Variables_relevantes_filtrado_y_muestreo` | La clase 06 pasó a ser la de **muestreo**. El notebook anterior (MIP + ejercicios de pandas) quedó en `Backup/` |
 | `05-Matrices y Leontief` | `05_Vectores_y_matrices` | Leontief salió del cronograma |
