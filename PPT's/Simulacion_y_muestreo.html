@@ -170,6 +170,16 @@
   .flujo span { color: var(--tenue); margin-top: .3rem; }
 
   .cita { border-left: 6px solid var(--naranja); }
+  .espejo { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center; }
+  .espejo .lado { background: #fff; border: 1.5px solid var(--linea); border-radius: 16px; padding: .9rem 1.2rem; display: grid; gap: .2rem; }
+  .espejo .lado.copia { border-style: dashed; background: rgba(169, 205, 177, .35); }
+  .espejo .lado b { font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: clamp(1.4rem, 2.4vw, 2rem); color: var(--titulo); }
+  .espejo .lado span { color: var(--tenue); font-size: .95rem; }
+  .espejo .flechas { display: grid; gap: .4rem; text-align: center; font-weight: 600; font-size: .9rem; }
+  .espejo .flechas span { background: var(--naranja); border: 1.5px solid var(--linea); border-radius: 999px; padding: .25em .9em; }
+  .espejo .flechas span + span { background: var(--salvia); }
+  .pasos .tarjeta { padding: .9rem 1rem; }
+  .fuente { font-size: .78rem; color: #8a867d; }
   .particion { display: flex; border: 1.5px solid var(--linea); border-radius: 8px; overflow: hidden; margin: .3rem 0 .6rem; font-size: .78rem; font-weight: 600; }
   .particion span { padding: .35rem .5rem; background: var(--naranja); white-space: nowrap; }
   .particion span + span { flex: 1; background: var(--salvia); border-left: 1.5px solid var(--linea); }
@@ -197,7 +207,7 @@
   @media (max-width: 900px) {
     html, body { overflow: auto; }
     .slide { padding: 56px 16px 90px; justify-content: flex-start; }
-    .dos, .dos-uno, .uno-dos, .tres, .cuatro, .ruta { grid-template-columns: 1fr; }
+    .dos, .dos-uno, .uno-dos, .tres, .cuatro, .ruta, .espejo { grid-template-columns: 1fr; }
     .ruta svg.linea { display: none; }
     .portada { padding-right: 16px; }
     .portada .foto { display: none; }
@@ -240,14 +250,27 @@
   <div class="ruta">
     <svg class="linea" preserveAspectRatio="none" viewBox="0 0 100 4"><line x1="2" y1="2" x2="88" y2="2" pathLength="1"/></svg>
     <div class="nodo" style="--d:0"><div class="circ">A</div><h3>Dados y semilla</h3><p>Azar que se puede repetir.</p></div>
-    <div class="nodo" style="--d:1"><div class="circ">B</div><h3>Clientes de mentira</h3><p>Una base para practicar, y para Machine Learning.</p></div>
+    <div class="nodo" style="--d:1"><div class="circ">B</div><h3>Clientes de mentira</h3><p>Una base para practicar, y lo último: copias de personas.</p></div>
     <div class="nodo" style="--d:2"><div class="circ">C</div><h3>Muestreo</h3><p>¿Cuánto le creo a una encuesta?</p></div>
     <div class="nodo" style="--d:3"><div class="circ">D</div><h3>Simular para decidir</h3><p>Las medialunas y el horno.</p></div>
   </div>
   <p class="pista">Todo esto lo corremos en Colab: <strong>notebook 19</strong>.</p>
 </section>
 
-<!-- 4 · Dados y semilla -->
+<!-- 4 · Por qué simulamos -->
+<section class="slide" data-seccion="¿Por qué simulamos?">
+  <span class="etiqueta">Para arrancar</span>
+  <h2 class="ancho">¿Por qué <span class="hl">simulamos</span>?</h2>
+  <p class="grande">Por lo mismo que un piloto practica en un <strong>simulador de vuelo</strong> antes de subirse a un avión de verdad.</p>
+  <div class="fila cuatro">
+    <div class="tarjeta"><div class="num">1</div><h3>Lo real es caro, lento o imposible</h3><p>No podemos construir diez hornos para ver cuál conviene, ni repetir una crisis para estudiarla.</p></div>
+    <div class="tarjeta"><div class="num">2</div><h3>Para medir el riesgo</h3><p>Miles de futuros posibles en vez de un solo número.</p></div>
+    <div class="tarjeta"><div class="num">3</div><h3>Para practicar y probar</h3><p>Si fabricamos los datos, sabemos la respuesta y vemos si el análisis la encuentra.</p></div>
+    <div class="tarjeta"><div class="num">4</div><h3>Para cuidar la privacidad</h3><p>Datos parecidos a los reales, sin exponer a ningún cliente ni paciente.</p></div>
+  </div>
+</section>
+
+<!-- 5 · Dados y semilla -->
 <section class="slide" data-seccion="A · Dados y semilla">
   <span class="etiqueta">A · Dados y semilla</span>
   <h2 class="ancho">La computadora tira <span class="hl">10.000 dados</span> en un segundo</h2>
@@ -258,17 +281,6 @@
       <div class="tarjeta naranja"><h3>Misma semilla, mismos números</h3><p>La computadora no tira dados de verdad: usa una fórmula que arranca de la <strong>semilla</strong>. Probá tirar dos veces con 42, y después cambiala. Con semillas de 0 a 100 salen <strong>los mismos dados que en Colab</strong>.</p></div>
     </div>
     <div class="grafico-caja"><div id="g-dados"></div></div>
-  </div>
-</section>
-
-<!-- 5 · Para qué fabricar datos -->
-<section class="slide" data-seccion="B · Clientes de mentira">
-  <span class="etiqueta">B · Clientes de mentira</span>
-  <h2>¿Para qué <span class="hl">fabricar</span> datos?</h2>
-  <div class="fila tres">
-    <div class="tarjeta"><div class="num">1</div><h3>Para practicar</h3><p>Probar el código antes de tener los datos reales, o cuando todavía no llegaron.</p></div>
-    <div class="tarjeta"><div class="num">2</div><h3>Para cuidar a la gente</h3><p>Mostrar un análisis sin exponer a ningún cliente: los datos reales son confidenciales.</p></div>
-    <div class="tarjeta"><div class="num">3</div><h3>Para conocer la verdad</h3><p>Tener una población donde ya sabemos la respuesta, y ver qué tan bien funciona una muestra.</p></div>
   </div>
 </section>
 
@@ -300,7 +312,46 @@
   </div>
 </section>
 
-<!-- 8 · Una encuesta -->
+<!-- 8 · Gemelos digitales -->
+<section class="slide" data-seccion="Lo último en simulación">
+  <span class="etiqueta salvia">Lo último en simulación</span>
+  <h2 class="ancho">Gemelos digitales: <span class="hl">una copia virtual</span> de algo real</h2>
+  <div class="espejo">
+    <div class="lado"><b>Lo real</b><span>una fábrica, una ciudad, el planeta</span></div>
+    <div class="flechas"><span>sus datos →</span><span>← lo que conviene hacer</span></div>
+    <div class="lado copia"><b>La copia</b><span>donde se prueba sin romper nada</span></div>
+  </div>
+  <div class="fila tres">
+    <div class="tarjeta naranja"><h3>Una fábrica</h3><p><strong>BMW</strong> planificó su planta de Debrecen (Hungría) en una copia virtual mientras la construía: dónde va cada robot y cada recorrido, antes de mover nada.</p></div>
+    <div class="tarjeta salvia"><h3>Una ciudad</h3><p><strong>Singapur</strong> tiene una copia virtual de la ciudad para probar obras y cambios antes de hacerlos.</p></div>
+    <div class="tarjeta gris"><h3>El planeta</h3><p>La <strong>Unión Europea</strong> arma una copia digital de la Tierra (<em>Destination Earth</em>) para simular el clima y los eventos extremos.</p></div>
+  </div>
+</section>
+
+<!-- 9 · Copias de personas -->
+<section class="slide" data-seccion="Lo último en simulación">
+  <span class="etiqueta salvia">Lo último en simulación</span>
+  <h2 class="ancho">Stanford: <span class="hl">copias de 1.000 personas</span></h2>
+  <div class="fila dos-uno">
+    <div style="display:grid; gap:.8rem">
+      <div class="fila tres pasos">
+        <div class="tarjeta"><div class="num">1</div><h3>Entrevista</h3><p><strong>1.052 personas</strong> reales, dos horas cada una, con un entrevistador de IA.</p></div>
+        <div class="tarjeta"><div class="num">2</div><h3>Copia</h3><p>Con cada entrevista se armó un agente de IA que responde <strong>como esa persona</strong>.</p></div>
+        <div class="tarjeta"><div class="num">3</div><h3>Prueba</h3><p>Personas y copias contestaron <strong>la misma encuesta</strong> social.</p></div>
+      </div>
+      <div class="fila dos">
+        <div class="tarjeta"><p><strong>Antes, 2023 · Smallville:</strong> un pueblo virtual con 25 personajes de IA. A una le dijeron que organizara una fiesta de San Valentín; los demás se pasaron la invitación solos y fueron.</p></div>
+        <div class="tarjeta"><p><strong>Ahora, 2026 · Simile:</strong> el mismo equipo fundó una empresa que vende "consumidores simulados" a grandes marcas para estudios de mercado.</p></div>
+      </div>
+    </div>
+    <div class="tarjeta cifra naranja"><span class="rotulo">Las copias acertaron</span><b>85%</b>
+      <p class="nota">de lo que <strong>las propias personas</strong> coinciden consigo mismas cuando repiten la encuesta dos semanas después.</p></div>
+  </div>
+  <p>¿Reemplazan a las encuestas? <span class="marcado">Todavía no:</span> una copia es tan buena como la gente con la que se arma. Por eso hay que entender bien cómo funciona una encuesta →</p>
+  <p class="fuente">Park y otros (2024), <em>Generative Agent Simulations of 1,000 People</em> (Stanford y Google DeepMind); Park y otros (2023), <em>Generative Agents</em>.</p>
+</section>
+
+<!-- 10 · Una encuesta -->
 <section class="slide" data-seccion="C · Muestreo">
   <span class="etiqueta">C · Muestreo</span>
   <h2 class="ancho">Encuestamos a <span class="hl">100 clientes</span> al azar</h2>
@@ -317,7 +368,7 @@
   </div>
 </section>
 
-<!-- 9 · Más gente -->
+<!-- 11 · Más gente -->
 <section class="slide" data-seccion="C · Muestreo">
   <span class="etiqueta">C · Muestreo</span>
   <h2 class="ancho">Encuestar a más gente ayuda… <span class="hl">cada vez menos</span></h2>
@@ -334,7 +385,7 @@
   </div>
 </section>
 
-<!-- 10 · Tres formas -->
+<!-- 12 · Tres formas -->
 <section class="slide" data-seccion="C · Muestreo">
   <span class="etiqueta">C · Muestreo</span>
   <h2 class="ancho">¿Importa <span class="hl">a quién</span> le preguntás?</h2>
@@ -346,7 +397,7 @@
   <p class="pista">¿Cuál te parece que sale peor? Respondé en el chat.</p>
 </section>
 
-<!-- 11 · 200 encuestas -->
+<!-- 13 · 200 encuestas -->
 <section class="slide" data-seccion="C · Muestreo">
   <span class="etiqueta">C · Muestreo</span>
   <h2 class="ancho">200 encuestas de 200 clientes, <span class="hl">de cada forma</span></h2>
@@ -359,7 +410,7 @@
   </div>
 </section>
 
-<!-- 12 · Sesgo -->
+<!-- 14 · Sesgo -->
 <section class="slide" data-seccion="C · Muestreo">
   <span class="etiqueta">C · Muestreo</span>
   <h2 class="ancho">El sesgo <span class="hl">no se arregla</span> con más datos</h2>
@@ -375,7 +426,7 @@
   </div>
 </section>
 
-<!-- 13 · Monte Carlo -->
+<!-- 15 · Monte Carlo -->
 <section class="slide" data-seccion="D · Simular para decidir">
   <span class="etiqueta">D · Simular para decidir</span>
   <h2 class="ancho">Monte Carlo: <span class="hl">probar mil futuros</span> antes de elegir</h2>
@@ -388,7 +439,7 @@
   <p class="pista">Se llama así por el casino de Montecarlo: todo se basa en el azar.</p>
 </section>
 
-<!-- 14 · Medialunas: el problema -->
+<!-- 16 · Medialunas: el problema -->
 <section class="slide" data-seccion="D · Caso 1: medialunas">
   <span class="etiqueta">D · Caso 1</span>
   <h2 class="ancho">¿Cuántas <span class="hl">medialunas</span> hornear por día?</h2>
@@ -412,7 +463,7 @@
   </div>
 </section>
 
-<!-- 15 · Medialunas: la respuesta -->
+<!-- 17 · Medialunas: la respuesta -->
 <section class="slide" data-seccion="D · Caso 1: medialunas">
   <span class="etiqueta">D · Caso 1</span>
   <h2 class="ancho">Conviene hornear <span class="hl" id="t-mejor">—</span></h2>
@@ -426,7 +477,7 @@
   </div>
 </section>
 
-<!-- 16 · Horno -->
+<!-- 18 · Horno -->
 <section class="slide" data-seccion="D · Caso 2: el horno">
   <span class="etiqueta">D · Caso 2 · el horno de la clase 14</span>
   <h2 class="ancho">¿El horno <span class="hl">realmente</span> conviene?</h2>
@@ -439,7 +490,7 @@
   </div>
 </section>
 
-<!-- 17 · VAN simulado -->
+<!-- 19 · VAN simulado -->
 <section class="slide" data-seccion="D · Caso 2: el horno">
   <span class="etiqueta">D · Caso 2 · el horno de la clase 14</span>
   <h2 class="ancho">En <span class="hl">una de cada tres</span> historias, el horno pierde plata</h2>
@@ -455,7 +506,7 @@
   </div>
 </section>
 
-<!-- 18 · Para llevarse -->
+<!-- 20 · Para llevarse -->
 <section class="slide" data-seccion="Para llevarse">
   <span class="etiqueta">Para llevarse</span>
   <h2>Cuatro ideas</h2>
@@ -468,7 +519,7 @@
   <p class="grande">Entonces, la encuesta de 1.000 personas: <span class="marcado">depende de a quién le preguntaron</span>.</p>
 </section>
 
-<!-- 19 · A Colab -->
+<!-- 21 · A Colab -->
 <section class="slide" data-seccion="Ahora, a Colab">
   <span class="etiqueta salvia">Ahora, a Colab</span>
   <h2 class="ancho">Notebook 19: <span class="hl">tres ejercicios</span></h2>
@@ -779,7 +830,8 @@ function cifras() {
 
 /* ══ Navegación ══ */
 const slides = [...document.querySelectorAll('.slide')];
-const alEntrar = { 3: tirarDados, 5: segmentos, 7: campo, 8: acumulado, 9: miniaturas, 10: formas, 11: sesgo, 13: demanda, 14: medialunas, 15: flujos, 16: van };
+const alEntrar = { 'g-dados': tirarDados, segmentos, campo, 'g-acum': acumulado, 'm-aleat': miniaturas, 'g-formas': formas,
+                   'g-conv': sesgo, 'g-demanda': demanda, 'g-medialunas': medialunas, flujos, 'g-van': van };
 let actual = 0;
 function ir(i) {
   actual = Math.max(0, Math.min(slides.length - 1, i));
@@ -787,7 +839,7 @@ function ir(i) {
   $('barra').style.width = ((actual + 1) / slides.length * 100) + '%';
   $('contador').textContent = `${actual + 1} / ${slides.length}`;
   $('pie-seccion').textContent = slides[actual].dataset.seccion || '';
-  if (alEntrar[actual]) alEntrar[actual]();
+  for (const id in alEntrar) if (slides[actual].querySelector('#' + id)) alEntrar[id]();
   history.replaceState(null, '', '#' + (actual + 1));
 }
 $('sig').addEventListener('click', () => ir(actual + 1));
