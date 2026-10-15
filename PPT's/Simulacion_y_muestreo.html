@@ -214,6 +214,16 @@
   .nodo .ej { margin-top: .6rem; font-size: 17px; color: var(--texto); border-left: 4px solid var(--naranja); padding-left: .6rem; }
   .ruta3 { grid-template-columns: repeat(3, 1fr); }
 
+  /* Monte Carlo contra Machine Learning */
+  .comparacion { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; margin-top: .8rem; }
+  .comp { background: var(--superficie); border: 1.5px solid var(--linea); border-top: 7px solid var(--naranja); border-radius: 16px; padding: 1rem 1.3rem; }
+  .comp.ml { border-top-color: var(--salvia); }
+  .comp .rotulo-c { font-size: 14px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); }
+  .comp .sentido { font-family: var(--serif); font-stretch: 72%; font-weight: 800; font-size: 42px; color: var(--titulo); margin: .2rem 0 .4rem; }
+  .comp .sentido span { color: var(--naranja); }
+  .comp.ml .sentido span { color: var(--verde); }
+  .comp p { font-size: 18px; max-width: none; }
+
   /* Línea de tiempo */
   .linea-tiempo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; border-top: 3px solid var(--linea); padding-top: 1.1rem; position: relative; }
   .linea-tiempo > div { position: relative; }
@@ -298,7 +308,7 @@
     html, body { overflow: auto; }
     .slide { padding: 56px 16px 90px; justify-content: flex-start; }
     .escenario { position: static; width: auto; height: auto; transform: none; }
-    .dos, .dos-uno, .uno-dos, .tres, .cuatro, .ruta, .espejo, .razones, .versus, .linea-tiempo { grid-template-columns: 1fr; }
+    .dos, .dos-uno, .uno-dos, .tres, .cuatro, .ruta, .espejo, .razones, .versus, .linea-tiempo, .comparacion { grid-template-columns: 1fr; }
     .ruta svg.linea { display: none; }
     .portada { padding-right: 16px; }
     .portada .dado-portada { display: none; }
@@ -543,7 +553,15 @@
     <div class="nodo" style="--d:2"><div class="circ">3</div><h3>Calcular</h3><p>El resultado de cada decisión en cada futuro.</p><p class="ej">La ganancia de hornear 90, 91… 160.</p></div>
     <div class="nodo" style="--d:3"><div class="circ">4</div><h3>Elegir</h3><p>La decisión que mejor funciona en todos.</p><p class="ej">La cantidad que más gana en promedio.</p></div>
   </div>
-  <p class="pista">Se llama así por el casino de Montecarlo: todo se basa en el azar.</p>
+  <div class="comparacion">
+    <div class="comp"><span class="rotulo-c">Monte Carlo · lo de hoy</span>
+      <div class="sentido">la regla <span>→</span> los datos</div>
+      <p>Yo le digo a la compu: «un día normal piden unas 120 medialunas». Ella <strong>inventa</strong> 1.000 días y yo veo qué me conviene.</p></div>
+    <div class="comp ml"><span class="rotulo-c">Machine Learning · más adelante</span>
+      <div class="sentido">los datos <span>→</span> la regla</div>
+      <p>Le doy el cuaderno con 1.000 días <strong>reales</strong> de ventas. Ella descubre sola que «los sábados se venden más» y predice mañana.</p></div>
+  </div>
+  <p class="pista">Se llama Monte Carlo por el casino de Montecarlo: todo se basa en el azar.</p>
 </section>
 
 <!-- 16 · Medialunas: el problema -->
