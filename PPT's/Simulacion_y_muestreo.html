@@ -171,16 +171,9 @@
 
   .cita { border-left: 6px solid var(--naranja); }
 
-  /* Fondo: papel cuadriculado tenue (las partículas siguen arriba) */
-  body {
-    background-image:
-      linear-gradient(rgba(26, 26, 26, .075) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(26, 26, 26, .075) 1px, transparent 1px),
-      linear-gradient(rgba(26, 26, 26, .035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(26, 26, 26, .035) 1px, transparent 1px);
-    background-size: 160px 160px, 160px 160px, 32px 32px, 32px 32px;
-    background-position: -1px -1px;
-  }
+  /* Fondo: crema liso y, detrás de todo, una máquina de Galton tenue */
+  body { background-image: none; }
+  #fondo { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
   /* Escenario fijo que se escala entero a la ventana, como una diapositiva */
   .escenario { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px;
@@ -315,7 +308,7 @@
 </style>
 </head>
 <body>
-<div class="puntitos" id="puntitos"></div>
+<canvas id="fondo" aria-hidden="true"></canvas>
 <div class="barra" id="barra"></div>
 <div id="tip"></div>
 <div class="escenario" id="escenario">
@@ -1030,15 +1023,93 @@ document.addEventListener('keydown', e => {
 });
 document.querySelectorAll('.opcion').forEach(b => b.addEventListener('click', () => b.classList.toggle('elegida')));
 
-/* Puntitos de fondo */
-(function () {
-  const caja = $('puntitos'), colores = ['#FF7A3D', '#A9CDB1', '#1A1A1A'];
-  for (let i = 0; i < 26; i++) {
-    const p = document.createElement('i'), t = 4 + Math.random() * 10;
-    p.style.cssText = `width:${t}px;height:${t}px;left:${Math.random() * 100}%;top:${Math.random() * 100}%;background:${colores[i % 3]};
-      opacity:${.12 + Math.random() * .2};--dx:${(Math.random() - .5) * 80}px;--dy:${(Math.random() - .5) * 80}px;animation-delay:${-Math.random() * 20}s`;
-    caja.appendChild(p);
+/* Fondo: máquina de Galton. Cada bolita rebota al azar a izquierda o derecha en
+   cada fila de clavos; juntas se apilan abajo y dibujan la campana. Cuando la
+   pila se llena, se desvanece y vuelve a empezar. */
+(function galton() {
+  const lienzo = $('fondo'), ctx = lienzo.getContext('2d');
+  const FILAS = 24, COLUMNAS = 29, CADA_MS = 230;
+  let W, H, ancho, radio, alturaMax, pila, bolitas, transparencia = 1, vaciando = false, ultima = 0;
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function medir() {
+    const d = devicePixelRatio || 1;
+    W = lienzo.width = innerWidth * d; H = lienzo.height = innerHeight * d;
+    ancho = W / COLUMNAS; radio = Math.min(ancho * 0.17, 6 * d); alturaMax = H * 0.32;
+    reiniciar();
+    if (quieto) { for (let k = 0; k < 400; k++) apilar(Math.round(binomial())); dibujar(); }
   }
+  function reiniciar() { pila = new Array(COLUMNAS).fill(0); bolitas = []; transparencia = 1; vaciando = false; }
+  const binomial = () => { let c = 0; for (let k = 0; k < FILAS; k++) c += Math.random() < .5 ? -.5 : .5; return c; };
+  const centro = () => (COLUMNAS - 1) / 2;
+  const porNivel = () => Math.max(1, Math.floor(ancho / (radio * 2.3)));   // bolitas por renglón en cada columna
+  function apilar(desvio) {
+    const col = Math.max(0, Math.min(COLUMNAS - 1, centro() + desvio));
+    pila[col]++;
+    const nivel = Math.floor((pila[col] - 1) / porNivel());
+    if ((nivel + 1) * radio * 2.1 > alturaMax) vaciando = true;
+  }
+  function soltar() { bolitas.push({ x: W / 2, y: -radio, col: 0, fila: 0, xObjetivo: W / 2 }); }
+
+  function dibujar() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalAlpha = transparencia;
+    // la pila: bolitas verdes muy tenues
+    ctx.fillStyle = 'rgba(47, 125, 91, .15)';
+    const n = porNivel();
+    pila.forEach((cant, col) => {
+      for (let k = 0; k < cant; k++) {
+        const nivel = Math.floor(k / n), lugar = k % n;
+        const x = col * ancho + ancho / 2 + (lugar - (n - 1) / 2) * radio * 2.2;
+        const y = H - radio * 1.1 - nivel * radio * 2.1;
+        ctx.beginPath(); ctx.arc(x, y, radio, 0, 7); ctx.fill();
+      }
+    });
+    // la campana teórica, como una línea suave sobre la pila
+    const total = pila.reduce((a, b) => a + b, 0);
+    if (total > 30) {
+      const sd = Math.sqrt(FILAS) / 2, alto = total / (sd * Math.sqrt(2 * Math.PI)) / n * radio * 2.1;
+      ctx.strokeStyle = 'rgba(26, 26, 26, .12)'; ctx.lineWidth = Math.max(1, radio * 0.25);
+      ctx.beginPath();
+      for (let px = 0; px <= W; px += 6) {
+        const z = (px / ancho - .5 - centro()) / sd;
+        const y = H - alto * Math.exp(-z * z / 2);
+        px ? ctx.lineTo(px, y) : ctx.moveTo(px, y);
+      }
+      ctx.stroke();
+    }
+    // las bolitas que caen: naranjas
+    ctx.fillStyle = 'rgba(255, 122, 61, .26)';
+    bolitas.forEach(b => { ctx.beginPath(); ctx.arc(b.x, b.y, radio, 0, 7); ctx.fill(); });
+    ctx.globalAlpha = 1;
+  }
+
+  function paso(t) {
+    if (!vaciando && t - ultima > CADA_MS) { soltar(); ultima = t; }
+    const arriba = H * 0.04, entreFilas = H * 0.022, velocidad = H * 0.0065;
+    bolitas.forEach(b => {
+      b.y += velocidad;
+      if (b.fila < FILAS && b.y > arriba + b.fila * entreFilas) {   // pega en un clavo: izquierda o derecha
+        b.col += Math.random() < .5 ? -.5 : .5; b.fila++;
+        b.xObjetivo = W / 2 + b.col * ancho;
+      }
+      b.x += (b.xObjetivo - b.x) * 0.25;
+    });
+    // las que llegan a la pila se quedan
+    bolitas = bolitas.filter(b => {
+      const cant = pila[Math.max(0, Math.min(COLUMNAS - 1, centro() + b.col))] || 0;
+      const techo = H - radio * 1.1 - Math.floor(cant / porNivel()) * radio * 2.1;
+      if (b.fila >= FILAS && b.y >= techo) { apilar(b.col); return false; }
+      return true;
+    });
+    if (vaciando) { transparencia -= 0.012; if (transparencia <= 0) reiniciar(); }
+    dibujar();
+    requestAnimationFrame(paso);
+  }
+
+  addEventListener('resize', medir);
+  medir();
+  if (!quieto) requestAnimationFrame(paso);
 })();
 
 const dadoSlide = crearDado($('dado-slide'), 84);
