@@ -1007,7 +1007,11 @@ let actual = 0;
 function ir(i) {
   const adelante = i > actual;
   actual = Math.max(0, Math.min(slides.length - 1, i));
-  slides[actual].querySelectorAll('.paso').forEach(p => p.classList.toggle('visto', !adelante));   // al volver, todo a la vista
+  // Las partes de la slide aparecen solas, una detrás de otra (sin tocar nada)
+  clearTimeout(window.tiempoPasos);
+  const pasos = [...slides[actual].querySelectorAll('.paso')];
+  pasos.forEach(p => p.classList.remove('visto'));
+  pasos.forEach((p, k) => setTimeout(() => p.classList.add('visto'), 350 + k * 450));
   slides.forEach((s, k) => s.classList.toggle('activa', k === actual));
   $('barra').style.width = ((actual + 1) / slides.length * 100) + '%';
   $('contador').textContent = `${actual + 1} / ${slides.length}`;
@@ -1015,10 +1019,7 @@ function ir(i) {
   for (const id in alEntrar) if (slides[actual].querySelector('#' + id)) alEntrar[id]();
   history.replaceState(null, '', '#' + (actual + 1));
 }
-function avanzar() {
-  const oculto = slides[actual].querySelector('.paso:not(.visto)');
-  if (oculto) oculto.classList.add('visto'); else ir(actual + 1);
-}
+function avanzar() { ir(actual + 1); }
 $('sig').addEventListener('click', avanzar);
 $('ant').addEventListener('click', () => ir(actual - 1));
 document.addEventListener('keydown', e => {
