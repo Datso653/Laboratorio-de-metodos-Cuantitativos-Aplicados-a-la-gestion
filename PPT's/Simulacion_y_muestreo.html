@@ -44,7 +44,7 @@
   /* ══ Diapositivas ══ */
   .slide {
     position: absolute; inset: 0; z-index: 1;
-    padding: 7vh 7vw 11vh; display: flex; flex-direction: column; justify-content: center; gap: 1.2rem;
+    padding: 63px 112px 99px; display: flex; flex-direction: column; justify-content: center; gap: 1.2rem;
     opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility .45s;
     overflow-y: auto;
   }
@@ -57,19 +57,19 @@
   @keyframes subir { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 
   h1, h2 { font-family: var(--serif); font-stretch: 68%; font-weight: 800; color: var(--titulo); letter-spacing: -0.01em; line-height: 1.02; }
-  h1 { font-size: clamp(2.8rem, 7.4vw, 6.4rem); }
-  h2 { font-size: clamp(1.9rem, 4.4vw, 3.5rem); max-width: 22ch; }
+  h1 { font-size: clamp(2.8rem, 118.4px, 6.4rem); }
+  h2 { font-size: clamp(1.9rem, 70.4px, 3.5rem); max-width: 22ch; }
   h2.ancho { max-width: none; }
   .hl { background: linear-gradient(transparent 58%, var(--resaltador) 58%, var(--resaltador) 92%, transparent 92%); padding: 0 0.06em; }
-  p { color: var(--tenue); font-size: clamp(0.95rem, 1.35vw, 1.2rem); line-height: 1.55; max-width: 60ch; }
-  p.grande { font-size: clamp(1.15rem, 2vw, 1.6rem); color: var(--texto); }
+  p { color: var(--tenue); font-size: clamp(0.95rem, 21.6px, 1.2rem); line-height: 1.55; max-width: 60ch; }
+  p.grande { font-size: clamp(1.15rem, 32px, 1.6rem); color: var(--texto); }
   strong { color: var(--texto); font-weight: 600; }
   .marcado { background: var(--resaltador); padding: 0 0.15em; border-radius: 3px; color: var(--texto); }
 
   .etiqueta {
     display: inline-block; align-self: flex-start; width: fit-content;
     background: var(--naranja); color: var(--texto);
-    font-weight: 700; font-size: clamp(0.72rem, 0.95vw, 0.9rem); letter-spacing: 0.06em; text-transform: uppercase;
+    font-weight: 700; font-size: clamp(0.72rem, 15.2px, 0.9rem); letter-spacing: 0.06em; text-transform: uppercase;
     padding: 0.38em 1.05em; border-radius: 999px;
   }
   .etiqueta.salvia { background: var(--salvia); }
@@ -84,15 +84,15 @@
 
   /* Tarjetas y cifras */
   .tarjeta { background: var(--superficie); border: 1.5px solid var(--linea); border-radius: 16px; padding: 1.2rem 1.3rem; }
-  .tarjeta h3 { font-size: clamp(1rem, 1.5vw, 1.25rem); margin-bottom: .35rem; }
-  .tarjeta p { font-size: clamp(0.85rem, 1.1vw, 1rem); }
+  .tarjeta h3 { font-size: clamp(1rem, 24px, 1.25rem); margin-bottom: .35rem; }
+  .tarjeta p { font-size: clamp(0.85rem, 17.6px, 1rem); }
   .tarjeta.naranja { border-top: 7px solid var(--naranja); }
   .tarjeta.verde { border-top: 7px solid var(--verde); }
   .tarjeta.gris { border-top: 7px solid var(--gris-osc); }
   .tarjeta.salvia { border-top: 7px solid var(--salvia); }
   .cifra b { display: block; font-family: var(--serif); font-stretch: 75%; font-weight: 800; color: var(--titulo);
-             font-size: clamp(2.2rem, 5.2vw, 4.4rem); line-height: 1; margin: .2rem 0 .4rem; }
-  .cifra b.chica { font-size: clamp(1.6rem, 3.2vw, 2.6rem); }
+             font-size: clamp(2.2rem, 83.2px, 4.4rem); line-height: 1; margin: .2rem 0 .4rem; }
+  .cifra b.chica { font-size: clamp(1.6rem, 51.2px, 2.6rem); }
   .cifra .rotulo { font-size: .85rem; font-weight: 600; color: var(--tenue); text-transform: uppercase; letter-spacing: .05em; }
   .cifra .nota { border-top: 1.5px solid var(--borde); margin-top: .6rem; padding-top: .6rem; }
   .num { display: inline-grid; place-items: center; width: 2.3rem; height: 2.3rem; border-radius: 50%;
@@ -100,7 +100,7 @@
 
   /* Píldoras clickeables (encuestas en el chat) */
   .opciones { display: flex; flex-wrap: wrap; gap: .7rem; }
-  .opcion { font-family: var(--sans); font-size: clamp(.95rem, 1.3vw, 1.15rem); font-weight: 600; cursor: pointer;
+  .opcion { font-family: var(--sans); font-size: clamp(.95rem, 20.8px, 1.15rem); font-weight: 600; cursor: pointer;
             background: #fff; border: 1.5px solid var(--linea); border-radius: 999px; padding: .55em 1.3em; color: var(--texto); transition: background .2s; }
   .opcion:hover, .opcion.elegida { background: var(--naranja); }
   .pista { font-size: .9rem; color: var(--tenue); font-style: italic; }
@@ -116,12 +116,12 @@
                 display: grid; place-items: center; font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: 1.5rem; margin-bottom: .8rem; }
   .slide.activa .nodo .circ { animation: rebote .5s calc(.4s + var(--d) * .25s) both cubic-bezier(.3,1.6,.6,1); }
   @keyframes rebote { from { transform: scale(0); } to { transform: scale(1); } }
-  .nodo h3 { font-size: clamp(1rem, 1.5vw, 1.3rem); }
-  .nodo p { font-size: clamp(.85rem, 1.1vw, 1rem); }
+  .nodo h3 { font-size: clamp(1rem, 24px, 1.3rem); }
+  .nodo p { font-size: clamp(.85rem, 17.6px, 1rem); }
 
   /* Gráficos */
   .grafico-caja { background: var(--superficie); border: 1.5px solid var(--linea); border-radius: 16px; padding: .8rem 1rem .5rem; }
-  svg.grafico { width: 100%; height: auto; max-height: 50vh; display: block; font-family: var(--sans); }
+  svg.grafico { width: 100%; height: auto; max-height: 450px; display: block; font-family: var(--sans); }
   svg.grafico text { fill: var(--tenue); font-size: 13px; }
   svg.grafico .eje-titulo { fill: var(--texto); font-weight: 600; font-size: 13.5px; }
   svg.grafico .grilla { stroke: rgba(26,26,26,.1); }
@@ -141,9 +141,9 @@
   .control input[type=range] { flex: 1; min-width: 160px; accent-color: var(--naranja); }
   .boton { font: inherit; font-weight: 700; cursor: pointer; background: var(--naranja); border: 1.5px solid var(--linea); border-radius: 999px; padding: .5em 1.3em; }
   .boton:hover { background: #ff935f; }
-  .lectura { font-size: clamp(1rem, 1.4vw, 1.2rem); color: var(--texto); }
+  .lectura { font-size: clamp(1rem, 22.4px, 1.2rem); color: var(--texto); }
   .lectura b { font-family: var(--serif); font-stretch: 75%; font-size: 1.5em; }
-  .dados { font-size: clamp(1.6rem, 2.8vw, 2.4rem); letter-spacing: .08em; color: var(--texto); min-height: 1.3em; }
+  .dados { font-size: clamp(1.6rem, 44.8px, 2.4rem); letter-spacing: .08em; color: var(--texto); min-height: 1.3em; }
 
   /* Segmentos */
   .seg { display: grid; grid-template-columns: 6.5rem 1fr; gap: .4rem .8rem; align-items: center; margin-bottom: .9rem; }
@@ -170,17 +170,89 @@
   .flujo span { color: var(--tenue); margin-top: .3rem; }
 
   .cita { border-left: 6px solid var(--naranja); }
+
+  /* Fondo: papel cuadriculado tenue (las partículas siguen arriba) */
+  body {
+    background-image:
+      linear-gradient(rgba(26, 26, 26, .075) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26, 26, 26, .075) 1px, transparent 1px),
+      linear-gradient(rgba(26, 26, 26, .035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26, 26, 26, .035) 1px, transparent 1px);
+    background-size: 160px 160px, 160px 160px, 32px 32px, 32px 32px;
+    background-position: -1px -1px;
+  }
+
+  /* Escenario fijo que se escala entero a la ventana, como una diapositiva */
+  .escenario { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px;
+               transform: translate(-50%, -50%) scale(var(--escala, 1)); }
+
+  /* Lo que aparece de a un clic */
+  .paso { opacity: 0; transform: translateY(14px); transition: opacity .45s ease, transform .45s ease; }
+  .paso.visto, .ver-todo .paso { opacity: 1; transform: none; }
+  .slide.activa > .paso { animation: none; }
+
+  /* ¿Por qué simulamos? */
+  .razones { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, .9fr); gap: 2.6rem; margin: 1.4rem 0 .6rem; }
+  .razon b { display: inline-block; font-family: var(--serif); font-stretch: 68%; font-weight: 800; font-size: 72px; line-height: 1;
+             color: var(--titulo); margin-bottom: 1.1rem; padding: 0 .08em; transform: rotate(-2deg);
+             background: linear-gradient(transparent 55%, var(--resaltador) 55%, var(--resaltador) 92%, transparent 92%); }
+  .razon:nth-child(even) b { transform: rotate(1.5deg); background: linear-gradient(transparent 55%, rgba(169, 205, 177, .9) 55%, rgba(169, 205, 177, .9) 92%, transparent 92%); }
+  .razon span { display: block; font-size: 21px; line-height: 1.45; color: var(--tenue); border-top: 2px solid var(--linea); padding-top: .8rem; }
+  .remate { font-size: 24px; color: var(--texto); max-width: 70ch; }
+
+  /* Censo contra muestra */
+  .versus { display: grid; grid-template-columns: 1fr auto 1fr; gap: 3rem; align-items: start; margin-top: .6rem; }
+  .lado-v b { display: block; font-family: var(--serif); font-stretch: 72%; font-weight: 800; font-size: 60px; color: var(--titulo); line-height: 1; margin: .2rem 0 .6rem; }
+  .lado-v .rotulo { font-size: 15px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--tenue); }
+  .lado-v p { font-size: 20px; }
+  .vs { align-self: center; font-family: var(--serif); font-stretch: 72%; font-weight: 800; font-size: 54px; color: var(--naranja); }
+  .campo-chico { display: grid; grid-template-columns: repeat(24, 1fr); gap: 5px; margin-bottom: 1.2rem; }
+  .campo-chico i { aspect-ratio: 1; border-radius: 50%; background: var(--gris); }
+  .campo-chico i.on { background: var(--linea); }
+  .campo-chico i.muestra { background: var(--naranja); box-shadow: 0 0 0 1.5px var(--linea); transform: scale(1.25); }
+
+  /* Slide centrada */
+  .slide.centrada { align-items: center; text-align: center; }
+  .slide.centrada .etiqueta { align-self: center; }
+  .slide.centrada p { margin: 0 auto; max-width: 64ch; }
+  .slide.centrada .grafico-caja { width: 100%; }
+
+  /* Ejemplos debajo de cada paso de una ruta */
+  .nodo .ej { margin-top: .6rem; font-size: 17px; color: var(--texto); border-left: 4px solid var(--naranja); padding-left: .6rem; }
+  .ruta3 { grid-template-columns: repeat(3, 1fr); }
+
+  /* Línea de tiempo */
+  .linea-tiempo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; border-top: 3px solid var(--linea); padding-top: 1.1rem; position: relative; }
+  .linea-tiempo > div { position: relative; }
+  .linea-tiempo > div::before { content: ''; position: absolute; top: calc(-1.1rem - 10px); left: 0; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 3px solid var(--linea); }
+  .linea-tiempo > div.ahora::before { background: var(--naranja); }
+  .linea-tiempo .anio { font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: 34px; color: var(--titulo); }
+  .linea-tiempo p { font-size: 17px; margin-top: .2rem; }
+
+  /* Frases grandes en lugar de tarjetas */
+  .ideas { display: grid; gap: 1.2rem; margin: .6rem 0; }
+  .idea { display: flex; gap: 1.3rem; align-items: baseline; max-width: none; font-family: var(--serif); font-stretch: 72%; font-weight: 700;
+          font-size: 48px; line-height: 1.12; color: var(--titulo); }
+  .idea .n { flex: none; display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--linea); color: #fff;
+             font-family: var(--sans); font-stretch: 100%; font-size: 20px; font-weight: 700; transform: translateY(-8px); }
+  .ideas.chicas .idea { font-size: 34px; }
+  .ideas.chicas .idea strong { font-weight: 800; }
+  .ideas.chicas .idea .n { width: 38px; height: 38px; font-size: 18px; transform: translateY(-4px); }
+
+  /* El dado se agarra y se gira con el mouse */
+  .dado3d-escena { cursor: grab; touch-action: none; user-select: none; }
+  .dado3d-escena:active { cursor: grabbing; }
   .espejo { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center; }
   .espejo .lado { background: #fff; border: 1.5px solid var(--linea); border-radius: 16px; padding: .9rem 1.2rem; display: grid; gap: .2rem; }
   .espejo .lado.copia { border-style: dashed; background: rgba(169, 205, 177, .35); }
-  .espejo .lado b { font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: clamp(1.4rem, 2.4vw, 2rem); color: var(--titulo); }
+  .espejo .lado b { font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: clamp(1.4rem, 38.4px, 2rem); color: var(--titulo); }
   .espejo .lado span { color: var(--tenue); font-size: .95rem; }
   .espejo .flechas { display: grid; gap: .4rem; text-align: center; font-weight: 600; font-size: .9rem; }
   .espejo .flechas span { background: var(--naranja); border: 1.5px solid var(--linea); border-radius: 999px; padding: .25em .9em; }
   .espejo .flechas span + span { background: var(--salvia); }
   .pasos .tarjeta { padding: .9rem 1rem; }
   .fuente { font-size: .78rem; color: #8a867d; }
-  svg.flujo-ml { width: 100%; height: auto; max-height: 34vh; display: block; font-family: var(--sans); }
+  svg.flujo-ml { width: 100%; height: auto; max-height: 306px; display: block; font-family: var(--sans); }
   .caja-ml rect { fill: #fff; stroke: var(--linea); stroke-width: 1.8; }
   .caja-ml.naranja rect { fill: var(--naranja); }
   .caja-ml.salvia rect { fill: var(--salvia); }
@@ -206,15 +278,15 @@
   /* Navegación */
   .barra { position: fixed; top: 0; left: 0; height: 4px; background: var(--naranja); z-index: 10; transition: width .4s; }
   .pie { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between;
-         padding: 0 7vw 2.2vh; font-size: .82rem; color: #8a867d; pointer-events: none; }
+         padding: 0 112px 19.8px; font-size: .82rem; color: #8a867d; pointer-events: none; }
   .pie .controles { display: flex; gap: .5rem; align-items: center; pointer-events: auto; }
   .pie button { width: 2.4rem; height: 2.4rem; border-radius: 50%; cursor: pointer; background: transparent; border: 1.5px solid var(--linea); font-size: 1rem; color: var(--texto); }
   .pie button:hover { background: var(--naranja); }
   .contador { min-width: 3.5rem; text-align: center; color: var(--tenue); }
 
   /* Portada */
-  .portada { padding-right: max(16px, 44vw); }
-  .portada .dado-portada { position: absolute; right: 12vw; top: 50%; transform: translateY(-50%); display: grid; justify-items: center; gap: 3.6rem; cursor: pointer; }
+  .portada { padding-right: max(16px, 704px); }
+  .portada .dado-portada { position: absolute; right: 192px; top: 50%; transform: translateY(-50%); display: grid; justify-items: center; gap: 3.6rem; cursor: pointer; }
 
   /* Dado 3D: seis caras con sus puntos; rueda con transform y transition */
   .dado3d-escena { width: var(--t); height: var(--t); perspective: calc(var(--t) * 5); }
@@ -226,13 +298,14 @@
   .dado3d .cara i { width: 64%; height: 64%; border-radius: 50%; background: var(--linea); place-self: center; }
   .dado3d .cara.c1 i { background: var(--naranja); box-shadow: 0 0 0 2px var(--linea); }
   .fila-dado { display: flex; align-items: center; gap: 1.8rem; padding: .5rem 0 .2rem .3rem; }
-  .fila-dado .dados { font-size: clamp(1.2rem, 1.9vw, 1.8rem); letter-spacing: .04em; white-space: nowrap; }
-  .autores { color: var(--texto); font-weight: 600; font-size: clamp(.9rem, 1.2vw, 1.05rem); }
+  .fila-dado .dados { font-size: clamp(1.2rem, 30.4px, 1.8rem); letter-spacing: .04em; white-space: nowrap; }
+  .autores { color: var(--texto); font-weight: 600; font-size: clamp(.9rem, 19.2px, 1.05rem); }
 
   @media (max-width: 900px) {
     html, body { overflow: auto; }
     .slide { padding: 56px 16px 90px; justify-content: flex-start; }
-    .dos, .dos-uno, .uno-dos, .tres, .cuatro, .ruta, .espejo { grid-template-columns: 1fr; }
+    .escenario { position: static; width: auto; height: auto; transform: none; }
+    .dos, .dos-uno, .uno-dos, .tres, .cuatro, .ruta, .espejo, .razones, .versus, .linea-tiempo { grid-template-columns: 1fr; }
     .ruta svg.linea { display: none; }
     .portada { padding-right: 16px; }
     .portada .dado-portada { display: none; }
@@ -245,6 +318,7 @@
 <div class="puntitos" id="puntitos"></div>
 <div class="barra" id="barra"></div>
 <div id="tip"></div>
+<div class="escenario" id="escenario">
 
 <!-- 1 · Portada -->
 <section class="slide portada" data-seccion="Clase 19">
@@ -255,20 +329,7 @@
   <div class="dado-portada"><div id="dado-portada"></div><p class="pista">Simular: tirarlo mil veces y mirar qué pasa</p></div>
 </section>
 
-<!-- 2 · Pregunta -->
-<section class="slide" data-seccion="Para arrancar">
-  <span class="etiqueta">Para arrancar</span>
-  <h2>Una encuesta de <span class="hl">1.000 personas</span> dice qué piensan 45 millones.</h2>
-  <p class="grande">¿Le creés?</p>
-  <div class="opciones">
-    <button class="opcion">Sí, le creo</button>
-    <button class="opcion">No, son muy poquitos</button>
-    <button class="opcion">Depende de a quién le preguntaron</button>
-  </div>
-  <p class="pista">Respondé en el chat. Al final de la clase volvemos a esta pregunta.</p>
-</section>
-
-<!-- 3 · Ruta -->
+<!-- 2 · Ruta -->
 <section class="slide" data-seccion="La clase de hoy">
   <span class="etiqueta">La clase de hoy</span>
   <h2 class="ancho">Simular: probar <span class="hl">mil veces</span> lo que pasa una sola vez</h2>
@@ -282,21 +343,29 @@
   <p class="pista">Todo esto lo corremos en Colab: <strong>notebook 19</strong>.</p>
 </section>
 
-<!-- 4 · Por qué simulamos -->
+<!-- 3 · Por qué simulamos -->
 <section class="slide" data-seccion="¿Por qué simulamos?">
   <span class="etiqueta">Para arrancar</span>
-  <h2 class="ancho">¿Por qué <span class="hl">simulamos</span>?</h2>
-  <p class="grande">Por lo mismo que un piloto practica en un <strong>simulador de vuelo</strong> antes de subirse a un avión de verdad.</p>
-  <div class="fila cuatro">
-    <div class="tarjeta"><div class="num">1</div><h3>Lo real es caro, lento o imposible</h3><p>No podemos construir diez hornos para ver cuál conviene, ni repetir una crisis para estudiarla.</p></div>
-    <div class="tarjeta"><div class="num">2</div><h3>Para medir el riesgo</h3><p>Miles de futuros posibles en vez de un solo número.</p></div>
-    <div class="tarjeta"><div class="num">3</div><h3>Para practicar y probar</h3><p>Si fabricamos los datos, sabemos la respuesta y vemos si el análisis la encuentra.</p></div>
-    <div class="tarjeta"><div class="num">4</div><h3>Para cuidar la privacidad</h3><p>Datos parecidos a los reales, sin exponer a ningún cliente ni paciente.</p></div>
+  <h2 class="ancho">Simulamos cuando la realidad es…</h2>
+  <div class="razones">
+    <div class="razon paso"><b>cara</b><span>No podemos construir diez hornos para ver cuál conviene.</span></div>
+    <div class="razon paso"><b>incierta</b><span>En vez de un solo resultado, miramos miles de futuros posibles.</span></div>
+    <div class="razon paso"><b>desconocida</b><span>Si inventamos los datos, sabemos la respuesta y vemos si el análisis la encuentra.</span></div>
+    <div class="razon paso"><b>privada</b><span>Datos parecidos a los reales, sin exponer a ningún cliente ni paciente.</span></div>
   </div>
-  <div class="fila dos">
-    <div class="tarjeta salvia"><h3>Un ejemplo de acá: el INDEC</h3><p>El <strong>censo</strong> cuenta a los 46 millones, pero es carísimo y se hace cada unos diez años (el último, en 2022). Cada trimestre, el INDEC usa la <strong>EPH</strong>: una muestra de hogares en 31 ciudades. De ahí salen la desocupación y la pobreza.</p></div>
-    <div class="tarjeta naranja"><h3>Ficticio, pero lógico</h3><p>Inventamos situaciones, pero con <strong>reglas que tengan sentido</strong>. Si los supuestos son absurdos, el resultado también: una simulación vale lo que valen sus supuestos.</p></div>
+  <p class="remate paso">Como un piloto en un <strong>simulador de vuelo</strong>: situaciones ficticias, pero con <span class="marcado">reglas lógicas</span>. Una simulación vale lo que valen sus supuestos.</p>
+</section>
+
+<!-- 4 · INDEC -->
+<section class="slide" data-seccion="Un ejemplo de acá">
+  <span class="etiqueta salvia">Un ejemplo de acá</span>
+  <h2 class="ancho">El INDEC no puede preguntarle <span class="hl">a todos</span> cada trimestre</h2>
+  <div class="versus">
+    <div class="lado-v"><div class="campo-chico" data-marcados="todos"></div><span class="rotulo">Censo</span><b>46 millones</b><p>Cuenta a todos. Es carísimo: se hace cada unos <strong>diez años</strong> (el último, en 2022).</p></div>
+    <div class="vs">vs.</div>
+    <div class="lado-v"><div class="campo-chico" data-marcados="14"></div><span class="rotulo">EPH</span><b>una muestra</b><p>Una parte de los hogares de <strong>31 ciudades</strong>, <strong>cada trimestre</strong>. De ahí salen la desocupación y la pobreza.</p></div>
   </div>
+  <p class="grande">¿Cuánto le podemos creer a una muestra así? <span class="marcado">Es la pregunta de hoy.</span></p>
 </section>
 
 <!-- 5 · Dados y semilla -->
@@ -329,7 +398,7 @@
 </section>
 
 <!-- 7 · Machine Learning -->
-<section class="slide" data-seccion="B · Para qué sirve después">
+<section class="slide centrada" data-seccion="B · Para qué sirve después">
   <span class="etiqueta">B · Para qué sirve después</span>
   <h2 class="ancho">Lo van a volver a ver en <span class="hl">Machine Learning</span></h2>
   <p>Programas que <strong>aprenden de los datos</strong> para predecir (si un cliente se va, cuánto va a gastar, si un crédito se paga). Funcionan como un <strong>motor</strong>:</p>
@@ -350,11 +419,7 @@
       <g class="caja-ml"><rect x="760" y="165" width="190" height="70" rx="14"/><text x="855" y="195" class="t1b">¿Acertó?</text><text x="855" y="218" class="t2">se compara con lo real</text></g>
     </svg>
   </div>
-  <div class="fila tres">
-    <div class="tarjeta"><div class="num">1</div><h3>Probar el motor</h3><p>Con datos inventados sabemos qué patrón pusimos (los de Online gastan 30% más): el motor lo tiene que encontrar.</p></div>
-    <div class="tarjeta"><div class="num">2</div><h3>Partir al azar</h3><p>Entrenamiento y prueba se separan <strong>al azar, con semilla</strong>, y a veces <strong>estratificado</strong>: el muestreo de hoy.</p></div>
-    <div class="tarjeta"><div class="num">3</div><h3>Datos sintéticos</h3><p>Si los datos son pocos o privados, se fabrican datos parecidos para entrenar.</p></div>
-  </div>
+  <p class="grande">Lo de hoy aparece en todo el motor: <span class="marcado">datos inventados</span> para probarlo, la <span class="marcado">partición al azar con semilla</span> (y a veces estratificada) y <span class="marcado">datos sintéticos</span> cuando los reales son pocos o privados.</p>
 </section>
 
 <!-- 8 · Gemelos digitales -->
@@ -378,15 +443,17 @@
   <span class="etiqueta salvia">Lo último en simulación</span>
   <h2 class="ancho">Stanford: <span class="hl">copias de 1.000 personas</span></h2>
   <div class="fila dos-uno">
-    <div style="display:grid; gap:.8rem">
-      <div class="fila tres pasos">
-        <div class="tarjeta"><div class="num">1</div><h3>Entrevista</h3><p><strong>1.052 personas</strong> reales, dos horas cada una, con un entrevistador de IA.</p></div>
-        <div class="tarjeta"><div class="num">2</div><h3>Copia</h3><p>Con cada entrevista se armó un agente de IA que responde <strong>como esa persona</strong>.</p></div>
-        <div class="tarjeta"><div class="num">3</div><h3>Prueba</h3><p>Personas y copias contestaron <strong>la misma encuesta</strong> social.</p></div>
+    <div style="display:grid; gap:2.2rem">
+      <div class="ruta ruta3">
+        <svg class="linea" preserveAspectRatio="none" viewBox="0 0 100 4"><line x1="2" y1="2" x2="80" y2="2" pathLength="1"/></svg>
+        <div class="nodo" style="--d:0"><div class="circ">1</div><h3>Entrevista</h3><p><strong>1.052 personas</strong> reales, dos horas cada una.</p></div>
+        <div class="nodo" style="--d:1"><div class="circ">2</div><h3>Copia</h3><p>Una IA que responde <strong>como esa persona</strong>.</p></div>
+        <div class="nodo" style="--d:2"><div class="circ">3</div><h3>Prueba</h3><p>Personas y copias contestan <strong>la misma encuesta</strong>.</p></div>
       </div>
-      <div class="fila dos">
-        <div class="tarjeta"><p><strong>Antes, 2023 · Smallville:</strong> un pueblo virtual con 25 personajes de IA. A una le dijeron que organizara una fiesta de San Valentín; los demás se pasaron la invitación solos y fueron.</p></div>
-        <div class="tarjeta"><p><strong>Ahora, 2026 · Simile:</strong> el mismo equipo fundó una empresa que vende "consumidores simulados" a grandes marcas para estudios de mercado.</p></div>
+      <div class="linea-tiempo">
+        <div><span class="anio">2023</span><p><strong>Smallville:</strong> un pueblo con 25 personajes de IA que organizaron solos una fiesta de San Valentín.</p></div>
+        <div class="ahora"><span class="anio">2024</span><p><strong>Copias de 1.000 personas</strong> reales.</p></div>
+        <div><span class="anio">2026</span><p><strong>Simile:</strong> vende "consumidores simulados" a grandes marcas.</p></div>
       </div>
     </div>
     <div class="tarjeta cifra naranja"><span class="rotulo">Las copias acertaron</span><b>85%</b>
@@ -476,11 +543,12 @@
 <section class="slide" data-seccion="D · Simular para decidir">
   <span class="etiqueta">D · Simular para decidir</span>
   <h2 class="ancho">Monte Carlo: <span class="hl">probar mil futuros</span> antes de elegir</h2>
-  <div class="fila cuatro">
-    <div class="tarjeta"><div class="num">1</div><h3>Supuestos</h3><p>Lo que sabemos y lo que no: precios, costos, una demanda que cambia.</p></div>
-    <div class="tarjeta"><div class="num">2</div><h3>Simular</h3><p>Miles de días o de futuros posibles.</p></div>
-    <div class="tarjeta"><div class="num">3</div><h3>Calcular</h3><p>El resultado de cada decisión en cada futuro.</p></div>
-    <div class="tarjeta"><div class="num">4</div><h3>Elegir</h3><p>La decisión que mejor funciona en todos.</p></div>
+  <div class="ruta">
+    <svg class="linea" preserveAspectRatio="none" viewBox="0 0 100 4"><line x1="2" y1="2" x2="88" y2="2" pathLength="1"/></svg>
+    <div class="nodo" style="--d:0"><div class="circ">1</div><h3>Supuestos</h3><p>Lo que sabemos y lo que no.</p><p class="ej">Precio $500, costo $200, piden unas 120 por día.</p></div>
+    <div class="nodo" style="--d:1"><div class="circ">2</div><h3>Simular</h3><p>Miles de días o de futuros posibles.</p><p class="ej">1.000 días de demanda.</p></div>
+    <div class="nodo" style="--d:2"><div class="circ">3</div><h3>Calcular</h3><p>El resultado de cada decisión en cada futuro.</p><p class="ej">La ganancia de hornear 90, 91… 160.</p></div>
+    <div class="nodo" style="--d:3"><div class="circ">4</div><h3>Elegir</h3><p>La decisión que mejor funciona en todos.</p><p class="ej">La cantidad que más gana en promedio.</p></div>
   </div>
   <p class="pista">Se llama así por el casino de Montecarlo: todo se basa en el azar.</p>
 </section>
@@ -518,7 +586,7 @@
     <div style="display:grid; gap:1rem">
       <div class="control">Costo por medialuna <input type="range" id="r-costo" min="100" max="450" step="50" value="200"></div>
       <div class="lectura" id="l-costo"></div>
-      <div class="tarjeta naranja"><p id="p-costo"></p></div>
+      <div class="tarjeta naranja" id="p-costo"></div>
     </div>
   </div>
 </section>
@@ -555,27 +623,28 @@
 <!-- 20 · Para llevarse -->
 <section class="slide" data-seccion="Para llevarse">
   <span class="etiqueta">Para llevarse</span>
-  <h2>Cuatro ideas</h2>
-  <div class="fila cuatro">
-    <div class="tarjeta"><div class="num">1</div><h3>Fijá la semilla</h3><p>Azar, pero repetible: <code>default_rng(42)</code> o <code>random_state=42</code>.</p></div>
-    <div class="tarjeta"><div class="num">2</div><h3>Más datos ayudan, cada vez menos</h3><p>Unas 1.000 personas bien elegidas alcanzan para un país.</p></div>
-    <div class="tarjeta"><div class="num">3</div><h3>Importa a quién le preguntás</h3><p>Al azar o estratificado. El sesgo no se arregla con más datos.</p></div>
-    <div class="tarjeta"><div class="num">4</div><h3>Simulá antes de decidir</h3><p>Miles de futuros muestran el riesgo que un solo número esconde.</p></div>
+  <div class="ideas">
+    <p class="idea paso"><span class="n">1</span><span>Fijá la <span class="hl">semilla</span>: azar, pero repetible.</span></p>
+    <p class="idea paso"><span class="n">2</span><span>Más datos ayudan, <span class="hl">cada vez menos</span>.</span></p>
+    <p class="idea paso"><span class="n">3</span><span>Importa <span class="hl">a quién</span> le preguntás: el sesgo no se arregla con más datos.</span></p>
+    <p class="idea paso"><span class="n">4</span><span>Simulá miles de futuros: muestran el <span class="hl">riesgo</span> que un número esconde.</span></p>
   </div>
-  <p class="grande">Entonces, la encuesta de 1.000 personas: <span class="marcado">depende de a quién le preguntaron</span>.</p>
+  <p class="grande paso">¿Le creerías a una encuesta de 1.000 personas? <span class="marcado">Depende de a quién le preguntaron.</span></p>
 </section>
 
 <!-- 21 · A Colab -->
 <section class="slide" data-seccion="Ahora, a Colab">
   <span class="etiqueta salvia">Ahora, a Colab</span>
   <h2 class="ancho">Notebook 19: <span class="hl">tres ejercicios</span></h2>
-  <div class="fila tres">
-    <div class="tarjeta"><div class="num">1</div><h3>Dos dados</h3><p>¿En qué porcentaje de 100.000 tiradas suman 7? Comparalo con 6/36.</p></div>
-    <div class="tarjeta"><div class="num">2</div><h3>Medialunas más caras</h3><p>Si hacer cada una cuesta $350, ¿cuántas conviene hornear? ¿Por qué?</p></div>
-    <div class="tarjeta"><div class="num">3</div><h3>Un horno más incierto</h3><p>Si los flujos varían un 30%, ¿qué pasa con la probabilidad de perder?</p></div>
+  <div class="ideas chicas">
+    <p class="idea"><span class="n">1</span><span><strong>Dos dados:</strong> ¿en qué porcentaje de 100.000 tiradas suman 7? Comparalo con 6/36.</span></p>
+    <p class="idea"><span class="n">2</span><span><strong>Medialunas más caras:</strong> si cada una cuesta $350, ¿cuántas conviene hornear? ¿Por qué?</span></p>
+    <p class="idea"><span class="n">3</span><span><strong>Un horno más incierto:</strong> si los flujos varían un 30%, ¿qué pasa con la chance de perder?</span></p>
   </div>
   <div class="tarjeta salvia"><p><strong>En el TP:</strong> digan siempre de dónde salieron los datos (¿toda la población o una muestra? ¿quién respondió?). Y si el análisis depende de supuestos inciertos, simulen escenarios en vez de mostrar un solo número.</p></div>
 </section>
+
+</div>
 
 <footer class="pie">
   <span id="pie-seccion"></span>
@@ -650,14 +719,36 @@ function crearDado(contenedor, tamano) {
     PUNTOS[n].forEach(p => { const i = document.createElement('i'); i.style.gridArea = `${Math.ceil(p / 3)} / ${(p - 1) % 3 + 1}`; cara.appendChild(i); });
     cubo.appendChild(cara);
   }
-  let vueltas = 0;
-  return {
-    tirar(cara) {   // vueltas completas para que se vea rodar, y termina mostrando la cara pedida
-      vueltas += 2 + Math.floor(Math.random() * 2);
+  let rx = 0, ry = 0;
+  const aplicar = () => { cubo.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`; };
+  const dado = {
+    tocado: false,
+    tirar(cara) {   // da varias vueltas completas y termina mostrando la cara pedida
       const [ax, ay] = MOSTRAR_CARA[cara];
-      cubo.style.transform = `rotateX(${ax + 360 * vueltas}deg) rotateY(${ay + 360 * (vueltas + 1)}deg)`;
+      rx = ax + 360 * (Math.ceil((rx - ax) / 360) + 2);
+      ry = ay + 360 * (Math.ceil((ry - ay) / 360) + 2 + Math.floor(Math.random() * 2));
+      aplicar();
     }
   };
+  // Arrastrar con el mouse lo gira; un clic sin arrastrar lo tira
+  const escena = contenedor.querySelector('.dado3d-escena');
+  let agarrado = false, movido = false, x0 = 0, y0 = 0;
+  escena.addEventListener('pointerdown', e => {
+    agarrado = true; movido = false; x0 = e.clientX; y0 = e.clientY; dado.tocado = true;
+    cubo.style.transition = 'none'; escena.setPointerCapture(e.pointerId);
+  });
+  escena.addEventListener('pointermove', e => {
+    if (!agarrado) return;
+    const dx = e.clientX - x0, dy = e.clientY - y0;
+    if (Math.abs(dx) + Math.abs(dy) > 3) movido = true;
+    ry += dx * 0.7; rx -= dy * 0.7; x0 = e.clientX; y0 = e.clientY;
+    aplicar();
+  });
+  escena.addEventListener('pointerup', () => {
+    agarrado = false; cubo.style.transition = '';
+    if (!movido) dado.tirar(1 + Math.floor(Math.random() * 6));
+  });
+  return dado;
 }
 
 /* ══ A · Dados ══ */
@@ -838,6 +929,7 @@ function demanda() {
 function medialunas() {
   const costo = +$('r-costo').value, ops = OPCIONES, g = ops.map(h => gananciaPromedio(h, costo));
   const iMejor = g.indexOf(Math.max(...g)), mejor = ops[iMejor];
+  const dif = mejor - 120, difTexto = dif > 0 ? `${dif} más que el promedio de 120` : dif < 0 ? `${-dif} menos que el promedio de 120` : 'justo el promedio';
   const W = 720, H = 340, m = { l: 82, r: 18, t: 18, b: 50 };
   const s = lienzo('g-medialunas', W, H), x = escala(ops[0], ops[ops.length - 1], m.l, W - m.r);
   const lo = Math.floor(Math.min(...g) / 10000) * 10000, hi = Math.ceil(Math.max(...g) / 5000) * 5000 + 5000, y = escala(lo, hi, H - m.b, m.t);
@@ -846,6 +938,11 @@ function medialunas() {
             xlab: 'Medialunas que se hornean por día', ylab: 'Ganancia promedio por día ($)' });
   el('path', { d: ops.map((h, i) => (i ? 'L' : 'M') + x(h).toFixed(1) + ' ' + y(g[i]).toFixed(1)).join(' '),
                fill: 'none', stroke: 'var(--linea)', 'stroke-width': 2.5, pathLength: 1, class: 'trazo' }, s);
+  // El promedio de demanda, para comparar con lo que conviene hornear
+  const promedioDerecha = mejor < 120;
+  el('line', { x1: x(120), x2: x(120), y1: m.t, y2: H - m.b, stroke: 'var(--gris-osc)', 'stroke-width': 2, 'stroke-dasharray': '3 4' }, s);
+  el('text', { x: x(120) + (promedioDerecha ? 8 : -8), y: m.t + 14, 'text-anchor': promedioDerecha ? 'start' : 'end', style: 'fill:var(--tenue);font-weight:600' }, s).textContent = 'promedio de demanda: 120';
+  el('text', { x: x(mejor) + (promedioDerecha ? -8 : 8), y: m.t + 14, 'text-anchor': promedioDerecha ? 'end' : 'start', style: 'fill:var(--texto);font-weight:700' }, s).textContent = 'conviene: ' + mejor;
   el('line', { x1: x(mejor), x2: x(mejor), y1: m.t, y2: H - m.b, stroke: 'var(--naranja)', 'stroke-width': 2.5, 'stroke-dasharray': '7 5' }, s);
   el('circle', { cx: x(mejor), cy: y(g[iMejor]), r: 8, fill: 'var(--naranja)', stroke: 'var(--linea)', 'stroke-width': 1.5 }, s);
   ops.forEach((h, i) => {   // zonas invisibles para el tooltip
@@ -853,12 +950,15 @@ function medialunas() {
     conTip(r, `Hornear <b>${h}</b>: ganancia promedio de ${miles(g[i])} por día`);
   });
   $('t-mejor').textContent = mejor;
-  $('l-costo').innerHTML = `Con un costo de <strong>${miles(costo)}</strong>, conviene hornear <b>${mejor}</b> y se gana, en promedio, <strong>${miles(g[iMejor])}</strong> por día.`;
+  $('l-costo').innerHTML = `Con un costo de <strong>${miles(costo)}</strong>, conviene hornear <b>${mejor}</b> (${difTexto}) y se gana, en promedio, <strong>${miles(g[iMejor])}</strong> por día.`;
   const falta = PRECIO - costo, sobra = costo;
-  $('p-costo').innerHTML = `Cada medialuna de más es <strong>una apuesta</strong>: si se vende, ganás <strong>${miles(falta)}</strong>; si sobra, perdés <strong>${miles(sobra)}</strong>. `
-    + (falta > sobra ? 'Ante la duda, <span class="marcado">conviene pasarse un poco</span> del promedio.'
-       : falta < sobra ? 'Ahora sobrar es peor: <span class="marcado">conviene quedarse un poco corto</span>.'
-       : 'Los dos errores cuestan lo mismo: conviene hornear cerca del promedio.');
+  const f = D.medialunas.demanda_hist, dias = f.reduce((a, b) => a + b, 0);
+  const cortos120 = Math.round(f.slice(121).reduce((a, b) => a + b, 0) / dias * 100);   // % de días en que 120 no alcanzan
+  $('p-costo').innerHTML = falta > sobra
+    ? `<h3>¿Por qué no justo 120?</h3><p>Si horneás el promedio, <strong>casi la mitad de los días</strong> (${cortos120}%) te quedás sin medialunas. Y quedarte corto cuesta más (<strong>${miles(falta)}</strong> que no ganás) que que te sobre una (<strong>${miles(sobra)}</strong> que tirás). Por eso conviene <span class="marcado">cubrirse con ${dif} de más</span>.</p>`
+    : falta < sobra
+    ? `<h3>¿Por qué menos que 120?</h3><p>Ahora que te sobre una cuesta más (<strong>${miles(sobra)}</strong> que tirás) que quedarte corto (<strong>${miles(falta)}</strong> que no ganás). Conviene <span class="marcado">quedarse ${-dif} por debajo</span> del promedio.</p>`
+    : `<h3>Empate</h3><p>Quedarte corto y que te sobre cuestan lo mismo (<strong>${miles(falta)}</strong>): conviene hornear <span class="marcado">cerca del promedio</span>.</p>`;
 }
 $('r-costo').addEventListener('input', medialunas);
 
@@ -905,7 +1005,9 @@ const alEntrar = { 'g-dados': tirarDados, segmentos, campo, 'g-acum': acumulado,
                    'g-conv': sesgo, 'g-demanda': demanda, 'g-medialunas': medialunas, flujos, 'g-van': van };
 let actual = 0;
 function ir(i) {
+  const adelante = i > actual;
   actual = Math.max(0, Math.min(slides.length - 1, i));
+  slides[actual].querySelectorAll('.paso').forEach(p => p.classList.toggle('visto', !adelante));   // al volver, todo a la vista
   slides.forEach((s, k) => s.classList.toggle('activa', k === actual));
   $('barra').style.width = ((actual + 1) / slides.length * 100) + '%';
   $('contador').textContent = `${actual + 1} / ${slides.length}`;
@@ -913,11 +1015,15 @@ function ir(i) {
   for (const id in alEntrar) if (slides[actual].querySelector('#' + id)) alEntrar[id]();
   history.replaceState(null, '', '#' + (actual + 1));
 }
-$('sig').addEventListener('click', () => ir(actual + 1));
+function avanzar() {
+  const oculto = slides[actual].querySelector('.paso:not(.visto)');
+  if (oculto) oculto.classList.add('visto'); else ir(actual + 1);
+}
+$('sig').addEventListener('click', avanzar);
 $('ant').addEventListener('click', () => ir(actual - 1));
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;
-  if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); ir(actual + 1); }
+  if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); avanzar(); }
   if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); ir(actual - 1); }
   if (e.key === 'f') document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
 });
@@ -936,10 +1042,23 @@ document.querySelectorAll('.opcion').forEach(b => b.addEventListener('click', ()
 
 const dadoSlide = crearDado($('dado-slide'), 84);
 const dadoPortada = crearDado($('dado-portada'), 190);
-const rodarPortada = () => { if (slides[actual].classList.contains('portada')) dadoPortada.tirar(1 + Math.floor(Math.random() * 6)); };
-document.querySelector('.dado-portada').addEventListener('click', rodarPortada);
+const rodarPortada = () => {   // rueda solo hasta que alguien lo agarra
+  if (slides[actual].classList.contains('portada') && !dadoPortada.tocado) dadoPortada.tirar(1 + Math.floor(Math.random() * 6));
+};
 setTimeout(rodarPortada, 400);
 setInterval(rodarPortada, 2600);
+// Escala del escenario y puntos del censo contra la muestra
+function ajustarEscala() {
+  const e = innerWidth <= 900 ? 1 : Math.min(innerWidth / 1600, innerHeight / 900);
+  document.documentElement.style.setProperty('--escala', e);
+}
+addEventListener('resize', ajustarEscala); ajustarEscala();
+if (location.search.includes('todo')) document.body.classList.add('ver-todo');
+document.querySelectorAll('.campo-chico').forEach((c, k) => {
+  const azar = generador(31 + k), total = 240, todos = c.dataset.marcados === 'todos', elegidos = new Set();
+  while (!todos && elegidos.size < +c.dataset.marcados) elegidos.add(Math.floor(azar() * total));
+  for (let i = 0; i < total; i++) { const p = document.createElement('i'); if (todos) p.className = 'on'; else if (elegidos.has(i)) p.className = 'muestra'; c.appendChild(p); }
+});
 cifras(); leyendaFormas();
 ir((parseInt(location.hash.slice(1)) || 1) - 1);
 </script>
