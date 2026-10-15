@@ -1010,7 +1010,7 @@ function ir(i) {
   $('contador').textContent = `${actual + 1} / ${slides.length}`;
   $('pie-seccion').textContent = slides[actual].dataset.seccion || '';
   for (const id in alEntrar) if (slides[actual].querySelector('#' + id)) alEntrar[id]();
-  history.replaceState(null, '', '#' + (actual + 1));
+  try { history.replaceState(null, '', '#' + (actual + 1)); } catch (e) { /* en algunos visores no se puede tocar la dirección */ }
 }
 function avanzar() { ir(actual + 1); }
 $('sig').addEventListener('click', avanzar);
@@ -1019,7 +1019,7 @@ document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;
   if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); avanzar(); }
   if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); ir(actual - 1); }
-  if (e.key === 'f') document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  if (e.key === 'f') (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()).catch(() => {});
 });
 document.querySelectorAll('.opcion').forEach(b => b.addEventListener('click', () => b.classList.toggle('elegida')));
 
