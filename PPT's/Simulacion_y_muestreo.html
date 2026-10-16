@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simular para decidir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:wdth,wght@62.5..100,100..900&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+<style>
+  /* ══ Paleta y tipografía: la misma estética de la presentación de data centers ══ */
+  :root {
+    --fondo: #EFEEEA;
+    --superficie: #FFFFFF;
+    --linea: #1A1A1A;
+    --texto: #1A1A1A;
+    --titulo: #171C2E;
+    --tenue: #57544E;
+    --borde: rgba(26, 26, 26, 0.16);
+    --naranja: #FF7A3D;
+    --resaltador: rgba(255, 122, 61, 0.45);
+    --salvia: #A9CDB1;
+    --verde: #2F7D5B;
+    --gris: #D6D2C8;
+    --gris-osc: #A29E94;
+    --serif: 'Noto Serif Display', Georgia, serif;
+    --sans: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: var(--sans); color: var(--texto); background-color: var(--fondo);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.33 0 0 0 0 0.3 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Puntitos que flotan de fondo */
+  .puntitos { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .puntitos i { position: absolute; border-radius: 50%; display: block; animation: flotar 20s ease-in-out infinite alternate; }
+  @keyframes flotar {
+    0%   { transform: translate(0, 0); }
+    50%  { transform: translate(var(--dx), calc(var(--dy) * -0.5)); }
+    100% { transform: translate(calc(var(--dx) * -0.6), var(--dy)); }
+  }
+
+  /* ══ Diapositivas ══ */
+  .slide {
+    position: absolute; inset: 0; z-index: 1;
+    padding: 63px 112px 99px; display: flex; flex-direction: column; justify-content: center; gap: 1.2rem;
+    opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility .45s;
+    overflow-y: auto;
+  }
+  .slide.activa { opacity: 1; visibility: visible; }
+  .slide.activa > * { animation: subir .6s ease both; }
+  .slide.activa > *:nth-child(2) { animation-delay: .08s; }
+  .slide.activa > *:nth-child(3) { animation-delay: .16s; }
+  .slide.activa > *:nth-child(4) { animation-delay: .24s; }
+  .slide.activa > *:nth-child(5) { animation-delay: .32s; }
+  @keyframes subir { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+  h1, h2 { font-family: var(--serif); font-stretch: 68%; font-weight: 800; color: var(--titulo); letter-spacing: -0.01em; line-height: 1.02; }
+  h1 { font-size: clamp(2.8rem, 118.4px, 6.4rem); }
+  h2 { font-size: clamp(1.9rem, 70.4px, 3.5rem); max-width: 22ch; }
+  h2.ancho { max-width: none; }
+  .hl { background: linear-gradient(transparent 58%, var(--resaltador) 58%, var(--resaltador) 92%, transparent 92%); padding: 0 0.06em; }
+  p { color: var(--tenue); font-size: clamp(0.95rem, 21.6px, 1.2rem); line-height: 1.55; max-width: 60ch; }
+  p.grande { font-size: clamp(1.15rem, 32px, 1.6rem); color: var(--texto); }
+  strong { color: var(--texto); font-weight: 600; }
+  .marcado { background: var(--resaltador); padding: 0 0.15em; border-radius: 3px; color: var(--texto); }
+
+  .etiqueta {
+    display: inline-block; align-self: flex-start; width: fit-content;
+    background: var(--naranja); color: var(--texto);
+    font-weight: 700; font-size: clamp(0.72rem, 15.2px, 0.9rem); letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0.38em 1.05em; border-radius: 999px;
+  }
+  .etiqueta.salvia { background: var(--salvia); }
+
+  /* Grillas */
+  .fila { display: grid; gap: 1.4rem; align-items: center; }
+  .dos { grid-template-columns: 1fr 1fr; }
+  .dos-uno { grid-template-columns: 1.6fr 1fr; }
+  .uno-dos { grid-template-columns: 1fr 1.6fr; }
+  .tres { grid-template-columns: repeat(3, 1fr); align-items: stretch; }
+  .cuatro { grid-template-columns: repeat(4, 1fr); align-items: stretch; }
+
+  /* Tarjetas y cifras */
+  .tarjeta { background: var(--superficie); border: 1.5px solid var(--linea); border-radius: 16px; padding: 1.2rem 1.3rem; }
+  .tarjeta h3 { font-size: clamp(1rem, 24px, 1.25rem); margin-bottom: .35rem; }
+  .tarjeta p { font-size: clamp(0.85rem, 17.6px, 1rem); }
+  .tarjeta.naranja { border-top: 7px solid var(--naranja); }
+  .tarjeta.verde { border-top: 7px solid var(--verde); }
+  .tarjeta.gris { border-top: 7px solid var(--gris-osc); }
+  .tarjeta.salvia { border-top: 7px solid var(--salvia); }
+  .cifra b { display: block; font-family: var(--serif); font-stretch: 75%; font-weight: 800; color: var(--titulo);
+             font-size: clamp(2.2rem, 83.2px, 4.4rem); line-height: 1; margin: .2rem 0 .4rem; }
+  .cifra b.chica { font-size: clamp(1.6rem, 51.2px, 2.6rem); }
+  .cifra .rotulo { font-size: .85rem; font-weight: 600; color: var(--tenue); text-transform: uppercase; letter-spacing: .05em; }
+  .cifra .nota { border-top: 1.5px solid var(--borde); margin-top: .6rem; padding-top: .6rem; }
+  .num { display: inline-grid; place-items: center; width: 2.3rem; height: 2.3rem; border-radius: 50%;
+         background: var(--linea); color: #fff; font-weight: 700; margin-bottom: .6rem; }
+
+  /* Píldoras clickeables (encuestas en el chat) */
+  .opciones { display: flex; flex-wrap: wrap; gap: .7rem; }
+  .opcion { font-family: var(--sans); font-size: clamp(.95rem, 20.8px, 1.15rem); font-weight: 600; cursor: pointer;
+            background: #fff; border: 1.5px solid var(--linea); border-radius: 999px; padding: .55em 1.3em; color: var(--texto); transition: background .2s; }
+  .opcion:hover, .opcion.elegida { background: var(--naranja); }
+  .pista { font-size: .9rem; color: var(--tenue); font-style: italic; }
+
+  /* Ruta de la clase */
+  .ruta { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem; }
+  .ruta svg.linea { position: absolute; left: 0; top: 1.6rem; width: 100%; height: 4px; overflow: visible; }
+  .ruta svg.linea line { stroke: var(--linea); stroke-width: 3; stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .slide.activa .ruta svg.linea line { animation: trazar 1.4s .3s ease forwards; }
+  @keyframes trazar { to { stroke-dashoffset: 0; } }
+  .nodo { position: relative; text-align: left; }
+  .nodo .circ { width: 3.2rem; height: 3.2rem; border-radius: 50%; background: var(--naranja); border: 2px solid var(--linea);
+                display: grid; place-items: center; font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: 1.5rem; margin-bottom: .8rem; }
+  .slide.activa .nodo .circ { animation: rebote .5s calc(.4s + var(--d) * .25s) both cubic-bezier(.3,1.6,.6,1); }
+  @keyframes rebote { from { transform: scale(0); } to { transform: scale(1); } }
+  .nodo h3 { font-size: clamp(1rem, 24px, 1.3rem); }
+  .nodo p { font-size: clamp(.85rem, 17.6px, 1rem); }
+
+  /* Gráficos */
+  .grafico-caja { background: var(--superficie); border: 1.5px solid var(--linea); border-radius: 16px; padding: .8rem 1rem .5rem; }
+  svg.grafico { width: 100%; height: auto; max-height: 450px; display: block; font-family: var(--sans); }
+  svg.grafico text { fill: var(--tenue); font-size: 13px; }
+  svg.grafico .eje-titulo { fill: var(--texto); font-weight: 600; font-size: 13.5px; }
+  svg.grafico .grilla { stroke: rgba(26,26,26,.1); }
+  svg.grafico .base { stroke: var(--linea); stroke-width: 1.5; }
+  .crece { transform-box: fill-box; transform-origin: bottom; animation: crecer .8s ease both; }
+  @keyframes crecer { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  .trazo { stroke-dasharray: 1; stroke-dashoffset: 1; animation: trazar 1.6s ease forwards; }
+  .leyenda { display: flex; flex-wrap: wrap; gap: .5rem 1.1rem; font-size: .85rem; color: var(--tenue); margin: .2rem 0 .4rem; }
+  .leyenda span::before { content: ''; display: inline-block; width: .85em; height: .85em; border-radius: 3px; margin-right: .35em; vertical-align: -1px; background: var(--c); border: 1px solid var(--linea); }
+  .leyenda button { font: inherit; cursor: pointer; background: #fff; border: 1.5px solid var(--linea); border-radius: 999px; padding: .2em .8em; }
+  .leyenda button.apagado { opacity: .35; }
+  .leyenda button::before { content: ''; display: inline-block; width: .8em; height: .8em; border-radius: 50%; margin-right: .4em; background: var(--c); vertical-align: -1px; }
+
+  /* Controles (dados, encuesta, medialunas) */
+  .control { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem; font-weight: 600; }
+  .control input[type=number] { width: 5.5rem; font: inherit; padding: .35em .6em; border: 1.5px solid var(--linea); border-radius: 10px; }
+  .control input[type=range] { flex: 1; min-width: 160px; accent-color: var(--naranja); }
+  .boton { font: inherit; font-weight: 700; cursor: pointer; background: var(--naranja); border: 1.5px solid var(--linea); border-radius: 999px; padding: .5em 1.3em; }
+  .boton:hover { background: #ff935f; }
+  .lectura { font-size: clamp(1rem, 22.4px, 1.2rem); color: var(--texto); }
+  .lectura b { font-family: var(--serif); font-stretch: 75%; font-size: 1.5em; }
+  .dados { font-size: clamp(1.6rem, 44.8px, 2.4rem); letter-spacing: .08em; color: var(--texto); min-height: 1.3em; }
+
+  /* Segmentos */
+  .seg { display: grid; grid-template-columns: 6.5rem 1fr; gap: .4rem .8rem; align-items: center; margin-bottom: .9rem; }
+  .seg .nombre { font-weight: 700; }
+  .barrita { height: 1.5rem; border: 1.5px solid var(--linea); border-radius: 6px; background: var(--salvia); width: 0; transition: width 1s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: .4rem; font-size: .8rem; font-weight: 600; white-space: nowrap; }
+  .barrita.gasto { background: var(--naranja); }
+  .seg small { grid-column: 2; color: var(--tenue); font-size: .8rem; margin-top: -.3rem; }
+
+  /* Puntos de la muestra */
+  .campo { display: grid; grid-template-columns: repeat(25, 1fr); gap: 5px; }
+  .campo i { aspect-ratio: 1; border-radius: 50%; background: var(--gris); transition: background .3s, transform .3s; }
+  .campo i.on { background: var(--naranja); transform: scale(1.25); box-shadow: 0 0 0 1.5px var(--linea); }
+  .mini { width: 100%; height: auto; }
+
+  /* Flujos del horno */
+  .flujos { display: grid; grid-template-columns: repeat(6, 1fr); gap: .5rem; height: 15rem; }
+  .flujo { display: grid; grid-template-rows: 1fr 1.6fr auto; justify-items: center; height: 100%; font-size: .85rem; }
+  .flujo .arriba, .flujo .abajo { width: 100%; display: flex; flex-direction: column; align-items: center; gap: .25rem; }
+  .flujo .arriba { justify-content: flex-end; border-bottom: 1.5px solid var(--linea); }
+  .flujo .abajo { justify-content: flex-start; padding-top: 0; }
+  .flujo .b { width: 70%; border: 1.5px solid var(--linea); background: var(--salvia); border-radius: 6px 6px 0 0; }
+  .flujo.neg .b { background: var(--naranja); border-radius: 0 0 6px 6px; transform-origin: top; }
+  .flujo b { font-weight: 700; color: var(--texto); }
+  .flujo span { color: var(--tenue); margin-top: .3rem; }
+
+  .cita { border-left: 6px solid var(--naranja); }
+
+  /* Fondo: crema liso y, detrás de todo, una máquina de Galton tenue */
+  body { background-image: none; }
+  #fondo { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+  /* Escenario fijo que se escala entero a la ventana, como una diapositiva */
+  .escenario { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px;
+               transform: translate(-50%, -50%) scale(var(--escala, 1)); }
+
+  /* Lo que aparece de a un clic */
+  .paso { opacity: 0; transform: translateY(14px); transition: opacity .45s ease, transform .45s ease; }
+  .paso.visto, .ver-todo .paso { opacity: 1; transform: none; }
+  .slide.activa > .paso { animation: none; }
+
+  /* ¿Por qué simulamos? */
+  .razones { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, .9fr); gap: 2.6rem; margin: 1.4rem 0 .6rem; }
+  .razon b { display: inline-block; font-family: var(--serif); font-stretch: 68%; font-weight: 800; font-size: 72px; line-height: 1;
+             color: var(--titulo); margin-bottom: 1.1rem; padding: 0 .08em; transform: rotate(-2deg);
+             background: linear-gradient(transparent 55%, var(--resaltador) 55%, var(--resaltador) 92%, transparent 92%); }
+  .razon:nth-child(even) b { transform: rotate(1.5deg); background: linear-gradient(transparent 55%, rgba(169, 205, 177, .9) 55%, rgba(169, 205, 177, .9) 92%, transparent 92%); }
+  .razon span { display: block; font-size: 21px; line-height: 1.45; color: var(--tenue); border-top: 2px solid var(--linea); padding-top: .8rem; }
+  .remate { font-size: 24px; color: var(--texto); max-width: 70ch; }
+
+  /* Censo contra muestra */
+  .versus { display: grid; grid-template-columns: 1fr auto 1fr; gap: 3rem; align-items: start; margin-top: .6rem; }
+  .lado-v b { display: block; font-family: var(--serif); font-stretch: 72%; font-weight: 800; font-size: 60px; color: var(--titulo); line-height: 1; margin: .2rem 0 .6rem; }
+  .lado-v .rotulo { font-size: 15px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--tenue); }
+  .lado-v p { font-size: 20px; }
+  .vs { align-self: center; font-family: var(--serif); font-stretch: 72%; font-weight: 800; font-size: 54px; color: var(--naranja); }
+  .campo-chico { display: grid; grid-template-columns: repeat(24, 1fr); gap: 5px; margin-bottom: 1.2rem; }
+  .campo-chico i { aspect-ratio: 1; border-radius: 50%; background: var(--gris); }
+  .campo-chico i.on { background: var(--linea); }
+  .campo-chico i.muestra { background: var(--naranja); box-shadow: 0 0 0 1.5px var(--linea); transform: scale(1.25); }
+
+  /* Slide centrada */
+  .slide.centrada { align-items: center; text-align: center; }
+  .slide.centrada .etiqueta { align-self: center; }
+  .slide.centrada p { margin: 0 auto; max-width: 64ch; }
+  .slide.centrada .grafico-caja { width: 100%; }
+
+  /* Ejemplos debajo de cada paso de una ruta */
+  .nodo .ej { margin-top: .6rem; font-size: 17px; color: var(--texto); border-left: 4px solid var(--naranja); padding-left: .6rem; }
+  .ruta3 { grid-template-columns: repeat(3, 1fr); }
+
+  /* Monte Carlo contra Machine Learning */
+  .comparacion { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; margin-top: .8rem; }
+  .comp { background: var(--superficie); border: 1.5px solid var(--linea); border-top: 7px solid var(--naranja); border-radius: 16px; padding: 1rem 1.3rem; }
+  .comp.ml { border-top-color: var(--salvia); }
+  .comp .rotulo-c { font-size: 14px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); }
+  .comp .sentido { font-family: var(--serif); font-stretch: 72%; font-weight: 800; font-size: 42px; color: var(--titulo); margin: .2rem 0 .4rem; }
+  .comp .sentido span { color: var(--naranja); }
+  .comp.ml .sentido span { color: var(--verde); }
+  .comp p { font-size: 18px; max-width: none; }
+
+  /* Línea de tiempo */
+  .linea-tiempo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; border-top: 3px solid var(--linea); padding-top: 1.1rem; position: relative; }
+  .linea-tiempo > div { position: relative; }
+  .linea-tiempo > div::before { content: ''; position: absolute; top: calc(-1.1rem - 10px); left: 0; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 3px solid var(--linea); }
+  .linea-tiempo > div.ahora::before { background: var(--naranja); }
+  .linea-tiempo .anio { font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: 34px; color: var(--titulo); }
+  .linea-tiempo p { font-size: 17px; margin-top: .2rem; }
+
+  /* Frases grandes en lugar de tarjetas */
+  .ideas { display: grid; gap: 1.2rem; margin: .6rem 0; }
+  .idea { display: flex; gap: 1.3rem; align-items: baseline; max-width: none; font-family: var(--serif); font-stretch: 72%; font-weight: 700;
+          font-size: 48px; line-height: 1.12; color: var(--titulo); }
+  .idea .n { flex: none; display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--linea); color: #fff;
+             font-family: var(--sans); font-stretch: 100%; font-size: 20px; font-weight: 700; transform: translateY(-8px); }
+  .ideas.chicas .idea { font-size: 34px; }
+  .ideas.chicas .idea strong { font-weight: 800; }
+  .ideas.chicas .idea .n { width: 38px; height: 38px; font-size: 18px; transform: translateY(-4px); }
+
+  /* El dado se agarra y se gira con el mouse */
+  .dado3d-escena { cursor: grab; touch-action: none; user-select: none; }
+  .dado3d-escena:active { cursor: grabbing; }
+  .espejo { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center; }
+  .espejo .lado { background: #fff; border: 1.5px solid var(--linea); border-radius: 16px; padding: .9rem 1.2rem; display: grid; gap: .2rem; }
+  .espejo .lado.copia { border-style: dashed; background: rgba(169, 205, 177, .35); }
+  .espejo .lado b { font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: clamp(1.4rem, 38.4px, 2rem); color: var(--titulo); }
+  .espejo .lado span { color: var(--tenue); font-size: .95rem; }
+  .espejo .flechas { display: grid; gap: .4rem; text-align: center; font-weight: 600; font-size: .9rem; }
+  .espejo .flechas span { background: var(--naranja); border: 1.5px solid var(--linea); border-radius: 999px; padding: .25em .9em; }
+  .espejo .flechas span + span { background: var(--salvia); }
+  .pasos .tarjeta { padding: .9rem 1rem; }
+  .fuente { font-size: .78rem; color: #8a867d; }
+  svg.flujo-ml { width: 100%; height: auto; max-height: 306px; display: block; font-family: var(--sans); }
+  .caja-ml rect { fill: #fff; stroke: var(--linea); stroke-width: 1.8; }
+  .caja-ml.naranja rect { fill: var(--naranja); }
+  .caja-ml.salvia rect { fill: var(--salvia); }
+  .caja-ml.motor rect { fill: var(--linea); }
+  .caja-ml.motor text { fill: #fff; }
+  .flujo-ml text { text-anchor: middle; fill: var(--texto); }
+  .flujo-ml .t1 { font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: 30px; }
+  .flujo-ml .t1b { font-weight: 700; font-size: 19px; }
+  .flujo-ml .t2 { font-size: 14px; fill: var(--tenue); }
+  .caja-ml.motor .t2 { fill: #ddd; }
+  .caja-ml.naranja .t2, .caja-ml.salvia .t2 { fill: var(--texto); }
+  .flujo-ml .t3 { font-size: 13px; fill: var(--tenue); font-style: italic; }
+  .flujo-ml .fl { fill: none; stroke: var(--linea); stroke-width: 2; marker-end: url(#flecha); }
+  .particion { display: flex; border: 1.5px solid var(--linea); border-radius: 8px; overflow: hidden; margin: .3rem 0 .6rem; font-size: .78rem; font-weight: 600; }
+  .particion span { padding: .35rem .5rem; background: var(--naranja); white-space: nowrap; }
+  .particion span + span { flex: 1; background: var(--salvia); border-left: 1.5px solid var(--linea); }
+
+  /* Tooltip */
+  #tip { position: fixed; z-index: 50; pointer-events: none; background: #fff; border: 1.5px solid var(--linea); border-radius: 10px;
+         box-shadow: 4px 4px 0 var(--naranja); padding: .45rem .7rem; font-size: .85rem; opacity: 0; transition: opacity .15s; max-width: 260px; }
+  #tip.ver { opacity: 1; }
+
+  /* Navegación */
+  .barra { position: fixed; top: 0; left: 0; height: 4px; background: var(--naranja); z-index: 10; transition: width .4s; }
+  .pie { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between;
+         padding: 0 112px 19.8px; font-size: .82rem; color: #8a867d; pointer-events: none; }
+  .pie .controles { display: flex; gap: .5rem; align-items: center; pointer-events: auto; }
+  .pie button { width: 2.4rem; height: 2.4rem; border-radius: 50%; cursor: pointer; background: transparent; border: 1.5px solid var(--linea); font-size: 1rem; color: var(--texto); }
+  .pie button:hover { background: var(--naranja); }
+  .contador { min-width: 3.5rem; text-align: center; color: var(--tenue); }
+
+  /* Portada */
+  .portada { padding-right: max(16px, 704px); }
+  .portada .dado-portada { position: absolute; right: 192px; top: 50%; transform: translateY(-50%); display: grid; justify-items: center; gap: 3.6rem; cursor: pointer; }
+
+  /* Dado 3D: seis caras con sus puntos; rueda con transform y transition */
+  .dado3d-escena { width: var(--t); height: var(--t); perspective: calc(var(--t) * 5); }
+  .dado3d-escena .inclinado { width: 100%; height: 100%; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(28deg); }
+  .dado3d { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 1.4s cubic-bezier(.2, .8, .25, 1); }
+  .dado3d .cara { position: absolute; inset: 0; background: #fff; border: 2px solid var(--linea); border-radius: 18%;
+                  display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 13%;
+                  box-shadow: inset 0 0 calc(var(--t) * .12) rgba(26, 26, 26, .10); }
+  .dado3d .cara i { width: 64%; height: 64%; border-radius: 50%; background: var(--linea); place-self: center; }
+  .dado3d .cara.c1 i { background: var(--naranja); box-shadow: 0 0 0 2px var(--linea); }
+  .fila-dado { display: flex; align-items: center; gap: 1.8rem; padding: .5rem 0 .2rem .3rem; }
+  .fila-dado .dados { font-size: clamp(1.2rem, 30.4px, 1.8rem); letter-spacing: .04em; white-space: nowrap; }
+  .autores { color: var(--texto); font-weight: 600; font-size: clamp(.9rem, 19.2px, 1.05rem); }
+
+  @media (max-width: 900px) {
+    html, body { overflow: auto; }
+    .slide { padding: 56px 16px 90px; justify-content: flex-start; }
+    .escenario { position: static; width: auto; height: auto; transform: none; }
+    .dos, .dos-uno, .uno-dos, .tres, .cuatro, .ruta, .espejo, .razones, .versus, .linea-tiempo, .comparacion { grid-template-columns: 1fr; }
+    .ruta svg.linea { display: none; }
+    .portada { padding-right: 16px; }
+    .portada .dado-portada { display: none; }
+    .pie { padding: 0 16px 12px; }
+    .campo { grid-template-columns: repeat(20, 1fr); }
+  }
+</style>
+</head>
+<body>
+<canvas id="fondo" aria-hidden="true"></canvas>
+<div class="barra" id="barra"></div>
+<div id="tip"></div>
+<div class="escenario" id="escenario">
+
+<!-- 1 · Portada -->
+<section class="slide portada" data-seccion="Clase 19">
+  <span class="etiqueta">Clase 19 · Laboratorio de Métodos Cuantitativos</span>
+  <h1>Simular para <span class="hl">decidir</span></h1>
+  <p class="grande">Datos de mentira, encuestas de verdad y una panadería que no sabe cuánto va a vender.</p>
+  <p class="autores">Juan Ignacio Da Torre · viernes 16 de octubre de 2026 · FCE-UBA</p>
+  <div class="dado-portada"><div id="dado-portada"></div><p class="pista">Simular: tirarlo mil veces y mirar qué pasa</p></div>
+</section>
+
+<!-- 2 · Ruta -->
+<section class="slide" data-seccion="La clase de hoy">
+  <span class="etiqueta">La clase de hoy</span>
+  <h2 class="ancho">Simular: probar <span class="hl">mil veces</span> lo que pasa una sola vez</h2>
+  <div class="ruta">
+    <svg class="linea" preserveAspectRatio="none" viewBox="0 0 100 4"><line x1="2" y1="2" x2="88" y2="2" pathLength="1"/></svg>
+    <div class="nodo" style="--d:0"><div class="circ">A</div><h3>Dados y semilla</h3><p>Azar que se puede repetir.</p></div>
+    <div class="nodo" style="--d:1"><div class="circ">B</div><h3>Clientes de mentira</h3><p>Una base para practicar, y lo último: copias de personas.</p></div>
+    <div class="nodo" style="--d:2"><div class="circ">C</div><h3>Muestreo</h3><p>¿Cuánto le creo a una encuesta?</p></div>
+    <div class="nodo" style="--d:3"><div class="circ">D</div><h3>Simular para decidir</h3><p>Las medialunas y el horno.</p></div>
+  </div>
+  <p class="pista">Todo esto lo corremos en Colab: <strong>notebook 19</strong>.</p>
+</section>
+
+<!-- 3 · Por qué simulamos -->
+<section class="slide" data-seccion="¿Por qué simulamos?">
+  <span class="etiqueta">Para arrancar</span>
+  <h2 class="ancho">Simulamos cuando la realidad es…</h2>
+  <div class="razones">
+    <div class="razon paso"><b>cara</b><span>No podemos construir diez hornos para ver cuál conviene.</span></div>
+    <div class="razon paso"><b>incierta</b><span>En vez de un solo resultado, miramos miles de futuros posibles.</span></div>
+    <div class="razon paso"><b>desconocida</b><span>Si inventamos los datos, sabemos la respuesta y vemos si el análisis la encuentra.</span></div>
+    <div class="razon paso"><b>privada</b><span>Datos parecidos a los reales, sin exponer a ningún cliente ni paciente.</span></div>
+  </div>
+  <p class="remate paso">Como un piloto en un <strong>simulador de vuelo</strong>: situaciones ficticias, pero con <span class="marcado">reglas lógicas</span>. Una simulación vale lo que valen sus supuestos.</p>
+</section>
+
+<!-- 4 · INDEC -->
+<section class="slide" data-seccion="Un ejemplo de acá">
+  <span class="etiqueta salvia">Un ejemplo de acá</span>
+  <h2 class="ancho">El INDEC no puede preguntarle <span class="hl">a todos</span> cada trimestre</h2>
+  <div class="versus">
+    <div class="lado-v"><div class="campo-chico" data-marcados="todos"></div><span class="rotulo">Censo</span><b>46 millones</b><p>Cuenta a todos. Es carísimo: se hace cada unos <strong>diez años</strong> (el último, en 2022).</p></div>
+    <div class="vs">vs.</div>
+    <div class="lado-v"><div class="campo-chico" data-marcados="14"></div><span class="rotulo">EPH</span><b>una muestra</b><p>Una parte de los hogares de <strong>31 ciudades</strong>, <strong>cada trimestre</strong>. De ahí salen la desocupación y la pobreza.</p></div>
+  </div>
+  <p class="grande">¿Cuánto le podemos creer a una muestra así? <span class="marcado">Es la pregunta de hoy.</span></p>
+</section>
+
+<!-- 5 · Dados y semilla -->
+<section class="slide" data-seccion="A · Dados y semilla">
+  <span class="etiqueta">A · Dados y semilla</span>
+  <h2 class="ancho">La computadora tira <span class="hl">10.000 dados</span> en un segundo</h2>
+  <div class="fila uno-dos">
+    <div style="display:grid; gap:1rem">
+      <div class="control">Semilla <input type="number" id="semilla" value="42" min="0" max="100"> <button class="boton" id="tirar">Tirar 10.000 dados</button></div>
+      <div class="fila-dado"><div id="dado-slide"></div><div><div class="rotulo pista">Las primeras diez tiradas:</div><div class="dados" id="dados">·</div></div></div>
+      <div class="tarjeta naranja"><h3>La semilla es el punto de partida</h3><p>La computadora usa una fórmula que arranca de un número: la <strong>semilla</strong>. Misma semilla, mismos dados. Probá tirar dos veces con 42 y después cambiala (de 0 a 100 da lo mismo que en Colab).</p></div>
+      <div class="tarjeta salvia"><h3>¿Es azar de verdad?</h3><p>No del todo: es una fórmula, por eso se llama <strong>pseudoaleatorio</strong>. El azar "de verdad" sale de cosas físicas: Cloudflare filma una pared de lámparas de lava para generar claves.</p></div>
+    </div>
+    <div class="grafico-caja"><div id="g-dados"></div></div>
+  </div>
+</section>
+
+<!-- 6 · Los 100.000 clientes -->
+<section class="slide" data-seccion="B · Clientes de mentira">
+  <span class="etiqueta">B · Clientes de mentira</span>
+  <h2 class="ancho">Nuestra empresa: <span class="hl">100.000 clientes</span> inventados</h2>
+  <div class="fila dos-uno">
+    <div class="tarjeta" id="segmentos"></div>
+    <div class="tarjeta cifra">
+      <span class="rotulo">Gasto promedio verdadero</span>
+      <b id="c-mu">$ —</b>
+      <p class="nota">En la vida real este número <strong>no lo conocemos</strong>: es justamente lo que una encuesta quiere averiguar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · Machine Learning -->
+<section class="slide centrada" data-seccion="B · Para qué sirve después">
+  <span class="etiqueta">B · Para qué sirve después</span>
+  <h2 class="ancho">Lo van a volver a ver en <span class="hl">Machine Learning</span></h2>
+  <p>Programas que <strong>aprenden de los datos</strong> para predecir (si un cliente se va, cuánto va a gastar, si un crédito se paga). Funcionan como un <strong>motor</strong>:</p>
+  <div class="grafico-caja">
+    <svg class="flujo-ml" viewBox="0 0 960 250" role="img" aria-label="Flujo de un modelo de Machine Learning">
+      <defs><marker id="flecha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker></defs>
+      <g class="caja-ml"><rect x="8" y="72" width="170" height="106" rx="14"/><text x="93" y="117" class="t1">Datos</text><text x="93" y="143" class="t2">100.000 clientes</text></g>
+      <path d="M178,125 C215,125 215,50 248,50" class="fl"/><path d="M178,125 C215,125 215,200 248,200" class="fl"/>
+      <text x="93" y="204" class="t3">se parte al azar,</text><text x="93" y="220" class="t3">con semilla</text>
+      <g class="caja-ml naranja"><rect x="250" y="15" width="190" height="70" rx="14"/><text x="345" y="45" class="t1b">Entrenamiento</text><text x="345" y="68" class="t2">80%: con esto aprende</text></g>
+      <g class="caja-ml salvia"><rect x="250" y="165" width="190" height="70" rx="14"/><text x="345" y="195" class="t1b">Prueba</text><text x="345" y="218" class="t2">20% que nunca vio</text></g>
+      <path d="M440,50 L498,50" class="fl"/>
+      <g class="caja-ml motor"><rect x="500" y="5" width="210" height="90" rx="14"/><text x="605" y="44" class="t1b">⚙ Motor (el modelo)</text><text x="605" y="70" class="t2">busca patrones en los datos</text></g>
+      <path d="M710,50 L758,50" class="fl"/>
+      <g class="caja-ml"><rect x="760" y="15" width="190" height="70" rx="14"/><text x="855" y="45" class="t1b">Predicción</text><text x="855" y="68" class="t2">¿cuánto va a gastar?</text></g>
+      <path d="M440,200 L758,200" class="fl"/><text x="600" y="190" class="t3" text-anchor="middle">casos nuevos para el motor</text>
+      <path d="M855,85 L855,163" class="fl"/>
+      <g class="caja-ml"><rect x="760" y="165" width="190" height="70" rx="14"/><text x="855" y="195" class="t1b">¿Acertó?</text><text x="855" y="218" class="t2">se compara con lo real</text></g>
+    </svg>
+  </div>
+  <p class="grande">Lo de hoy aparece en todo el motor: <span class="marcado">datos inventados</span> para probarlo, la <span class="marcado">partición al azar con semilla</span> (y a veces estratificada) y <span class="marcado">datos sintéticos</span> cuando los reales son pocos o privados.</p>
+</section>
+
+<!-- 8 · Gemelos digitales -->
+<section class="slide" data-seccion="Lo último en simulación">
+  <span class="etiqueta salvia">Lo último en simulación</span>
+  <h2 class="ancho">Gemelos digitales: <span class="hl">una copia virtual</span> de algo real</h2>
+  <div class="espejo">
+    <div class="lado"><b>Lo real</b><span>una fábrica, una ciudad, el planeta</span></div>
+    <div class="flechas"><span>sus datos →</span><span>← lo que conviene hacer</span></div>
+    <div class="lado copia"><b>La copia</b><span>donde se prueba sin romper nada</span></div>
+  </div>
+  <div class="fila tres">
+    <div class="tarjeta naranja"><h3>Una fábrica</h3><p><strong>BMW</strong> planificó su planta de Debrecen (Hungría) en una copia virtual mientras la construía: dónde va cada robot y cada recorrido, antes de mover nada.</p></div>
+    <div class="tarjeta salvia"><h3>Una ciudad</h3><p><strong>Singapur</strong> tiene una copia virtual de la ciudad para probar obras y cambios antes de hacerlos.</p></div>
+    <div class="tarjeta gris"><h3>El planeta</h3><p>La <strong>Unión Europea</strong> arma una copia digital de la Tierra (<em>Destination Earth</em>) para simular el clima y los eventos extremos.</p></div>
+  </div>
+</section>
+
+<!-- 9 · Copias de personas -->
+<section class="slide" data-seccion="Lo último en simulación">
+  <span class="etiqueta salvia">Lo último en simulación</span>
+  <h2 class="ancho">Stanford: <span class="hl">copias de 1.000 personas</span></h2>
+  <div class="fila dos-uno">
+    <div style="display:grid; gap:2.2rem">
+      <div class="ruta ruta3">
+        <svg class="linea" preserveAspectRatio="none" viewBox="0 0 100 4"><line x1="2" y1="2" x2="80" y2="2" pathLength="1"/></svg>
+        <div class="nodo" style="--d:0"><div class="circ">1</div><h3>Entrevista</h3><p><strong>1.052 personas</strong> reales, dos horas cada una.</p></div>
+        <div class="nodo" style="--d:1"><div class="circ">2</div><h3>Copia</h3><p>Una IA que responde <strong>como esa persona</strong>.</p></div>
+        <div class="nodo" style="--d:2"><div class="circ">3</div><h3>Prueba</h3><p>Personas y copias contestan <strong>la misma encuesta</strong>.</p></div>
+      </div>
+      <div class="linea-tiempo">
+        <div><span class="anio">2023</span><p><strong>Smallville:</strong> un pueblo con 25 personajes de IA que organizaron solos una fiesta de San Valentín.</p></div>
+        <div class="ahora"><span class="anio">2024</span><p><strong>Copias de 1.000 personas</strong> reales.</p></div>
+        <div><span class="anio">2026</span><p><strong>Simile:</strong> vende "consumidores simulados" a grandes marcas.</p></div>
+      </div>
+    </div>
+    <div class="tarjeta cifra naranja"><span class="rotulo">Las copias acertaron</span><b>85%</b>
+      <p class="nota">de lo que <strong>las propias personas</strong> coinciden consigo mismas cuando repiten la encuesta dos semanas después.</p></div>
+  </div>
+  <p>¿Reemplazan a las encuestas? <span class="marcado">Todavía no:</span> una copia es tan buena como la gente con la que se arma. Por eso hay que entender bien cómo funciona una encuesta →</p>
+  <p class="fuente">Park y otros (2024), <em>Generative Agent Simulations of 1,000 People</em> (Stanford y Google DeepMind); Park y otros (2023), <em>Generative Agents</em>.</p>
+</section>
+
+<!-- 10 · Una encuesta -->
+<section class="slide" data-seccion="C · Muestreo">
+  <span class="etiqueta">C · Muestreo</span>
+  <h2 class="ancho">Encuestamos a <span class="hl">100 clientes</span> al azar</h2>
+  <div class="fila dos">
+    <div class="tarjeta"><div class="campo" id="campo"></div><p class="pista" style="margin-top:.6rem">Una encuesta mira solo una parte. Cada vez que la repetimos, mira otra parte.</p></div>
+    <div style="display:grid; gap:1rem">
+      <div class="fila dos">
+        <div class="tarjeta cifra"><span class="rotulo">La encuesta dice</span><b class="chica" id="c-m100">$ —</b></div>
+        <div class="tarjeta cifra"><span class="rotulo">La verdad es</span><b class="chica" id="c-mu2">$ —</b></div>
+      </div>
+      <p class="grande">Se equivocó por <span class="marcado" id="c-err100">$ —</span>.</p>
+      <p>No es un error de cuentas: es lo que pasa por mirar solo una parte.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · Más gente -->
+<section class="slide" data-seccion="C · Muestreo">
+  <span class="etiqueta">C · Muestreo</span>
+  <h2 class="ancho">Encuestar a más gente ayuda… <span class="hl">cada vez menos</span></h2>
+  <div class="fila dos-uno">
+    <div class="grafico-caja">
+      <div class="leyenda"><span style="--c:var(--linea)">lo que da una encuesta de ese tamaño</span><span style="--c:var(--naranja)">promedio verdadero</span></div>
+      <div id="g-acum"></div>
+    </div>
+    <div style="display:grid; gap:1rem">
+      <div class="control">Encuestados <input type="range" id="r-acum" min="0" max="6" value="0"></div>
+      <div class="lectura" id="l-acum"></div>
+      <div class="tarjeta naranja"><h3>¿Por qué cada vez menos?</h3><p>Cada persona nueva <strong>pesa menos</strong> en el promedio: la número 11 lo mueve 1/11; la número 1.001, apenas 1/1.001. Por eso alcanza con <strong>unas 1.000 personas</strong>… <span class="marcado">siempre que se elijan al azar</span>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · Tres formas -->
+<section class="slide" data-seccion="C · Muestreo">
+  <span class="etiqueta">C · Muestreo</span>
+  <h2 class="ancho">¿Importa <span class="hl">a quién</span> le preguntás?</h2>
+  <div class="fila tres">
+    <div class="tarjeta gris"><svg class="mini" id="m-aleat" viewBox="0 0 300 120"></svg><h3>Aleatoria</h3><p>Un sorteo sobre <strong>toda</strong> la base de clientes.</p></div>
+    <div class="tarjeta verde"><svg class="mini" id="m-estrat" viewBox="0 0 300 120"></svg><h3>Estratificada</h3><p>Un sorteo <strong>dentro de cada segmento</strong>, respetando cuántos hay: 60% Básico, 30% Medio, 10% Premium.</p></div>
+    <div class="tarjeta naranja"><svg class="mini" id="m-conv" viewBox="0 0 300 120"></svg><h3>Por conveniencia</h3><p>Solo los fáciles de encontrar: una encuesta <strong>por la app</strong>, que contestan los de Online.</p></div>
+  </div>
+  <p class="pista">¿Cuál te parece que sale peor? Respondé en el chat.</p>
+</section>
+
+<!-- 13 · 200 encuestas -->
+<section class="slide" data-seccion="C · Muestreo">
+  <span class="etiqueta">C · Muestreo</span>
+  <h2 class="ancho">200 encuestas de 200 clientes, <span class="hl">de cada forma</span></h2>
+  <div class="fila dos-uno">
+    <div class="grafico-caja">
+      <div class="leyenda" id="ley-d"></div>
+      <div id="g-formas"></div>
+    </div>
+    <div style="display:grid; gap:.8rem" id="errores-d"></div>
+  </div>
+</section>
+
+<!-- 14 · Sesgo -->
+<section class="slide" data-seccion="C · Muestreo">
+  <span class="etiqueta">C · Muestreo</span>
+  <h2 class="ancho">El sesgo <span class="hl">no se arregla</span> con más datos</h2>
+  <div class="fila dos">
+    <div class="grafico-caja">
+      <div class="leyenda"><span style="--c:var(--naranja)">cuánto se pasa la encuesta por la app</span></div>
+      <div id="g-conv"></div>
+    </div>
+    <div style="display:grid; gap:1rem">
+      <div class="tarjeta cita"><h3>Estados Unidos, 1936</h3><p><em>Literary Digest</em> juntó <strong>2,4 millones de respuestas</strong> entre lectores y dueños de teléfono y auto (gente con plata) y pronosticó que Roosevelt perdía. Ganó con el 61%. Gallup, con unas 50.000 bien elegidas, acertó.</p></div>
+      <div class="tarjeta cita"><h3>Argentina, PASO 2019</h3><p>El promedio de 18 encuestadoras daba a Fernández <strong>4,8 puntos</strong> arriba de Macri. Ganó por <strong>16</strong>. Una de las explicaciones que más se discutieron: <strong>quién contesta</strong> las encuestas.</p></div>
+      <p class="grande">Antes de preguntar <em>cuántos</em> datos hay, preguntá <span class="marcado">quiénes</span> son.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 15 · Monte Carlo -->
+<section class="slide" data-seccion="D · Simular para decidir">
+  <span class="etiqueta">D · Simular para decidir</span>
+  <h2 class="ancho">Monte Carlo: <span class="hl">probar mil futuros</span> antes de elegir</h2>
+  <div class="ruta">
+    <svg class="linea" preserveAspectRatio="none" viewBox="0 0 100 4"><line x1="2" y1="2" x2="88" y2="2" pathLength="1"/></svg>
+    <div class="nodo" style="--d:0"><div class="circ">1</div><h3>Supuestos</h3><p>Lo que sabemos y lo que no.</p><p class="ej">Precio $500, costo $200, piden unas 120 por día.</p></div>
+    <div class="nodo" style="--d:1"><div class="circ">2</div><h3>Simular</h3><p>Miles de días o de futuros posibles.</p><p class="ej">1.000 días de demanda.</p></div>
+    <div class="nodo" style="--d:2"><div class="circ">3</div><h3>Calcular</h3><p>El resultado de cada decisión en cada futuro.</p><p class="ej">La ganancia de hornear 90, 91… 160.</p></div>
+    <div class="nodo" style="--d:3"><div class="circ">4</div><h3>Elegir</h3><p>La decisión que mejor funciona en todos.</p><p class="ej">La cantidad que más gana en promedio.</p></div>
+  </div>
+  <div class="comparacion">
+    <div class="comp"><span class="rotulo-c">Monte Carlo · lo de hoy</span>
+      <div class="sentido">la regla <span>→</span> los datos</div>
+      <p>Yo le digo a la compu: «un día normal piden unas 120 medialunas». Ella <strong>inventa</strong> 1.000 días y yo veo qué me conviene.</p></div>
+    <div class="comp ml"><span class="rotulo-c">Machine Learning · más adelante</span>
+      <div class="sentido">los datos <span>→</span> la regla</div>
+      <p>Le doy el cuaderno con 1.000 días <strong>reales</strong> de ventas. Ella descubre sola que «los sábados se venden más» y predice mañana.</p></div>
+  </div>
+  <p class="pista">Se llama Monte Carlo por el casino de Montecarlo: todo se basa en el azar.</p>
+</section>
+
+<!-- 16 · Medialunas: el problema -->
+<section class="slide" data-seccion="D · Caso 1: medialunas">
+  <span class="etiqueta">D · Caso 1</span>
+  <h2 class="ancho">¿Cuántas <span class="hl">medialunas</span> hornear por día?</h2>
+  <div class="fila dos">
+    <div style="display:grid; gap:1rem">
+      <div class="fila tres">
+        <div class="tarjeta cifra"><span class="rotulo">Precio</span><b class="chica">$ 500</b></div>
+        <div class="tarjeta cifra"><span class="rotulo">Costo</span><b class="chica">$ 200</b></div>
+        <div class="tarjeta cifra"><span class="rotulo">Piden, en promedio</span><b class="chica">120</b></div>
+      </div>
+      <div class="fila dos">
+        <div class="tarjeta naranja"><h3>Si hornea pocas</h3><p>Se queda sin y <strong>pierde ventas</strong>.</p></div>
+        <div class="tarjeta salvia"><h3>Si hornea muchas</h3><p>Le sobran, se tiran y <strong>pierde lo que costaron</strong>.</p></div>
+      </div>
+      <div class="opciones"><button class="opcion">Menos de 120</button><button class="opcion">Justo 120</button><button class="opcion">Más de 120</button></div>
+    </div>
+    <div class="grafico-caja">
+      <div class="leyenda"><span style="--c:var(--salvia)">días con esa demanda (1.000 días simulados)</span></div>
+      <div id="g-demanda"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 · Medialunas: la respuesta -->
+<section class="slide" data-seccion="D · Caso 1: medialunas">
+  <span class="etiqueta">D · Caso 1</span>
+  <h2 class="ancho">Conviene hornear <span class="hl" id="t-mejor">—</span></h2>
+  <div class="fila dos-uno">
+    <div class="grafico-caja"><div id="g-medialunas"></div></div>
+    <div style="display:grid; gap:1rem">
+      <div class="control">Costo por medialuna <input type="range" id="r-costo" min="100" max="450" step="50" value="200"></div>
+      <div class="lectura" id="l-costo"></div>
+      <div class="tarjeta naranja" id="p-costo"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 · Horno -->
+<section class="slide" data-seccion="D · Caso 2: el horno">
+  <span class="etiqueta">D · Caso 2 · el horno de la clase 14</span>
+  <h2 class="ancho">¿El horno <span class="hl">realmente</span> conviene?</h2>
+  <div class="fila dos">
+    <div class="tarjeta"><div class="flujos" id="flujos"></div><p class="pista" style="margin-top:.6rem">Millones de pesos por año. Costo de capital: 20%.</p></div>
+    <div style="display:grid; gap:1rem">
+      <div class="tarjeta cifra"><span class="rotulo">VAN de la clase 14</span><b>+0,38</b><p class="nota">millones: conviene, pero <strong>por poco</strong>.</p></div>
+      <p class="grande">¿Y si cada flujo sale hasta un <span class="marcado">20% mejor o peor</span>? Simulamos <strong>10.000 futuros</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 19 · VAN simulado -->
+<section class="slide" data-seccion="D · Caso 2: el horno">
+  <span class="etiqueta">D · Caso 2 · el horno de la clase 14</span>
+  <h2 class="ancho">En <span class="hl">una de cada tres</span> historias, el horno pierde plata</h2>
+  <div class="fila dos-uno">
+    <div class="grafico-caja">
+      <div class="leyenda"><span style="--c:var(--salvia)">futuros donde conviene</span><span style="--c:var(--naranja)">futuros donde se pierde plata</span></div>
+      <div id="g-van"></div>
+    </div>
+    <div style="display:grid; gap:1rem">
+      <div class="tarjeta cifra"><span class="rotulo">Probabilidad de perder</span><b id="c-pvan">—</b><p class="nota">de los 10.000 futuros simulados terminan con VAN negativo.</p></div>
+      <p>El VAN promedio sigue siendo <strong id="c-vprom">positivo</strong>. Un número solo <span class="marcado">esconde el riesgo</span>; la simulación lo muestra.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 20 · Para llevarse -->
+<section class="slide" data-seccion="Para llevarse">
+  <span class="etiqueta">Para llevarse</span>
+  <div class="ideas">
+    <p class="idea paso"><span class="n">1</span><span>Fijá la <span class="hl">semilla</span>: azar, pero repetible.</span></p>
+    <p class="idea paso"><span class="n">2</span><span>Más datos ayudan, <span class="hl">cada vez menos</span>.</span></p>
+    <p class="idea paso"><span class="n">3</span><span>Importa <span class="hl">a quién</span> le preguntás: el sesgo no se arregla con más datos.</span></p>
+    <p class="idea paso"><span class="n">4</span><span>Simulá miles de futuros: muestran el <span class="hl">riesgo</span> que un número esconde.</span></p>
+  </div>
+  <p class="grande paso">¿Le creerías a una encuesta de 1.000 personas? <span class="marcado">Depende de a quién le preguntaron.</span></p>
+</section>
+
+<!-- 21 · A Colab -->
+<section class="slide" data-seccion="Ahora, a Colab">
+  <span class="etiqueta salvia">Ahora, a Colab</span>
+  <h2 class="ancho">Notebook 19: <span class="hl">tres ejercicios</span></h2>
+  <div class="ideas chicas">
+    <p class="idea"><span class="n">1</span><span><strong>Dos dados:</strong> ¿en qué porcentaje de 100.000 tiradas suman 7? Comparalo con 6/36.</span></p>
+    <p class="idea"><span class="n">2</span><span><strong>Medialunas más caras:</strong> si cada una cuesta $350, ¿cuántas conviene hornear? ¿Por qué?</span></p>
+    <p class="idea"><span class="n">3</span><span><strong>Un horno más incierto:</strong> si los flujos varían un 30%, ¿qué pasa con la chance de perder?</span></p>
+  </div>
+  <div class="tarjeta salvia"><p><strong>En el TP:</strong> digan siempre de dónde salieron los datos (¿toda la población o una muestra? ¿quién respondió?). Y si el análisis depende de supuestos inciertos, simulen escenarios en vez de mostrar un solo número.</p></div>
+</section>
+
+</div>
+
+<footer class="pie">
+  <span id="pie-seccion"></span>
+  <div class="controles">
+    <button id="ant" aria-label="Anterior">←</button>
+    <span class="contador" id="contador"></span>
+    <button id="sig" aria-label="Siguiente">→</button>
+  </div>
+</footer>
+
+<script>
+const D = {"valores":{"mu":"103.907","e_simple":"4.429","e_seg":"2.023","e_conv":"19.342","mejor":"123","p_van":"34,9%"},"mu":103907,"dados":{"0":{"primeras":[6,4,4,2,2,1,1,1,2,5],"cuenta":[1689,1641,1640,1687,1652,1691]},"1":{"primeras":[3,4,5,6,1,1,5,6,2,2],"cuenta":[1695,1634,1668,1628,1717,1658]},"2":{"primeras":[6,2,1,2,3,5,3,1,3,4],"cuenta":[1680,1649,1716,1619,1635,1701]},"3":{"primeras":[5,1,2,2,2,5,6,4,1,1],"cuenta":[1704,1690,1618,1650,1683,1655]},"4":{"primeras":[5,6,6,4,6,6,6,1,3,4],"cuenta":[1725,1638,1689,1566,1662,1720]},"5":{"primeras":[5,5,1,5,3,4,4,2,6,1],"cuenta":[1701,1647,1637,1684,1628,1703]},"6":{"primeras":[3,4,4,3,6,3,4,3,3,6],"cuenta":[1628,1685,1669,1695,1635,1688]},"7":{"primeras":[6,4,5,6,4,5,6,2,1,2],"cuenta":[1619,1761,1694,1577,1659,1690]},"8":{"primeras":[5,2,2,6,2,2,4,5,4,6],"cuenta":[1563,1651,1730,1635,1800,1621]},"9":{"primeras":[3,6,6,2,1,4,5,5,4,5],"cuenta":[1599,1704,1657,1726,1670,1644]},"10":{"primeras":[5,6,2,2,5,5,4,1,5,4],"cuenta":[1627,1702,1691,1618,1694,1668]},"11":{"primeras":[1,1,5,3,4,4,5,1,3,1],"cuenta":[1644,1627,1681,1724,1695,1629]},"12":{"primeras":[4,2,6,6,1,2,2,2,4,3],"cuenta":[1687,1653,1679,1543,1736,1702]},"13":{"primeras":[6,6,5,6,1,5,6,2,2,1],"cuenta":[1665,1645,1668,1709,1649,1664]},"14":{"primeras":[1,5,4,3,1,5,3,6,3,4],"cuenta":[1667,1623,1675,1662,1694,1679]},"15":{"primeras":[6,5,5,5,2,3,2,1,3,4],"cuenta":[1641,1641,1646,1704,1711,1657]},"16":{"primeras":[4,4,5,3,5,1,4,3,1,4],"cuenta":[1617,1698,1629,1658,1718,1680]},"17":{"primeras":[5,6,1,1,3,4,5,3,1,2],"cuenta":[1607,1654,1728,1661,1687,1663]},"18":{"primeras":[6,3,2,5,6,2,3,1,6,6],"cuenta":[1632,1663,1648,1648,1700,1709]},"19":{"primeras":[4,3,3,6,3,2,6,1,3,2],"cuenta":[1670,1649,1679,1693,1633,1676]},"20":{"primeras":[6,2,2,3,6,1,2,4,2,3],"cuenta":[1661,1724,1625,1704,1631,1655]},"21":{"primeras":[2,5,3,4,3,5,3,1,2,4],"cuenta":[1651,1669,1634,1646,1710,1690]},"22":{"primeras":[5,3,4,2,6,1,2,4,1,3],"cuenta":[1718,1632,1665,1689,1621,1675]},"23":{"primeras":[1,5,3,4,2,1,4,1,1,4],"cuenta":[1674,1644,1706,1697,1647,1632]},"24":{"primeras":[3,2,5,3,5,4,1,4,3,4],"cuenta":[1656,1664,1612,1685,1742,1641]},"25":{"primeras":[4,1,6,1,2,2,4,3,1,1],"cuenta":[1735,1665,1611,1690,1643,1656]},"26":{"primeras":[6,3,4,2,3,1,3,5,5,5],"cuenta":[1683,1652,1685,1652,1646,1682]},"27":{"primeras":[1,5,2,2,6,1,4,2,3,6],"cuenta":[1647,1601,1636,1691,1726,1699]},"28":{"primeras":[4,6,2,6,5,5,5,1,1,1],"cuenta":[1641,1730,1677,1595,1696,1661]},"29":{"primeras":[6,1,4,4,2,4,4,2,4,1],"cuenta":[1684,1661,1636,1681,1639,1699]},"30":{"primeras":[1,2,5,3,3,1,4,4,2,5],"cuenta":[1650,1715,1633,1681,1625,1696]},"31":{"primeras":[4,6,3,1,4,5,1,3,3,5],"cuenta":[1655,1607,1695,1693,1693,1657]},"32":{"primeras":[6,1,6,4,3,3,2,2,4,5],"cuenta":[1689,1662,1641,1614,1697,1697]},"33":{"primeras":[6,3,3,4,5,6,2,2,4,4],"cuenta":[1669,1656,1667,1646,1659,1703]},"34":{"primeras":[1,1,1,6,1,2,1,4,1,3],"cuenta":[1694,1640,1638,1729,1670,1629]},"35":{"primeras":[1,3,5,3,6,6,2,6,1,1],"cuenta":[1703,1672,1654,1617,1674,1680]},"36":{"primeras":[3,2,3,3,3,6,6,3,6,5],"cuenta":[1689,1683,1688,1585,1640,1715]},"37":{"primeras":[1,5,4,4,2,1,6,5,2,2],"cuenta":[1631,1642,1679,1659,1738,1651]},"38":{"primeras":[2,3,2,2,3,5,3,4,1,6],"cuenta":[1682,1742,1627,1663,1648,1638]},"39":{"primeras":[6,4,2,4,5,1,2,2,5,4],"cuenta":[1712,1663,1693,1607,1686,1639]},"40":{"primeras":[4,5,1,5,3,6,1,1,3,5],"cuenta":[1721,1719,1613,1609,1640,1698]},"41":{"primeras":[4,6,5,5,5,1,2,5,3,6],"cuenta":[1625,1686,1644,1662,1695,1688]},"42":{"primeras":[1,5,4,3,3,6,1,5,2,1],"cuenta":[1681,1718,1662,1671,1643,1625]},"43":{"primeras":[4,4,3,1,4,1,2,6,3,4],"cuenta":[1692,1622,1604,1665,1687,1730]},"44":{"primeras":[5,1,5,2,4,3,1,6,4,1],"cuenta":[1648,1651,1670,1627,1704,1700]},"45":{"primeras":[6,4,5,4,4,5,5,5,4,4],"cuenta":[1731,1610,1705,1642,1712,1600]},"46":{"primeras":[4,6,2,1,4,2,2,4,1,6],"cuenta":[1696,1639,1642,1688,1623,1712]},"47":{"primeras":[1,5,4,5,3,3,1,1,1,6],"cuenta":[1648,1579,1762,1664,1646,1701]},"48":{"primeras":[1,3,3,4,5,4,1,5,6,4],"cuenta":[1664,1700,1670,1602,1671,1693]},"49":{"primeras":[1,3,6,4,1,3,4,4,6,4],"cuenta":[1713,1635,1670,1624,1722,1636]},"50":{"primeras":[5,5,5,6,5,4,2,6,5,2],"cuenta":[1685,1621,1677,1674,1713,1630]},"51":{"primeras":[3,6,6,2,3,2,2,2,5,5],"cuenta":[1709,1643,1649,1687,1646,1666]},"52":{"primeras":[6,4,2,4,3,4,5,1,3,4],"cuenta":[1627,1676,1674,1733,1664,1626]},"53":{"primeras":[5,1,5,5,5,2,4,6,3,1],"cuenta":[1700,1685,1636,1662,1635,1682]},"54":{"primeras":[2,2,2,4,4,1,6,4,5,1],"cuenta":[1621,1769,1621,1714,1633,1642]},"55":{"primeras":[6,5,5,6,2,2,5,2,4,3],"cuenta":[1605,1716,1693,1619,1693,1674]},"56":{"primeras":[3,5,3,1,6,6,4,5,1,4],"cuenta":[1586,1661,1680,1734,1683,1656]},"57":{"primeras":[1,5,5,3,6,6,6,3,2,3],"cuenta":[1613,1713,1636,1674,1689,1675]},"58":{"primeras":[4,2,4,6,6,2,4,2,4,6],"cuenta":[1619,1656,1657,1685,1708,1675]},"59":{"primeras":[5,4,5,5,4,1,5,3,3,2],"cuenta":[1631,1655,1723,1632,1681,1678]},"60":{"primeras":[2,2,3,1,6,1,6,6,6,6],"cuenta":[1699,1685,1625,1691,1643,1657]},"61":{"primeras":[3,3,5,5,3,5,5,5,2,3],"cuenta":[1685,1698,1640,1670,1663,1644]},"62":{"primeras":[3,4,4,5,5,5,2,2,1,5],"cuenta":[1714,1703,1615,1644,1660,1664]},"63":{"primeras":[3,4,6,6,6,2,4,4,2,2],"cuenta":[1684,1670,1607,1732,1634,1673]},"64":{"primeras":[4,6,6,4,2,1,1,2,4,6],"cuenta":[1684,1653,1681,1675,1642,1665]},"65":{"primeras":[2,1,4,4,2,3,6,2,6,6],"cuenta":[1667,1663,1596,1704,1649,1721]},"66":{"primeras":[6,6,2,5,4,1,5,4,5,3],"cuenta":[1604,1684,1683,1645,1675,1709]},"67":{"primeras":[5,3,4,1,3,4,4,2,5,4],"cuenta":[1669,1680,1629,1635,1701,1686]},"68":{"primeras":[3,3,4,6,2,5,6,4,6,6],"cuenta":[1672,1686,1659,1641,1705,1637]},"69":{"primeras":[1,4,5,4,5,6,3,5,6,3],"cuenta":[1705,1632,1615,1692,1712,1644]},"70":{"primeras":[4,3,2,5,3,2,1,6,6,5],"cuenta":[1576,1677,1740,1667,1719,1621]},"71":{"primeras":[6,2,3,4,4,5,3,4,4,2],"cuenta":[1604,1677,1672,1667,1744,1636]},"72":{"primeras":[6,6,4,1,3,2,1,1,3,5],"cuenta":[1612,1699,1713,1750,1606,1620]},"73":{"primeras":[5,3,5,2,1,2,6,6,5,2],"cuenta":[1615,1690,1716,1663,1660,1656]},"74":{"primeras":[2,6,3,4,6,5,5,5,1,4],"cuenta":[1641,1660,1615,1747,1637,1700]},"75":{"primeras":[4,2,2,1,6,4,3,5,5,6],"cuenta":[1643,1621,1679,1735,1675,1647]},"76":{"primeras":[4,5,3,6,3,5,6,5,6,1],"cuenta":[1692,1652,1608,1671,1676,1701]},"77":{"primeras":[1,5,4,4,5,2,6,3,6,2],"cuenta":[1663,1701,1687,1581,1736,1632]},"78":{"primeras":[5,3,2,6,1,4,2,6,1,3],"cuenta":[1637,1647,1663,1671,1665,1717]},"79":{"primeras":[1,6,6,1,6,6,2,1,4,1],"cuenta":[1675,1694,1614,1695,1685,1637]},"80":{"primeras":[6,5,1,1,5,1,3,4,2,4],"cuenta":[1664,1680,1642,1695,1629,1690]},"81":{"primeras":[1,3,1,2,4,6,3,4,2,3],"cuenta":[1706,1666,1709,1615,1682,1622]},"82":{"primeras":[5,6,4,6,6,2,6,6,5,3],"cuenta":[1685,1630,1681,1606,1682,1716]},"83":{"primeras":[5,2,4,1,2,4,3,2,3,3],"cuenta":[1683,1668,1618,1656,1683,1692]},"84":{"primeras":[4,5,2,6,4,5,4,6,3,2],"cuenta":[1597,1620,1701,1682,1688,1712]},"85":{"primeras":[5,1,6,3,4,3,4,3,1,6],"cuenta":[1659,1616,1674,1659,1688,1704]},"86":{"primeras":[6,4,2,2,1,4,1,3,1,3],"cuenta":[1692,1667,1619,1652,1690,1680]},"87":{"primeras":[4,4,1,5,4,2,5,3,3,3],"cuenta":[1720,1601,1686,1652,1666,1675]},"88":{"primeras":[4,2,6,5,5,5,6,5,3,4],"cuenta":[1696,1642,1637,1633,1670,1722]},"89":{"primeras":[6,4,2,5,1,5,1,1,5,4],"cuenta":[1708,1674,1634,1701,1629,1654]},"90":{"primeras":[4,3,1,5,2,4,2,3,4,5],"cuenta":[1667,1667,1625,1632,1705,1704]},"91":{"primeras":[5,2,3,6,1,5,5,2,4,6],"cuenta":[1717,1676,1687,1647,1604,1669]},"92":{"primeras":[3,4,6,1,3,3,3,3,4,1],"cuenta":[1721,1607,1667,1578,1709,1718]},"93":{"primeras":[6,6,4,4,2,3,2,3,6,4],"cuenta":[1624,1707,1650,1750,1640,1629]},"94":{"primeras":[1,2,6,5,2,5,3,1,1,2],"cuenta":[1655,1685,1625,1618,1689,1728]},"95":{"primeras":[3,4,1,6,3,2,3,3,3,3],"cuenta":[1639,1658,1771,1580,1648,1704]},"96":{"primeras":[5,5,5,5,2,4,6,3,6,4],"cuenta":[1659,1666,1606,1742,1651,1676]},"97":{"primeras":[1,5,1,3,4,4,4,6,5,2],"cuenta":[1640,1627,1718,1661,1670,1684]},"98":{"primeras":[3,6,5,6,4,1,1,2,6,1],"cuenta":[1641,1690,1685,1756,1626,1602]},"99":{"primeras":[6,4,5,4,2,4,6,6,6,4],"cuenta":[1676,1637,1648,1688,1724,1627]},"100":{"primeras":[5,6,1,4,1,2,3,1,4,6],"cuenta":[1698,1621,1619,1703,1696,1663]}},"segmentos":{"Básico":{"peso":0.6022,"gasto":66233},"Medio":{"peso":0.2979,"gasto":121479},"Premium":{"peso":0.0999,"gasto":278572}},"muestra100":97891,"tamanos":[[10,93694],[50,110698],[100,97891],[500,103122],[1000,104139],[5000,104125],[10000,104277]],"hist_d":{"bordes":[85000.0,86250.0,87500.0,88750.0,90000.0,91250.0,92500.0,93750.0,95000.0,96250.0,97500.0,98750.0,100000.0,101250.0,102500.0,103750.0,105000.0,106250.0,107500.0,108750.0,110000.0,111250.0,112500.0,113750.0,115000.0,116250.0,117500.0,118750.0,120000.0,121250.0,122500.0,123750.0,125000.0,126250.0,127500.0,128750.0,130000.0,131250.0,132500.0,133750.0,135000.0,136250.0,137500.0,138750.0,140000.0,141250.0,142500.0,143750.0,145000.0],"Aleatoria":[0,0,1,0,0,1,4,5,3,8,12,16,14,22,16,13,17,22,8,8,12,5,6,3,0,3,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"Estratificada":[0,0,0,0,0,0,0,0,0,0,1,7,18,27,40,39,27,27,5,6,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"Por conveniencia":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,4,3,9,6,4,10,6,12,11,18,15,14,16,18,15,4,12,9,5,3,1,0,1,0,1,0,0,0]},"error_d":{"Aleatoria":4429,"Estratificada":2023,"Por conveniencia":19342},"conv":{"200":26281,"2000":22272,"20000":19123},"medialunas":{"demanda_hist":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,4,1,1,2,3,2,1,0,2,2,3,5,3,6,10,6,8,14,9,10,14,13,8,16,15,16,24,13,15,21,25,17,17,25,30,29,26,33,36,22,17,19,26,30,29,35,22,19,24,22,18,10,25,18,11,22,15,9,11,10,6,10,10,13,7,6,6,5,4,6,2,5,3,1,1,3,2,0,1,1,1,1,2,0,0,0,0,1,0,1],"mejor":123},"hist_v":{"bordes":[-4.0,-3.8,-3.6,-3.4,-3.2,-3.0,-2.8,-2.5999999999999996,-2.4,-2.2,-2.0,-1.7999999999999998,-1.5999999999999996,-1.4,-1.1999999999999997,-1.0,-0.7999999999999998,-0.5999999999999996,-0.3999999999999999,-0.19999999999999973,0.0,0.20000000000000018,0.40000000000000036,0.6000000000000005,0.8000000000000007,1.0,1.2000000000000002,1.4000000000000004,1.6000000000000005,1.8000000000000007,2.0,2.2,2.4000000000000004,2.6000000000000005,2.8000000000000007,3.0,3.2,3.4000000000000004,3.6000000000000005,3.8000000000000007,4.0,4.200000000000001,4.4],"todos":[0,0,0,0,1,8,3,5,11,34,57,82,136,183,229,350,464,584,640,707,786,841,859,796,719,562,515,394,346,241,174,114,68,42,17,18,3,6,4,1,0,0]},"van":{"prom":0.37,"p":0.3494,"n":10000}};
+
+/* ══ Utilidades ══ */
+const NS = 'http://www.w3.org/2000/svg';
+const $ = id => document.getElementById(id);
+const redondear = v => (Math.abs(v % 1) === 0.5 ? 2 * Math.round(v / 2) : Math.round(v));   // igual que Python
+const miles = v => '$ ' + redondear(v).toLocaleString('es-AR');
+const num = v => Math.round(v).toLocaleString('es-AR');
+function el(tag, attrs = {}, padre) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (padre) padre.appendChild(e);
+  return e;
+}
+const escala = (d0, d1, r0, r1) => v => r0 + (v - d0) / (d1 - d0) * (r1 - r0);
+function lienzo(id, W = 720, H = 340) {
+  const caja = $(id); caja.innerHTML = '';
+  const s = el('svg', { viewBox: `0 0 ${W} ${H}`, class: 'grafico' }); caja.appendChild(s);
+  return s;
+}
+/* Ejes con grilla horizontal y títulos: los gráficos siempre declaran qué miden */
+function ejes(s, o) {
+  const { W, H, m, y, yt, fy, xt, x, fx, xlab, ylab } = o;
+  yt.forEach(v => {
+    el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), class: 'grilla' }, s);
+    el('text', { x: m.l - 8, y: y(v) + 4, 'text-anchor': 'end' }, s).textContent = fy(v);
+  });
+  xt.forEach(v => { el('text', { x: x(v), y: H - m.b + 18, 'text-anchor': 'middle' }, s).textContent = fx(v); });
+  el('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, class: 'base' }, s);
+  el('text', { x: (m.l + W - m.r) / 2, y: H - 6, 'text-anchor': 'middle', class: 'eje-titulo' }, s).textContent = xlab;
+  el('text', { x: 14, y: (m.t + H - m.b) / 2, 'text-anchor': 'middle', class: 'eje-titulo', transform: `rotate(-90 14 ${(m.t + H - m.b) / 2})` }, s).textContent = ylab;
+}
+/* Tooltip */
+const tip = $('tip');
+function conTip(nodo, html) {
+  nodo.addEventListener('mousemove', e => {
+    tip.innerHTML = typeof html === 'function' ? html() : html; tip.classList.add('ver');
+    const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8);
+    tip.style.left = x + 'px'; tip.style.top = (e.clientY - tip.offsetHeight - 12) + 'px';
+  });
+  nodo.addEventListener('mouseleave', () => tip.classList.remove('ver'));
+}
+/* Generador al azar con semilla (mulberry32): misma semilla, mismos números */
+function generador(semilla) {
+  let a = semilla >>> 0;
+  return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+
+/* ══ Dado 3D ══ */
+const PUNTOS = { 1: [5], 2: [1, 9], 3: [1, 5, 9], 4: [1, 3, 7, 9], 5: [1, 3, 5, 7, 9], 6: [1, 3, 4, 6, 7, 9] };
+const POSICION_CARA = { 1: 'rotateY(0deg)', 6: 'rotateY(180deg)', 2: 'rotateY(90deg)', 5: 'rotateY(-90deg)', 3: 'rotateX(90deg)', 4: 'rotateX(-90deg)' };
+const MOSTRAR_CARA = { 1: [0, 0], 6: [0, 180], 2: [0, -90], 5: [0, 90], 3: [-90, 0], 4: [90, 0] };   // giro del cubo para dejar esa cara al frente
+function crearDado(contenedor, tamano) {
+  contenedor.innerHTML = `<div class="dado3d-escena" style="--t:${tamano}px"><div class="inclinado"><div class="dado3d"></div></div></div>`;
+  const cubo = contenedor.querySelector('.dado3d');
+  for (let n = 1; n <= 6; n++) {
+    const cara = document.createElement('div');
+    cara.className = 'cara c' + n;
+    cara.style.transform = `${POSICION_CARA[n]} translateZ(${tamano / 2}px)`;
+    PUNTOS[n].forEach(p => { const i = document.createElement('i'); i.style.gridArea = `${Math.ceil(p / 3)} / ${(p - 1) % 3 + 1}`; cara.appendChild(i); });
+    cubo.appendChild(cara);
+  }
+  let rx = 0, ry = 0;
+  const aplicar = () => { cubo.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`; };
+  const dado = {
+    tocado: false,
+    tirar(cara) {   // da varias vueltas completas y termina mostrando la cara pedida
+      const [ax, ay] = MOSTRAR_CARA[cara];
+      rx = ax + 360 * (Math.ceil((rx - ax) / 360) + 2);
+      ry = ay + 360 * (Math.ceil((ry - ay) / 360) + 2 + Math.floor(Math.random() * 2));
+      aplicar();
+    }
+  };
+  // Arrastrar con el mouse lo gira; un clic sin arrastrar lo tira
+  const escena = contenedor.querySelector('.dado3d-escena');
+  let agarrado = false, movido = false, x0 = 0, y0 = 0;
+  escena.addEventListener('pointerdown', e => {
+    agarrado = true; movido = false; x0 = e.clientX; y0 = e.clientY; dado.tocado = true;
+    cubo.style.transition = 'none'; escena.setPointerCapture(e.pointerId);
+  });
+  escena.addEventListener('pointermove', e => {
+    if (!agarrado) return;
+    const dx = e.clientX - x0, dy = e.clientY - y0;
+    if (Math.abs(dx) + Math.abs(dy) > 3) movido = true;
+    ry += dx * 0.7; rx -= dy * 0.7; x0 = e.clientX; y0 = e.clientY;
+    aplicar();
+  });
+  escena.addEventListener('pointerup', () => {
+    agarrado = false; cubo.style.transition = '';
+    if (!movido) dado.tirar(1 + Math.floor(Math.random() * 6));
+  });
+  return dado;
+}
+
+/* ══ A · Dados ══ */
+const CARAS = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+function tirarDados() {
+  const semilla = Math.round(+$('semilla').value || 0);
+  let cuenta = [0, 0, 0, 0, 0, 0], primeras = [];
+  if (D.dados[semilla]) {   // semillas 0 a 100: los mismos dados que da numpy en Colab
+    cuenta = D.dados[semilla].cuenta; primeras = D.dados[semilla].primeras.map(c => CARAS[c - 1]);
+  } else {                  // otras semillas: generador propio de la página
+    const azar = generador(semilla);
+    for (let i = 0; i < 10000; i++) { const c = Math.floor(azar() * 6); cuenta[c]++; if (i < 10) primeras.push(CARAS[c]); }
+  }
+  $('dados').textContent = primeras.join(' ');
+  dadoSlide.tirar(CARAS.indexOf(primeras[0]) + 1);   // el dado grande muestra la primera tirada
+  const W = 560, H = 320, m = { l: 58, r: 16, t: 14, b: 48 };
+  const s = lienzo('g-dados', W, H);
+  const x = escala(0, 6, m.l, W - m.r), y = escala(0, 22, H - m.b, m.t);
+  ejes(s, { W, H, m, x: v => x(v + .5), y, yt: [0, 5, 10, 15, 20], fy: v => v + '%', xt: [0, 1, 2, 3, 4, 5], fx: v => v + 1,
+            xlab: 'Cara del dado', ylab: '% de las 10.000 tiradas' });
+  cuenta.forEach((c, i) => {
+    const p = c / 100, r = el('rect', { x: x(i) + 12, width: x(1) - x(0) - 24, y: y(p), height: y(0) - y(p),
+      fill: 'var(--salvia)', stroke: 'var(--linea)', 'stroke-width': 1.2, class: 'crece', style: `animation-delay:${i * .06}s` }, s);
+    conTip(r, `<b>Cara ${i + 1}</b>: salió ${num(c)} veces (${p.toFixed(1).replace('.', ',')}%)`);
+  });
+  el('line', { x1: m.l, x2: W - m.r, y1: y(100 / 6), y2: y(100 / 6), stroke: 'var(--naranja)', 'stroke-width': 2.5, 'stroke-dasharray': '7 5' }, s);
+  el('text', { x: W - m.r, y: y(100 / 6) - 8, 'text-anchor': 'end', style: 'fill:var(--texto);font-weight:600' }, s).textContent = 'la teoría: 1/6 = 16,7%';
+}
+$('tirar').addEventListener('click', tirarDados);
+
+/* ══ B · Segmentos ══ */
+function segmentos() {
+  const S = D.segmentos, maxG = Math.max(...Object.values(S).map(v => v.gasto));
+  $('segmentos').innerHTML = '<h3 style="margin-bottom:.9rem">Tres segmentos de clientes</h3>' + Object.entries(S).map(([k, v]) => `
+    <div class="seg"><span class="nombre">${k}</span>
+      <div class="barrita" data-w="${v.peso * 100}">${Math.round(v.peso * 100)}% de los clientes</div>
+      <span></span><div class="barrita gasto" data-w="${v.gasto / maxG * 100}">gastan ${miles(v.gasto)} por mes</div></div>`).join('')
+    + '<p class="pista">Los Premium son pocos, pero gastan muchísimo. Eso va a importar.</p>';
+  requestAnimationFrame(() => setTimeout(() => document.querySelectorAll('#segmentos .barrita').forEach(b => b.style.width = Math.max(b.dataset.w, 34) + '%'), 60));
+}
+
+/* ══ C · Una encuesta ══ */
+function campo() {
+  const c = $('campo'); c.innerHTML = '';
+  const azar = generador(10), elegidos = new Set();
+  while (elegidos.size < 22) elegidos.add(Math.floor(azar() * 250));
+  for (let i = 0; i < 250; i++) {
+    const p = document.createElement('i'); c.appendChild(p);
+    if (elegidos.has(i)) setTimeout(() => p.classList.add('on'), 300 + Math.random() * 900);
+  }
+}
+
+/* ══ C · Promedio a medida que se encuesta más gente ══ */
+let marcaAcum;
+function acumulado() {
+  const W = 720, H = 340, m = { l: 82, r: 18, t: 14, b: 50 };
+  const s = lienzo('g-acum', W, H);
+  const T = D.tamanos;
+  const lx = escala(Math.log10(7), Math.log10(14000), m.l, W - m.r), x = v => lx(Math.log10(v));
+  const y = escala(D.mu - 15000, D.mu + 15000, H - m.b, m.t), yc = v => y(Math.max(D.mu - 15000, Math.min(D.mu + 15000, v)));
+  const yt = []; for (let v = Math.ceil((D.mu - 15000) / 5000) * 5000; v <= D.mu + 15000; v += 5000) yt.push(v);
+  ejes(s, { W, H, m, x, y, yt, fy: v => (v / 1000) + ' mil', xt: T.map(([n]) => n), fx: v => num(v),
+            xlab: 'Clientes encuestados (cada salto multiplica la encuesta)', ylab: 'Gasto promedio ($)' });
+  el('line', { x1: m.l, x2: W - m.r, y1: y(D.mu), y2: y(D.mu), stroke: 'var(--naranja)', 'stroke-width': 2.5, 'stroke-dasharray': '7 5' }, s);
+  T.forEach(([n, v]) => el('line', { x1: x(n), x2: x(n), y1: y(D.mu), y2: yc(v), stroke: 'var(--gris-osc)', 'stroke-width': 2 }, s));
+  el('path', { d: T.map(([n, v], i) => (i ? 'L' : 'M') + x(n).toFixed(1) + ' ' + yc(v).toFixed(1)).join(' '), fill: 'none', stroke: 'var(--linea)', 'stroke-width': 2, pathLength: 1, class: 'trazo' }, s);
+  T.forEach(([n, v]) => { const c = el('circle', { cx: x(n), cy: yc(v), r: 6, fill: '#fff', stroke: 'var(--linea)', 'stroke-width': 1.8 }, s);
+    conTip(c, `Encuesta de <b>${num(n)}</b>: da ${miles(v)}, se equivoca por ${miles(Math.abs(v - D.mu))}`); });
+  marcaAcum = { s, x, yc, m, H, g: el('g', {}, s) };
+  $('r-acum').max = T.length - 1;
+  moverAcum();
+}
+function moverAcum() {
+  const i = +$('r-acum').value, [n, v] = D.tamanos[i], { x, yc, m, H, g } = marcaAcum;
+  g.innerHTML = '';
+  el('line', { x1: x(n), x2: x(n), y1: m.t, y2: H - m.b, stroke: 'var(--linea)', 'stroke-dasharray': '3 4' }, g);
+  el('circle', { cx: x(n), cy: yc(v), r: 7, fill: 'var(--naranja)', stroke: 'var(--linea)', 'stroke-width': 1.5 }, g);
+  const e = v - D.mu;
+  $('l-acum').innerHTML = `Con <b>${num(n)}</b> encuestados, el promedio da <strong>${miles(v)}</strong>: se equivoca por <span class="marcado">${miles(Math.abs(e))}</span>.`;
+}
+$('r-acum').addEventListener('input', moverAcum);
+
+/* ══ C · Dibujitos de las tres formas de muestrear ══ */
+function miniaturas() {
+  const dibujar = (id, elegir, bandas) => {
+    const s = $(id); s.innerHTML = '';
+    if (bandas) bandas.forEach(([y0, y1, txt]) => {
+      el('rect', { x: 2, y: y0, width: 296, height: y1 - y0, rx: 6, fill: 'none', stroke: 'var(--gris-osc)', 'stroke-dasharray': '4 3' }, s);
+      el('text', { x: 296, y: y0 + 11, 'text-anchor': 'end', style: 'font-size:10px;fill:var(--tenue)' }, s).textContent = txt;
+    });
+    const azar = generador(id.length * 7 + 3);
+    for (let f = 0; f < 6; f++) for (let c = 0; c < 20; c++) {
+      const on = elegir(f, c, azar);
+      el('circle', { cx: 10 + c * 12.4, cy: 12 + f * 19.5, r: on ? 5.5 : 4, fill: on ? (on === 2 ? 'var(--naranja)' : 'var(--linea)') : 'var(--gris)' }, s);
+    }
+  };
+  dibujar('m-aleat', (f, c, a) => a() < .14 ? 1 : 0);
+  dibujar('m-estrat', (f, c, a) => (f < 3 ? c % 7 === (f * 3) % 7 : f < 5 ? c % 7 === (f * 2) % 7 : c % 7 === 3) ? 1 : 0,
+          [[2, 60, 'Básico'], [63, 100, 'Medio'], [103, 119, 'Premium']]);
+  dibujar('m-conv', (f, c, a) => (c >= 13 && a() < .5) ? 2 : 0, [[2, 119, '']]);
+}
+
+/* ══ C · 200 encuestas de cada forma ══ */
+const FORMAS = [['Aleatoria', 'var(--gris-osc)'], ['Estratificada', 'var(--verde)'], ['Por conveniencia', 'var(--naranja)']];
+const visibles = new Set(FORMAS.map(f => f[0]));
+function formas() {
+  const W = 720, H = 340, m = { l: 62, r: 34, t: 14, b: 50 };
+  const s = lienzo('g-formas', W, H), B = D.hist_d.bordes;
+  const top = Math.max(...FORMAS.map(([f]) => Math.max(...D.hist_d[f])));
+  const x = escala(B[0], B[B.length - 1], m.l, W - m.r), y = escala(0, top * 1.08, H - m.b, m.t);
+  const paso = Math.ceil(top / 4 / 10) * 10, yt = [0, paso, 2 * paso, 3 * paso].filter(v => v <= top * 1.08);
+  const xt = []; for (let v = Math.ceil(B[0] / 10000) * 10000; v <= B[B.length - 1]; v += 10000) xt.push(v);
+  ejes(s, { W, H, m, x, y, yt, fy: v => v, xt, fx: v => (v / 1000) + ' mil',
+            xlab: 'Gasto promedio que da cada encuesta ($)', ylab: 'Cantidad de encuestas' });
+  FORMAS.forEach(([f, c], k) => {
+    if (!visibles.has(f)) return;
+    D.hist_d[f].forEach((n, i) => {
+      if (!n) return;
+      const r = el('rect', { x: x(B[i]) + .5, width: x(B[i + 1]) - x(B[i]) - 1, y: y(n), height: y(0) - y(n), fill: c, 'fill-opacity': .62,
+        stroke: 'var(--linea)', 'stroke-width': .6, class: 'crece', style: `animation-delay:${k * .25}s` }, s);
+      conTip(r, `<b>${f}</b><br>${n} encuestas dieron entre ${miles(B[i])} y ${miles(B[i + 1])}`);
+    });
+  });
+  el('line', { x1: x(D.mu), x2: x(D.mu), y1: m.t, y2: H - m.b, stroke: 'var(--linea)', 'stroke-width': 2, 'stroke-dasharray': '6 5' }, s);
+  el('text', { x: x(D.mu) - 6, y: m.t + 12, 'text-anchor': 'end', style: 'fill:var(--texto);font-weight:600' }, s).textContent = 'la verdad: ' + miles(D.mu);
+}
+function leyendaFormas() {
+  $('ley-d').innerHTML = FORMAS.map(([f, c]) => `<button style="--c:${c}" data-f="${f}">${f}</button>`).join('');
+  $('ley-d').querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    const f = b.dataset.f; visibles.has(f) ? visibles.delete(f) : visibles.add(f);
+    b.classList.toggle('apagado', !visibles.has(f)); formas();
+  }));
+  const clase = { 'Aleatoria': 'gris', 'Estratificada': 'verde', 'Por conveniencia': 'naranja' };
+  const texto = { 'Aleatoria': 'para arriba o para abajo', 'Estratificada': 'menos que al azar', 'Por conveniencia': '<span class="marcado">siempre para arriba</span>' };
+  $('errores-d').innerHTML = '<p class="pista">Cada encuesta se equivoca, en promedio, por…</p>' + FORMAS.map(([f]) =>
+    `<div class="tarjeta cifra ${clase[f]}"><span class="rotulo">${f}</span><b class="chica">${miles(D.error_d[f])}</b><p style="font-size:.9rem">${texto[f]}</p></div>`).join('');
+}
+
+/* ══ C · El sesgo no se arregla ══ */
+function sesgo() {
+  const W = 560, H = 320, m = { l: 74, r: 16, t: 24, b: 50 };
+  const s = lienzo('g-conv', W, H), ns = Object.keys(D.conv);
+  const tope = Math.max(...Object.values(D.conv)) * 1.15, yt = []; for (let v = 0; v <= tope; v += 5000) yt.push(v);
+  const x = escala(0, ns.length, m.l, W - m.r), y = escala(0, tope, H - m.b, m.t);
+  ejes(s, { W, H, m, x: v => x(v + .5), y, yt, fy: v => (v / 1000) + ' mil',
+            xt: ns.map((_, i) => i), fx: i => num(+ns[i]) + ' respuestas', xlab: 'Tamaño de la encuesta por la app', ylab: 'Error de la encuesta ($)' });
+  ns.forEach((n, i) => {
+    const v = D.conv[n];
+    el('rect', { x: x(i) + 22, width: x(1) - x(0) - 44, y: y(v), height: y(0) - y(v), fill: 'var(--naranja)', stroke: 'var(--linea)', 'stroke-width': 1.2,
+                 class: 'crece', style: `animation-delay:${i * .2}s` }, s);
+    el('text', { x: x(i + .5), y: y(v) - 8, 'text-anchor': 'middle', style: 'fill:var(--texto);font-weight:700' }, s).textContent = '+' + miles(v);
+  });
+}
+
+/* ══ D · Medialunas ══ */
+const PRECIO = 500, OPCIONES = Array.from({ length: 71 }, (_, i) => 90 + i);   // hornear de 90 a 160
+function gananciaPromedio(h, costo) {
+  const f = D.medialunas.demanda_hist; let t = 0, dias = 0;
+  for (let d = 0; d < f.length; d++) { if (!f[d]) continue; t += f[d] * (Math.min(d, h) * PRECIO - h * costo); dias += f[d]; }
+  return t / dias;
+}
+function demanda() {
+  const W = 560, H = 320, m = { l: 56, r: 16, t: 14, b: 50 }, f = D.medialunas.demanda_hist;
+  const grupos = [];   // días agrupados de a 5 medialunas: 70-74, 75-79, ...
+  for (let d0 = 70; d0 < 170; d0 += 5) { let n = 0; for (let d = d0; d < d0 + 5; d++) n += f[d] || 0; grupos.push([d0, n]); }
+  const top = Math.max(...grupos.map(g => g[1])), paso = Math.ceil(top / 4 / 10) * 10;
+  const s = lienzo('g-demanda', W, H), x = escala(70, 170, m.l, W - m.r), y = escala(0, top * 1.1, H - m.b, m.t);
+  ejes(s, { W, H, m, x, y, yt: [0, paso, 2 * paso, 3 * paso, 4 * paso].filter(v => v <= top * 1.1), fy: v => v, xt: [70, 90, 110, 130, 150, 170], fx: v => v,
+            xlab: 'Medialunas que piden en un día', ylab: 'Cantidad de días' });
+  grupos.forEach(([d0, n], i) => {
+    if (!n) return;
+    const r = el('rect', { x: x(d0) + 1, width: x(d0 + 5) - x(d0) - 2, y: y(n), height: y(0) - y(n), fill: 'var(--salvia)', stroke: 'var(--linea)', 'stroke-width': 1, class: 'crece', style: `animation-delay:${i * .03}s` }, s);
+    conTip(r, `En <b>${n}</b> de los 1.000 días pidieron entre ${d0} y ${d0 + 4} medialunas`);
+  });
+  el('line', { x1: x(120), x2: x(120), y1: m.t, y2: H - m.b, stroke: 'var(--naranja)', 'stroke-width': 2.5, 'stroke-dasharray': '7 5' }, s);
+  el('text', { x: x(120) + 6, y: m.t + 12, style: 'fill:var(--texto);font-weight:600' }, s).textContent = 'promedio: 120';
+}
+function medialunas() {
+  const costo = +$('r-costo').value, ops = OPCIONES, g = ops.map(h => gananciaPromedio(h, costo));
+  const iMejor = g.indexOf(Math.max(...g)), mejor = ops[iMejor];
+  const dif = mejor - 120, difTexto = dif > 0 ? `${dif} más que el promedio de 120` : dif < 0 ? `${-dif} menos que el promedio de 120` : 'justo el promedio';
+  const W = 720, H = 340, m = { l: 82, r: 18, t: 18, b: 50 };
+  const s = lienzo('g-medialunas', W, H), x = escala(ops[0], ops[ops.length - 1], m.l, W - m.r);
+  const lo = Math.floor(Math.min(...g) / 10000) * 10000, hi = Math.ceil(Math.max(...g) / 5000) * 5000 + 5000, y = escala(lo, hi, H - m.b, m.t);
+  const paso = (hi - lo) > 30000 ? 10000 : 5000, yt = []; for (let v = lo; v <= hi; v += paso) yt.push(v);
+  ejes(s, { W, H, m, x, y, yt, fy: v => (v / 1000) + ' mil', xt: [90, 100, 110, 120, 130, 140, 150, 160], fx: v => v,
+            xlab: 'Medialunas que se hornean por día', ylab: 'Ganancia promedio por día ($)' });
+  el('path', { d: ops.map((h, i) => (i ? 'L' : 'M') + x(h).toFixed(1) + ' ' + y(g[i]).toFixed(1)).join(' '),
+               fill: 'none', stroke: 'var(--linea)', 'stroke-width': 2.5, pathLength: 1, class: 'trazo' }, s);
+  // El promedio de demanda, para comparar con lo que conviene hornear
+  const promedioDerecha = mejor < 120;
+  el('line', { x1: x(120), x2: x(120), y1: m.t, y2: H - m.b, stroke: 'var(--gris-osc)', 'stroke-width': 2, 'stroke-dasharray': '3 4' }, s);
+  el('text', { x: x(120) + (promedioDerecha ? 8 : -8), y: m.t + 14, 'text-anchor': promedioDerecha ? 'start' : 'end', style: 'fill:var(--tenue);font-weight:600' }, s).textContent = 'promedio de demanda: 120';
+  el('text', { x: x(mejor) + (promedioDerecha ? -8 : 8), y: m.t + 14, 'text-anchor': promedioDerecha ? 'end' : 'start', style: 'fill:var(--texto);font-weight:700' }, s).textContent = 'conviene: ' + mejor;
+  el('line', { x1: x(mejor), x2: x(mejor), y1: m.t, y2: H - m.b, stroke: 'var(--naranja)', 'stroke-width': 2.5, 'stroke-dasharray': '7 5' }, s);
+  el('circle', { cx: x(mejor), cy: y(g[iMejor]), r: 8, fill: 'var(--naranja)', stroke: 'var(--linea)', 'stroke-width': 1.5 }, s);
+  ops.forEach((h, i) => {   // zonas invisibles para el tooltip
+    const r = el('rect', { x: x(h) - 5, y: m.t, width: 10, height: H - m.b - m.t, fill: 'transparent' }, s);
+    conTip(r, `Hornear <b>${h}</b>: ganancia promedio de ${miles(g[i])} por día`);
+  });
+  $('t-mejor').textContent = mejor;
+  $('l-costo').innerHTML = `Con un costo de <strong>${miles(costo)}</strong>, conviene hornear <b>${mejor}</b> (${difTexto}) y se gana, en promedio, <strong>${miles(g[iMejor])}</strong> por día.`;
+  const falta = PRECIO - costo, sobra = costo;
+  const f = D.medialunas.demanda_hist, dias = f.reduce((a, b) => a + b, 0);
+  const cortos120 = Math.round(f.slice(121).reduce((a, b) => a + b, 0) / dias * 100);   // % de días en que 120 no alcanzan
+  $('p-costo').innerHTML = falta > sobra
+    ? `<h3>¿Por qué no justo 120?</h3><p>Si horneás el promedio, <strong>casi la mitad de los días</strong> (${cortos120}%) te quedás sin medialunas. Y quedarte corto cuesta más (<strong>${miles(falta)}</strong> que no ganás) que que te sobre una (<strong>${miles(sobra)}</strong> que tirás). Por eso conviene <span class="marcado">cubrirse con ${dif} de más</span>.</p>`
+    : falta < sobra
+    ? `<h3>¿Por qué menos que 120?</h3><p>Ahora que te sobre una cuesta más (<strong>${miles(sobra)}</strong> que tirás) que quedarte corto (<strong>${miles(falta)}</strong> que no ganás). Conviene <span class="marcado">quedarse ${-dif} por debajo</span> del promedio.</p>`
+    : `<h3>Empate</h3><p>Quedarte corto y que te sobre cuestan lo mismo (<strong>${miles(falta)}</strong>): conviene hornear <span class="marcado">cerca del promedio</span>.</p>`;
+}
+$('r-costo').addEventListener('input', medialunas);
+
+/* ══ D · El horno ══ */
+function flujos() {
+  const v = [-10, 3, 3.5, 4, 4, 3], max = 10;
+  $('flujos').innerHTML = v.map((f, i) => `
+    <div class="flujo ${f < 0 ? 'neg' : ''}">
+      <div class="arriba">${f > 0 ? `<b>+${String(f).replace('.', ',')}</b><div class="b crece" style="height:${f * 13.1}%; animation-delay:${i * .1}s"></div>` : ''}</div>
+      <div class="abajo">${f < 0 ? `<div class="b crece" style="height:${-f / max * 82}%"></div><b>${f}</b>` : ''}</div>
+      <span>año ${i}</span></div>`).join('');
+}
+function van() {
+  const W = 720, H = 340, m = { l: 70, r: 16, t: 14, b: 50 };
+  const s = lienzo('g-van', W, H), B = D.hist_v.bordes, c = D.hist_v.todos, top = Math.max(...c);
+  const x = escala(B[0], B[B.length - 1], m.l, W - m.r), y = escala(0, top * 1.1, H - m.b, m.t);
+  const paso = Math.ceil(top / 4 / 100) * 100, yt = [0, paso, 2 * paso, 3 * paso, 4 * paso].filter(v => v <= top * 1.1);
+  ejes(s, { W, H, m, x, y, yt, fy: v => num(v), xt: [-4, -3, -2, -1, 0, 1, 2, 3, 4], fx: v => (v > 0 ? '+' : '') + v,
+            xlab: 'VAN del horno (millones de pesos)', ylab: 'Cantidad de futuros' });
+  c.forEach((n, i) => {
+    if (!n) return;
+    const neg = B[i + 1] <= 0;
+    const r = el('rect', { x: x(B[i]) + .5, width: x(B[i + 1]) - x(B[i]) - 1, y: y(n), height: y(0) - y(n), fill: neg ? 'var(--naranja)' : 'var(--salvia)',
+                           stroke: 'var(--linea)', 'stroke-width': .7, class: 'crece', style: `animation-delay:${i * .015}s` }, s);
+    const f = v => v.toFixed(1).replace('.', ',');
+    conTip(r, `En <b>${num(n)}</b> futuros el VAN quedó entre ${f(B[i])} y ${f(B[i + 1])} millones`);
+  });
+  el('line', { x1: x(0), x2: x(0), y1: m.t, y2: H - m.b, stroke: 'var(--linea)', 'stroke-width': 2 }, s);
+  el('text', { x: x(0) - 8, y: m.t + 12, 'text-anchor': 'end', style: 'fill:var(--texto);font-weight:600' }, s).textContent = '← se pierde plata';
+  el('text', { x: x(0) + 8, y: m.t + 12, style: 'fill:var(--texto);font-weight:600' }, s).textContent = 'conviene →';
+}
+
+/* ══ Textos con los números del notebook ══ */
+function cifras() {
+  $('c-mu').textContent = miles(D.mu); $('c-mu2').textContent = miles(D.mu);
+  $('c-m100').textContent = miles(D.muestra100); $('c-err100').textContent = miles(Math.abs(D.muestra100 - D.mu));
+  $('c-pvan').textContent = (D.van.p * 100).toFixed(1).replace('.', ',') + '%';
+  $('c-vprom').textContent = '+' + D.van.prom.toFixed(2).replace('.', ',') + ' millones';
+}
+
+/* ══ Navegación ══ */
+const slides = [...document.querySelectorAll('.slide')];
+const alEntrar = { 'g-dados': tirarDados, segmentos, campo, 'g-acum': acumulado, 'm-aleat': miniaturas, 'g-formas': formas,
+                   'g-conv': sesgo, 'g-demanda': demanda, 'g-medialunas': medialunas, flujos, 'g-van': van };
+let actual = 0;
+function ir(i) {
+  const adelante = i > actual;
+  actual = Math.max(0, Math.min(slides.length - 1, i));
+  // Las partes de la slide aparecen solas, una detrás de otra (sin tocar nada)
+  clearTimeout(window.tiempoPasos);
+  const pasos = [...slides[actual].querySelectorAll('.paso')];
+  pasos.forEach(p => p.classList.remove('visto'));
+  pasos.forEach((p, k) => setTimeout(() => p.classList.add('visto'), 350 + k * 450));
+  slides.forEach((s, k) => s.classList.toggle('activa', k === actual));
+  $('barra').style.width = ((actual + 1) / slides.length * 100) + '%';
+  $('contador').textContent = `${actual + 1} / ${slides.length}`;
+  $('pie-seccion').textContent = slides[actual].dataset.seccion || '';
+  for (const id in alEntrar) if (slides[actual].querySelector('#' + id)) alEntrar[id]();
+  try { history.replaceState(null, '', '#' + (actual + 1)); } catch (e) { /* en algunos visores no se puede tocar la dirección */ }
+}
+function avanzar() { ir(actual + 1); }
+$('sig').addEventListener('click', avanzar);
+$('ant').addEventListener('click', () => ir(actual - 1));
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); avanzar(); }
+  if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); ir(actual - 1); }
+  if (e.key === 'f') (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()).catch(() => {});
+});
+document.querySelectorAll('.opcion').forEach(b => b.addEventListener('click', () => b.classList.toggle('elegida')));
+
+/* Fondo: máquina de Galton. Cada bolita rebota al azar a izquierda o derecha en
+   cada fila de clavos; juntas se apilan abajo y dibujan la campana. Cuando la
+   pila se llena, se desvanece y vuelve a empezar. */
+(function galton() {
+  const lienzo = $('fondo'), ctx = lienzo.getContext('2d');
+  const FILAS = 24, COLUMNAS = 29, CADA_MS = 230;
+  let W, H, ancho, radio, alturaMax, pila, bolitas, transparencia = 1, vaciando = false, ultima = 0;
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function medir() {
+    const d = devicePixelRatio || 1;
+    W = lienzo.width = innerWidth * d; H = lienzo.height = innerHeight * d;
+    ancho = W / COLUMNAS; radio = Math.min(ancho * 0.17, 6 * d); alturaMax = H * 0.32;
+    reiniciar();
+    if (quieto) { for (let k = 0; k < 400; k++) apilar(Math.round(binomial())); dibujar(); }
+  }
+  function reiniciar() { pila = new Array(COLUMNAS).fill(0); bolitas = []; transparencia = 1; vaciando = false; }
+  const binomial = () => { let c = 0; for (let k = 0; k < FILAS; k++) c += Math.random() < .5 ? -.5 : .5; return c; };
+  const centro = () => (COLUMNAS - 1) / 2;
+  const porNivel = () => Math.max(1, Math.floor(ancho / (radio * 2.3)));   // bolitas por renglón en cada columna
+  function apilar(desvio) {
+    const col = Math.max(0, Math.min(COLUMNAS - 1, centro() + desvio));
+    pila[col]++;
+    const nivel = Math.floor((pila[col] - 1) / porNivel());
+    if ((nivel + 1) * radio * 2.1 > alturaMax) vaciando = true;
+  }
+  function soltar() { bolitas.push({ x: W / 2, y: -radio, col: 0, fila: 0, xObjetivo: W / 2 }); }
+
+  function dibujar() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalAlpha = transparencia;
+    // la pila: bolitas verdes muy tenues
+    ctx.fillStyle = 'rgba(47, 125, 91, .15)';
+    const n = porNivel();
+    pila.forEach((cant, col) => {
+      for (let k = 0; k < cant; k++) {
+        const nivel = Math.floor(k / n), lugar = k % n;
+        const x = col * ancho + ancho / 2 + (lugar - (n - 1) / 2) * radio * 2.2;
+        const y = H - radio * 1.1 - nivel * radio * 2.1;
+        ctx.beginPath(); ctx.arc(x, y, radio, 0, 7); ctx.fill();
+      }
+    });
+    // la campana teórica, como una línea suave sobre la pila
+    const total = pila.reduce((a, b) => a + b, 0);
+    if (total > 30) {
+      const sd = Math.sqrt(FILAS) / 2, alto = total / (sd * Math.sqrt(2 * Math.PI)) / n * radio * 2.1;
+      ctx.strokeStyle = 'rgba(26, 26, 26, .12)'; ctx.lineWidth = Math.max(1, radio * 0.25);
+      ctx.beginPath();
+      for (let px = 0; px <= W; px += 6) {
+        const z = (px / ancho - .5 - centro()) / sd;
+        const y = H - alto * Math.exp(-z * z / 2);
+        px ? ctx.lineTo(px, y) : ctx.moveTo(px, y);
+      }
+      ctx.stroke();
+    }
+    // las bolitas que caen: naranjas
+    ctx.fillStyle = 'rgba(255, 122, 61, .26)';
+    bolitas.forEach(b => { ctx.beginPath(); ctx.arc(b.x, b.y, radio, 0, 7); ctx.fill(); });
+    ctx.globalAlpha = 1;
+  }
+
+  function paso(t) {
+    if (!vaciando && t - ultima > CADA_MS) { soltar(); ultima = t; }
+    const arriba = H * 0.04, entreFilas = H * 0.022, velocidad = H * 0.0065;
+    bolitas.forEach(b => {
+      b.y += velocidad;
+      if (b.fila < FILAS && b.y > arriba + b.fila * entreFilas) {   // pega en un clavo: izquierda o derecha
+        b.col += Math.random() < .5 ? -.5 : .5; b.fila++;
+        b.xObjetivo = W / 2 + b.col * ancho;
+      }
+      b.x += (b.xObjetivo - b.x) * 0.25;
+    });
+    // las que llegan a la pila se quedan
+    bolitas = bolitas.filter(b => {
+      const cant = pila[Math.max(0, Math.min(COLUMNAS - 1, centro() + b.col))] || 0;
+      const techo = H - radio * 1.1 - Math.floor(cant / porNivel()) * radio * 2.1;
+      if (b.fila >= FILAS && b.y >= techo) { apilar(b.col); return false; }
+      return true;
+    });
+    if (vaciando) { transparencia -= 0.012; if (transparencia <= 0) reiniciar(); }
+    dibujar();
+    requestAnimationFrame(paso);
+  }
+
+  addEventListener('resize', medir);
+  medir();
+  if (!quieto) requestAnimationFrame(paso);
+})();
+
+const dadoSlide = crearDado($('dado-slide'), 84);
+const dadoPortada = crearDado($('dado-portada'), 190);
+const rodarPortada = () => {   // rueda solo hasta que alguien lo agarra
+  if (slides[actual].classList.contains('portada') && !dadoPortada.tocado) dadoPortada.tirar(1 + Math.floor(Math.random() * 6));
+};
+setTimeout(rodarPortada, 400);
+setInterval(rodarPortada, 2600);
+// Escala del escenario y puntos del censo contra la muestra
+function ajustarEscala() {
+  const e = innerWidth <= 900 ? 1 : Math.min(innerWidth / 1600, innerHeight / 900);
+  document.documentElement.style.setProperty('--escala', e);
+}
+addEventListener('resize', ajustarEscala); ajustarEscala();
+if (location.search.includes('todo')) document.body.classList.add('ver-todo');
+document.querySelectorAll('.campo-chico').forEach((c, k) => {
+  const azar = generador(31 + k), total = 240, todos = c.dataset.marcados === 'todos', elegidos = new Set();
+  while (!todos && elegidos.size < +c.dataset.marcados) elegidos.add(Math.floor(azar() * total));
+  for (let i = 0; i < total; i++) { const p = document.createElement('i'); if (todos) p.className = 'on'; else if (elegidos.has(i)) p.className = 'muestra'; c.appendChild(p); }
+});
+cifras(); leyendaFormas();
+ir((parseInt(location.hash.slice(1)) || 1) - 1);
+</script>
+</body>
+</html>
