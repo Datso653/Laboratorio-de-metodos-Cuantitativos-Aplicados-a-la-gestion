@@ -1,22 +1,22 @@
-{"Fecha":1704067200000,"Producto":"Monitor","Vendedor":"Juan","Ciudad":"Mendoza","Cantidad":6,"Precio_Unitario":23030,"TotalVenta":138180}
-{"Fecha":1704931200000,"Producto":"Monitor","Vendedor":"Sof\u00eda","Ciudad":"C\u00f3rdoba","Cantidad":1,"Precio_Unitario":51271,"TotalVenta":51271}
-{"Fecha":1705363200000,"Producto":"Monitor","Vendedor":"Mar\u00eda","Ciudad":"Mendoza","Cantidad":8,"Precio_Unitario":55448,"TotalVenta":443584}
-{"Fecha":1705708800000,"Producto":"Monitor","Vendedor":"Juan","Ciudad":"C\u00f3rdoba","Cantidad":6,"Precio_Unitario":9632,"TotalVenta":57792}
-{"Fecha":1705968000000,"Producto":"Monitor","Vendedor":"Mar\u00eda","Ciudad":"Buenos Aires","Cantidad":5,"Precio_Unitario":114779,"TotalVenta":573895}
-{"Fecha":1706313600000,"Producto":"Monitor","Vendedor":"Luc\u00eda","Ciudad":"La Plata","Cantidad":3,"Precio_Unitario":87152,"TotalVenta":261456}
-{"Fecha":1706832000000,"Producto":"Monitor","Vendedor":"Mar\u00eda","Ciudad":"Rosario","Cantidad":1,"Precio_Unitario":17910,"TotalVenta":17910}
-{"Fecha":1706918400000,"Producto":"Monitor","Vendedor":"Pedro","Ciudad":"La Plata","Cantidad":5,"Precio_Unitario":78479,"TotalVenta":392395}
-{"Fecha":1707350400000,"Producto":"Monitor","Vendedor":"Sof\u00eda","Ciudad":"Buenos Aires","Cantidad":9,"Precio_Unitario":53447,"TotalVenta":481023}
-{"Fecha":1707436800000,"Producto":"Monitor","Vendedor":"Pedro","Ciudad":"Mendoza","Cantidad":8,"Precio_Unitario":131394,"TotalVenta":1051152}
-{"Fecha":1708128000000,"Producto":"Monitor","Vendedor":"Pedro","Ciudad":"La Plata","Cantidad":5,"Precio_Unitario":6605,"TotalVenta":33025}
-{"Fecha":1708300800000,"Producto":"Monitor","Vendedor":"Luc\u00eda","Ciudad":"C\u00f3rdoba","Cantidad":4,"Precio_Unitario":81125,"TotalVenta":324500}
-{"Fecha":1708992000000,"Producto":"Monitor","Vendedor":"Juan","Ciudad":"C\u00f3rdoba","Cantidad":6,"Precio_Unitario":127177,"TotalVenta":763062}
-{"Fecha":1709078400000,"Producto":"Monitor","Vendedor":"Mar\u00eda","Ciudad":"Buenos Aires","Cantidad":2,"Precio_Unitario":46427,"TotalVenta":92854}
-{"Fecha":1709164800000,"Producto":"Monitor","Vendedor":"Mar\u00eda","Ciudad":"La Plata","Cantidad":3,"Precio_Unitario":127883,"TotalVenta":383649}
-{"Fecha":1709251200000,"Producto":"Monitor","Vendedor":"Pedro","Ciudad":"La Plata","Cantidad":5,"Precio_Unitario":136189,"TotalVenta":680945}
-{"Fecha":1709683200000,"Producto":"Monitor","Vendedor":"Luc\u00eda","Ciudad":"Rosario","Cantidad":5,"Precio_Unitario":5846,"TotalVenta":29230}
-{"Fecha":1709856000000,"Producto":"Monitor","Vendedor":"Mar\u00eda","Ciudad":"Mendoza","Cantidad":8,"Precio_Unitario":84239,"TotalVenta":673912}
-{"Fecha":1710374400000,"Producto":"Monitor","Vendedor":"Juan","Ciudad":"La Plata","Cantidad":5,"Precio_Unitario":69323,"TotalVenta":346615}
-{"Fecha":1710806400000,"Producto":"Monitor","Vendedor":"Luc\u00eda","Ciudad":"Rosario","Cantidad":2,"Precio_Unitario":83477,"TotalVenta":166954}
-{"Fecha":1711152000000,"Producto":"Monitor","Vendedor":"Juan","Ciudad":"Rosario","Cantidad":5,"Precio_Unitario":25618,"TotalVenta":128090}
-{"Fecha":1711411200000,"Producto":"Monitor","Vendedor":"Pedro","Ciudad":"La Plata","Cantidad":1,"Precio_Unitario":52362,"TotalVenta":52362}
+{"Fecha":1704067200000,"Producto":"Monitor","Vendedor":"Juan","Ciudad":"Mendoza","Cantidad":6,"Precio_Unitario":215200,"TotalVenta":1291200}
+{"Fecha":1704931200000,"Producto":"Monitor","Vendedor":"Sof\u00eda","Ciudad":"C\u00f3rdoba","Cantidad":1,"Precio_Unitario":251500,"TotalVenta":251500}
+{"Fecha":1705363200000,"Producto":"Monitor","Vendedor":"Mar\u00eda","Ciudad":"Mendoza","Cantidad":8,"Precio_Unitario":245000,"TotalVenta":1960000}
+{"Fecha":1705708800000,"Producto":"Monitor","Vendedor":"Juan","Ciudad":"C\u00f3rdoba","Cantidad":6,"Precio_Unitario":217400,"TotalVenta":1304400}
+{"Fecha":1705968000000,"Producto":"Monitor","Vendedor":"Mar\u00eda","Ciudad":"Buenos Aires","Cantidad":5,"Precio_Unitario":237500,"TotalVenta":1187500}
+{"Fecha":1706313600000,"Producto":"Monitor","Vendedor":"Luc\u00eda","Ciudad":"La Plata","Cantidad":3,"Precio_Unitario":216000,"TotalVenta":648000}
+{"Fecha":1706832000000,"Producto":"Monitor","Vendedor":"Mar\u00eda","Ciudad":"Rosario","Cantidad":1,"Precio_Unitario":243700,"TotalVenta":243700}
+{"Fecha":1706918400000,"Producto":"Monitor","Vendedor":"Pedro","Ciudad":"La Plata","Cantidad":5,"Precio_Unitario":234900,"TotalVenta":1174500}
+{"Fecha":1707350400000,"Producto":"Monitor","Vendedor":"Sof\u00eda","Ciudad":"Buenos Aires","Cantidad":9,"Precio_Unitario":248400,"TotalVenta":2235600}
+{"Fecha":1707436800000,"Producto":"Monitor","Vendedor":"Pedro","Ciudad":"Mendoza","Cantidad":8,"Precio_Unitario":221700,"TotalVenta":1773600}
+{"Fecha":1708128000000,"Producto":"Monitor","Vendedor":"Pedro","Ciudad":"La Plata","Cantidad":5,"Precio_Unitario":215700,"TotalVenta":1078500}
+{"Fecha":1708300800000,"Producto":"Monitor","Vendedor":"Luc\u00eda","Ciudad":"C\u00f3rdoba","Cantidad":4,"Precio_Unitario":232200,"TotalVenta":928800}
+{"Fecha":1708992000000,"Producto":"Monitor","Vendedor":"Juan","Ciudad":"C\u00f3rdoba","Cantidad":6,"Precio_Unitario":226100,"TotalVenta":1356600}
+{"Fecha":1709078400000,"Producto":"Monitor","Vendedor":"Mar\u00eda","Ciudad":"Buenos Aires","Cantidad":2,"Precio_Unitario":207100,"TotalVenta":414200}
+{"Fecha":1709164800000,"Producto":"Monitor","Vendedor":"Mar\u00eda","Ciudad":"La Plata","Cantidad":3,"Precio_Unitario":243500,"TotalVenta":730500}
+{"Fecha":1709251200000,"Producto":"Monitor","Vendedor":"Pedro","Ciudad":"La Plata","Cantidad":5,"Precio_Unitario":230900,"TotalVenta":1154500}
+{"Fecha":1709683200000,"Producto":"Monitor","Vendedor":"Luc\u00eda","Ciudad":"Rosario","Cantidad":5,"Precio_Unitario":252500,"TotalVenta":1262500}
+{"Fecha":1709856000000,"Producto":"Monitor","Vendedor":"Mar\u00eda","Ciudad":"Mendoza","Cantidad":8,"Precio_Unitario":223500,"TotalVenta":1788000}
+{"Fecha":1710374400000,"Producto":"Monitor","Vendedor":"Juan","Ciudad":"La Plata","Cantidad":5,"Precio_Unitario":251100,"TotalVenta":1255500}
+{"Fecha":1710806400000,"Producto":"Monitor","Vendedor":"Luc\u00eda","Ciudad":"Rosario","Cantidad":2,"Precio_Unitario":208100,"TotalVenta":416200}
+{"Fecha":1711152000000,"Producto":"Monitor","Vendedor":"Juan","Ciudad":"Rosario","Cantidad":5,"Precio_Unitario":229400,"TotalVenta":1147000}
+{"Fecha":1711411200000,"Producto":"Monitor","Vendedor":"Pedro","Ciudad":"La Plata","Cantidad":1,"Precio_Unitario":234800,"TotalVenta":234800}

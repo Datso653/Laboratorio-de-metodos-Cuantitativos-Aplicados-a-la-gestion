@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preguntarle a la base</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:wdth,wght@62.5..100,100..900&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+
+  /* ══ Paleta y tipografía: la misma estética de la presentación de data centers ══ */
+  :root {
+    --fondo: #EFEEEA;
+    --superficie: #FFFFFF;
+    --linea: #1A1A1A;
+    --texto: #1A1A1A;
+    --titulo: #171C2E;
+    --tenue: #57544E;
+    --borde: rgba(26, 26, 26, 0.16);
+    --naranja: #FF7A3D;
+    --resaltador: rgba(255, 122, 61, 0.45);
+    --salvia: #A9CDB1;
+    --verde: #2F7D5B;
+    --gris: #D6D2C8;
+    --gris-osc: #A29E94;
+    --serif: 'Noto Serif Display', Georgia, serif;
+    --sans: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: var(--sans); color: var(--texto); background-color: var(--fondo);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.33 0 0 0 0 0.3 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Puntitos que flotan de fondo */
+  .puntitos { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .puntitos i { position: absolute; border-radius: 50%; display: block; animation: flotar 20s ease-in-out infinite alternate; }
+  @keyframes flotar {
+    0%   { transform: translate(0, 0); }
+    50%  { transform: translate(var(--dx), calc(var(--dy) * -0.5)); }
+    100% { transform: translate(calc(var(--dx) * -0.6), var(--dy)); }
+  }
+
+  /* ══ Diapositivas ══ */
+  .slide {
+    position: absolute; inset: 0; z-index: 1;
+    padding: 63px 112px 99px; display: flex; flex-direction: column; justify-content: center; gap: 1.2rem;
+    opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility .45s;
+    overflow-y: auto;
+  }
+  .slide.activa { opacity: 1; visibility: visible; }
+  .slide.activa > * { animation: subir .6s ease both; }
+  .slide.activa > *:nth-child(2) { animation-delay: .08s; }
+  .slide.activa > *:nth-child(3) { animation-delay: .16s; }
+  .slide.activa > *:nth-child(4) { animation-delay: .24s; }
+  .slide.activa > *:nth-child(5) { animation-delay: .32s; }
+  @keyframes subir { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+  h1, h2 { font-family: var(--serif); font-stretch: 68%; font-weight: 800; color: var(--titulo); letter-spacing: -0.01em; line-height: 1.02; }
+  h1 { font-size: clamp(2.8rem, 118.4px, 6.4rem); }
+  h2 { font-size: clamp(1.9rem, 70.4px, 3.5rem); max-width: 22ch; }
+  h2.ancho { max-width: none; }
+  .hl { background: linear-gradient(transparent 58%, var(--resaltador) 58%, var(--resaltador) 92%, transparent 92%); padding: 0 0.06em; }
+  p { color: var(--tenue); font-size: clamp(0.95rem, 21.6px, 1.2rem); line-height: 1.55; max-width: 60ch; }
+  p.grande { font-size: clamp(1.15rem, 32px, 1.6rem); color: var(--texto); }
+  strong { color: var(--texto); font-weight: 600; }
+  .marcado { background: var(--resaltador); padding: 0 0.15em; border-radius: 3px; color: var(--texto); }
+
+  .etiqueta {
+    display: inline-block; align-self: flex-start; width: fit-content;
+    background: var(--naranja); color: var(--texto);
+    font-weight: 700; font-size: clamp(0.72rem, 15.2px, 0.9rem); letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0.38em 1.05em; border-radius: 999px;
+  }
+  .etiqueta.salvia { background: var(--salvia); }
+
+  /* Grillas */
+  .fila { display: grid; gap: 1.4rem; align-items: center; }
+  .dos { grid-template-columns: 1fr 1fr; }
+  .dos-uno { grid-template-columns: 1.6fr 1fr; }
+  .uno-dos { grid-template-columns: 1fr 1.6fr; }
+  .tres { grid-template-columns: repeat(3, 1fr); align-items: stretch; }
+  .cuatro { grid-template-columns: repeat(4, 1fr); align-items: stretch; }
+
+  /* Tarjetas y cifras */
+  .tarjeta { background: var(--superficie); border: 1.5px solid var(--linea); border-radius: 16px; padding: 1.2rem 1.3rem; }
+  .tarjeta h3 { font-size: clamp(1rem, 24px, 1.25rem); margin-bottom: .35rem; }
+  .tarjeta p { font-size: clamp(0.85rem, 17.6px, 1rem); }
+  .tarjeta.naranja { border-top: 7px solid var(--naranja); }
+  .tarjeta.verde { border-top: 7px solid var(--verde); }
+  .tarjeta.gris { border-top: 7px solid var(--gris-osc); }
+  .tarjeta.salvia { border-top: 7px solid var(--salvia); }
+  .cifra b { display: block; font-family: var(--serif); font-stretch: 75%; font-weight: 800; color: var(--titulo);
+             font-size: clamp(2.2rem, 83.2px, 4.4rem); line-height: 1; margin: .2rem 0 .4rem; }
+  .cifra b.chica { font-size: clamp(1.6rem, 51.2px, 2.6rem); }
+  .cifra .rotulo { font-size: .85rem; font-weight: 600; color: var(--tenue); text-transform: uppercase; letter-spacing: .05em; }
+  .cifra .nota { border-top: 1.5px solid var(--borde); margin-top: .6rem; padding-top: .6rem; }
+  .num { display: inline-grid; place-items: center; width: 2.3rem; height: 2.3rem; border-radius: 50%;
+         background: var(--linea); color: #fff; font-weight: 700; margin-bottom: .6rem; }
+
+  /* Píldoras clickeables (encuestas en el chat) */
+  .opciones { display: flex; flex-wrap: wrap; gap: .7rem; }
+  .opcion { font-family: var(--sans); font-size: clamp(.95rem, 20.8px, 1.15rem); font-weight: 600; cursor: pointer;
+            background: #fff; border: 1.5px solid var(--linea); border-radius: 999px; padding: .55em 1.3em; color: var(--texto); transition: background .2s; }
+  .opcion:hover, .opcion.elegida { background: var(--naranja); }
+  .pista { font-size: .9rem; color: var(--tenue); font-style: italic; }
+
+  /* Ruta de la clase */
+  .ruta { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem; }
+  .ruta svg.linea { position: absolute; left: 0; top: 1.6rem; width: 100%; height: 4px; overflow: visible; }
+  .ruta svg.linea line { stroke: var(--linea); stroke-width: 3; stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .slide.activa .ruta svg.linea line { animation: trazar 1.4s .3s ease forwards; }
+  @keyframes trazar { to { stroke-dashoffset: 0; } }
+  .nodo { position: relative; text-align: left; }
+  .nodo .circ { width: 3.2rem; height: 3.2rem; border-radius: 50%; background: var(--naranja); border: 2px solid var(--linea);
+                display: grid; place-items: center; font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: 1.5rem; margin-bottom: .8rem; }
+  .slide.activa .nodo .circ { animation: rebote .5s calc(.4s + var(--d) * .25s) both cubic-bezier(.3,1.6,.6,1); }
+  @keyframes rebote { from { transform: scale(0); } to { transform: scale(1); } }
+  .nodo h3 { font-size: clamp(1rem, 24px, 1.3rem); }
+  .nodo p { font-size: clamp(.85rem, 17.6px, 1rem); }
+
+  /* Gráficos */
+  .grafico-caja { background: var(--superficie); border: 1.5px solid var(--linea); border-radius: 16px; padding: .8rem 1rem .5rem; }
+  svg.grafico { width: 100%; height: auto; max-height: 450px; display: block; font-family: var(--sans); }
+  svg.grafico text { fill: var(--tenue); font-size: 13px; }
+  svg.grafico .eje-titulo { fill: var(--texto); font-weight: 600; font-size: 13.5px; }
+  svg.grafico .grilla { stroke: rgba(26,26,26,.1); }
+  svg.grafico .base { stroke: var(--linea); stroke-width: 1.5; }
+  .crece { transform-box: fill-box; transform-origin: bottom; animation: crecer .8s ease both; }
+  @keyframes crecer { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  .trazo { stroke-dasharray: 1; stroke-dashoffset: 1; animation: trazar 1.6s ease forwards; }
+  .leyenda { display: flex; flex-wrap: wrap; gap: .5rem 1.1rem; font-size: .85rem; color: var(--tenue); margin: .2rem 0 .4rem; }
+  .leyenda span::before { content: ''; display: inline-block; width: .85em; height: .85em; border-radius: 3px; margin-right: .35em; vertical-align: -1px; background: var(--c); border: 1px solid var(--linea); }
+  .leyenda button { font: inherit; cursor: pointer; background: #fff; border: 1.5px solid var(--linea); border-radius: 999px; padding: .2em .8em; }
+  .leyenda button.apagado { opacity: .35; }
+  .leyenda button::before { content: ''; display: inline-block; width: .8em; height: .8em; border-radius: 50%; margin-right: .4em; background: var(--c); vertical-align: -1px; }
+
+  /* Controles (dados, encuesta, medialunas) */
+  .control { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem; font-weight: 600; }
+  .control input[type=number] { width: 5.5rem; font: inherit; padding: .35em .6em; border: 1.5px solid var(--linea); border-radius: 10px; }
+  .control input[type=range] { flex: 1; min-width: 160px; accent-color: var(--naranja); }
+  .boton { font: inherit; font-weight: 700; cursor: pointer; background: var(--naranja); border: 1.5px solid var(--linea); border-radius: 999px; padding: .5em 1.3em; }
+  .boton:hover { background: #ff935f; }
+  .lectura { font-size: clamp(1rem, 22.4px, 1.2rem); color: var(--texto); }
+  .lectura b { font-family: var(--serif); font-stretch: 75%; font-size: 1.5em; }
+  .dados { font-size: clamp(1.6rem, 44.8px, 2.4rem); letter-spacing: .08em; color: var(--texto); min-height: 1.3em; }
+
+  /* Segmentos */
+  .seg { display: grid; grid-template-columns: 6.5rem 1fr; gap: .4rem .8rem; align-items: center; margin-bottom: .9rem; }
+  .seg .nombre { font-weight: 700; }
+  .barrita { height: 1.5rem; border: 1.5px solid var(--linea); border-radius: 6px; background: var(--salvia); width: 0; transition: width 1s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: .4rem; font-size: .8rem; font-weight: 600; white-space: nowrap; }
+  .barrita.gasto { background: var(--naranja); }
+  .seg small { grid-column: 2; color: var(--tenue); font-size: .8rem; margin-top: -.3rem; }
+
+  /* Puntos de la muestra */
+  .campo { display: grid; grid-template-columns: repeat(25, 1fr); gap: 5px; }
+  .campo i { aspect-ratio: 1; border-radius: 50%; background: var(--gris); transition: background .3s, transform .3s; }
+  .campo i.on { background: var(--naranja); transform: scale(1.25); box-shadow: 0 0 0 1.5px var(--linea); }
+  .mini { width: 100%; height: auto; }
+
+  /* Flujos del horno */
+  .flujos { display: grid; grid-template-columns: repeat(6, 1fr); gap: .5rem; height: 15rem; }
+  .flujo { display: grid; grid-template-rows: 1fr 1.6fr auto; justify-items: center; height: 100%; font-size: .85rem; }
+  .flujo .arriba, .flujo .abajo { width: 100%; display: flex; flex-direction: column; align-items: center; gap: .25rem; }
+  .flujo .arriba { justify-content: flex-end; border-bottom: 1.5px solid var(--linea); }
+  .flujo .abajo { justify-content: flex-start; padding-top: 0; }
+  .flujo .b { width: 70%; border: 1.5px solid var(--linea); background: var(--salvia); border-radius: 6px 6px 0 0; }
+  .flujo.neg .b { background: var(--naranja); border-radius: 0 0 6px 6px; transform-origin: top; }
+  .flujo b { font-weight: 700; color: var(--texto); }
+  .flujo span { color: var(--tenue); margin-top: .3rem; }
+
+  .cita { border-left: 6px solid var(--naranja); }
+
+  /* Fondo: crema liso y, detrás de todo, una máquina de Galton tenue */
+  body { background-image: none; }
+  #fondo { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+  /* Escenario fijo que se escala entero a la ventana, como una diapositiva */
+  .escenario { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px;
+               transform: translate(-50%, -50%) scale(var(--escala, 1)); }
+
+  /* Lo que aparece de a un clic */
+  .paso { opacity: 0; transform: translateY(14px); transition: opacity .45s ease, transform .45s ease; }
+  .paso.visto, .ver-todo .paso { opacity: 1; transform: none; }
+  .slide.activa > .paso { animation: none; }
+
+  /* ¿Por qué simulamos? */
+  .razones { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, .9fr); gap: 2.6rem; margin: 1.4rem 0 .6rem; }
+  .razon b { display: inline-block; font-family: var(--serif); font-stretch: 68%; font-weight: 800; font-size: 72px; line-height: 1;
+             color: var(--titulo); margin-bottom: 1.1rem; padding: 0 .08em; transform: rotate(-2deg);
+             background: linear-gradient(transparent 55%, var(--resaltador) 55%, var(--resaltador) 92%, transparent 92%); }
+  .razon:nth-child(even) b { transform: rotate(1.5deg); background: linear-gradient(transparent 55%, rgba(169, 205, 177, .9) 55%, rgba(169, 205, 177, .9) 92%, transparent 92%); }
+  .razon span { display: block; font-size: 21px; line-height: 1.45; color: var(--tenue); border-top: 2px solid var(--linea); padding-top: .8rem; }
+  .remate { font-size: 24px; color: var(--texto); max-width: 70ch; }
+
+  /* Censo contra muestra */
+  .versus { display: grid; grid-template-columns: 1fr auto 1fr; gap: 3rem; align-items: start; margin-top: .6rem; }
+  .lado-v b { display: block; font-family: var(--serif); font-stretch: 72%; font-weight: 800; font-size: 60px; color: var(--titulo); line-height: 1; margin: .2rem 0 .6rem; }
+  .lado-v .rotulo { font-size: 15px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--tenue); }
+  .lado-v p { font-size: 20px; }
+  .vs { align-self: center; font-family: var(--serif); font-stretch: 72%; font-weight: 800; font-size: 54px; color: var(--naranja); }
+  .campo-chico { display: grid; grid-template-columns: repeat(24, 1fr); gap: 5px; margin-bottom: 1.2rem; }
+  .campo-chico i { aspect-ratio: 1; border-radius: 50%; background: var(--gris); }
+  .campo-chico i.on { background: var(--linea); }
+  .campo-chico i.muestra { background: var(--naranja); box-shadow: 0 0 0 1.5px var(--linea); transform: scale(1.25); }
+
+  /* Slide centrada */
+  .slide.centrada { align-items: center; text-align: center; }
+  .slide.centrada .etiqueta { align-self: center; }
+  .slide.centrada p { margin: 0 auto; max-width: 64ch; }
+  .slide.centrada .grafico-caja { width: 100%; }
+
+  /* Ejemplos debajo de cada paso de una ruta */
+  .nodo .ej { margin-top: .6rem; font-size: 17px; color: var(--texto); border-left: 4px solid var(--naranja); padding-left: .6rem; }
+  .ruta3 { grid-template-columns: repeat(3, 1fr); }
+
+  /* Monte Carlo contra Machine Learning */
+  .comparacion { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; margin-top: .8rem; }
+  .comp { background: var(--superficie); border: 1.5px solid var(--linea); border-top: 7px solid var(--naranja); border-radius: 16px; padding: 1rem 1.3rem; }
+  .comp.ml { border-top-color: var(--salvia); }
+  .comp .rotulo-c { font-size: 14px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); }
+  .comp .sentido { font-family: var(--serif); font-stretch: 72%; font-weight: 800; font-size: 42px; color: var(--titulo); margin: .2rem 0 .4rem; }
+  .comp .sentido span { color: var(--naranja); }
+  .comp.ml .sentido span { color: var(--verde); }
+  .comp p { font-size: 18px; max-width: none; }
+
+  /* Línea de tiempo */
+  .linea-tiempo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; border-top: 3px solid var(--linea); padding-top: 1.1rem; position: relative; }
+  .linea-tiempo > div { position: relative; }
+  .linea-tiempo > div::before { content: ''; position: absolute; top: calc(-1.1rem - 10px); left: 0; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 3px solid var(--linea); }
+  .linea-tiempo > div.ahora::before { background: var(--naranja); }
+  .linea-tiempo .anio { font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: 34px; color: var(--titulo); }
+  .linea-tiempo p { font-size: 17px; margin-top: .2rem; }
+
+  /* Frases grandes en lugar de tarjetas */
+  .ideas { display: grid; gap: 1.2rem; margin: .6rem 0; }
+  .idea { display: flex; gap: 1.3rem; align-items: baseline; max-width: none; font-family: var(--serif); font-stretch: 72%; font-weight: 700;
+          font-size: 48px; line-height: 1.12; color: var(--titulo); }
+  .idea .n { flex: none; display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--linea); color: #fff;
+             font-family: var(--sans); font-stretch: 100%; font-size: 20px; font-weight: 700; transform: translateY(-8px); }
+  .ideas.chicas .idea { font-size: 34px; }
+  .ideas.chicas .idea strong { font-weight: 800; }
+  .ideas.chicas .idea .n { width: 38px; height: 38px; font-size: 18px; transform: translateY(-4px); }
+
+  /* El dado se agarra y se gira con el mouse */
+  .dado3d-escena { cursor: grab; touch-action: none; user-select: none; }
+  .dado3d-escena:active { cursor: grabbing; }
+  .espejo { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center; }
+  .espejo .lado { background: #fff; border: 1.5px solid var(--linea); border-radius: 16px; padding: .9rem 1.2rem; display: grid; gap: .2rem; }
+  .espejo .lado.copia { border-style: dashed; background: rgba(169, 205, 177, .35); }
+  .espejo .lado b { font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: clamp(1.4rem, 38.4px, 2rem); color: var(--titulo); }
+  .espejo .lado span { color: var(--tenue); font-size: .95rem; }
+  .espejo .flechas { display: grid; gap: .4rem; text-align: center; font-weight: 600; font-size: .9rem; }
+  .espejo .flechas span { background: var(--naranja); border: 1.5px solid var(--linea); border-radius: 999px; padding: .25em .9em; }
+  .espejo .flechas span + span { background: var(--salvia); }
+  .pasos .tarjeta { padding: .9rem 1rem; }
+  .fuente { font-size: .78rem; color: #8a867d; }
+  svg.flujo-ml { width: 100%; height: auto; max-height: 306px; display: block; font-family: var(--sans); }
+  .caja-ml rect { fill: #fff; stroke: var(--linea); stroke-width: 1.8; }
+  .caja-ml.naranja rect { fill: var(--naranja); }
+  .caja-ml.salvia rect { fill: var(--salvia); }
+  .caja-ml.motor rect { fill: var(--linea); }
+  .caja-ml.motor text { fill: #fff; }
+  .flujo-ml text { text-anchor: middle; fill: var(--texto); }
+  .flujo-ml .t1 { font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: 30px; }
+  .flujo-ml .t1b { font-weight: 700; font-size: 19px; }
+  .flujo-ml .t2 { font-size: 14px; fill: var(--tenue); }
+  .caja-ml.motor .t2 { fill: #ddd; }
+  .caja-ml.naranja .t2, .caja-ml.salvia .t2 { fill: var(--texto); }
+  .flujo-ml .t3 { font-size: 13px; fill: var(--tenue); font-style: italic; }
+  .flujo-ml .fl { fill: none; stroke: var(--linea); stroke-width: 2; marker-end: url(#flecha); }
+  .particion { display: flex; border: 1.5px solid var(--linea); border-radius: 8px; overflow: hidden; margin: .3rem 0 .6rem; font-size: .78rem; font-weight: 600; }
+  .particion span { padding: .35rem .5rem; background: var(--naranja); white-space: nowrap; }
+  .particion span + span { flex: 1; background: var(--salvia); border-left: 1.5px solid var(--linea); }
+
+  /* Tooltip */
+  #tip { position: fixed; z-index: 50; pointer-events: none; background: #fff; border: 1.5px solid var(--linea); border-radius: 10px;
+         box-shadow: 4px 4px 0 var(--naranja); padding: .45rem .7rem; font-size: .85rem; opacity: 0; transition: opacity .15s; max-width: 260px; }
+  #tip.ver { opacity: 1; }
+
+  /* Navegación */
+  .barra { position: fixed; top: 0; left: 0; height: 4px; background: var(--naranja); z-index: 10; transition: width .4s; }
+  .pie { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between;
+         padding: 0 112px 19.8px; font-size: .82rem; color: #8a867d; pointer-events: none; }
+  .pie .controles { display: flex; gap: .5rem; align-items: center; pointer-events: auto; }
+  .pie button { width: 2.4rem; height: 2.4rem; border-radius: 50%; cursor: pointer; background: transparent; border: 1.5px solid var(--linea); font-size: 1rem; color: var(--texto); }
+  .pie button:hover { background: var(--naranja); }
+  .contador { min-width: 3.5rem; text-align: center; color: var(--tenue); }
+
+  /* Portada */
+  .portada { padding-right: max(16px, 704px); }
+  .portada .dado-portada { position: absolute; right: 192px; top: 50%; transform: translateY(-50%); display: grid; justify-items: center; gap: 3.6rem; cursor: pointer; }
+
+  /* Dado 3D: seis caras con sus puntos; rueda con transform y transition */
+  .dado3d-escena { width: var(--t); height: var(--t); perspective: calc(var(--t) * 5); }
+  .dado3d-escena .inclinado { width: 100%; height: 100%; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(28deg); }
+  .dado3d { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 1.4s cubic-bezier(.2, .8, .25, 1); }
+  .dado3d .cara { position: absolute; inset: 0; background: #fff; border: 2px solid var(--linea); border-radius: 18%;
+                  display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 13%;
+                  box-shadow: inset 0 0 calc(var(--t) * .12) rgba(26, 26, 26, .10); }
+  .dado3d .cara i { width: 64%; height: 64%; border-radius: 50%; background: var(--linea); place-self: center; }
+  .dado3d .cara.c1 i { background: var(--naranja); box-shadow: 0 0 0 2px var(--linea); }
+  .fila-dado { display: flex; align-items: center; gap: 1.8rem; padding: .5rem 0 .2rem .3rem; }
+  .fila-dado .dados { font-size: clamp(1.2rem, 30.4px, 1.8rem); letter-spacing: .04em; white-space: nowrap; }
+  .autores { color: var(--texto); font-weight: 600; font-size: clamp(.9rem, 19.2px, 1.05rem); }
+
+  @media (max-width: 900px) {
+    html, body { overflow: auto; }
+    .slide { padding: 56px 16px 90px; justify-content: flex-start; }
+    .escenario { position: static; width: auto; height: auto; transform: none; }
+    .dos, .dos-uno, .uno-dos, .tres, .cuatro, .ruta, .espejo, .razones, .versus, .linea-tiempo, .comparacion { grid-template-columns: 1fr; }
+    .ruta svg.linea { display: none; }
+    .portada { padding-right: 16px; }
+    .portada .dado-portada { display: none; }
+    .pie { padding: 0 16px 12px; }
+    .campo { grid-template-columns: repeat(20, 1fr); }
+  }
+
+
+  /* ══════════════ Lo propio de la clase de SQL ══════════════ */
+  :root { --mono: 'IBM Plex Mono', Consolas, 'Courier New', monospace; }
+
+  /* Código SQL coloreado */
+  .codigo { font-family: var(--mono); font-size: 21px; line-height: 1.55; background: var(--superficie); border: 1.5px solid var(--linea);
+            border-radius: 14px; padding: 1rem 1.3rem; white-space: pre; color: var(--texto); overflow-x: auto; }
+  .codigo.chico { font-size: 16px; padding: .7rem 1rem; }
+  .codigo .kw { color: #C2501D; font-weight: 600; }
+  .codigo .str { color: var(--verde); }
+  .codigo .nro { color: #1F4E8C; }
+  .codigo .com { color: #8a867d; font-style: italic; }
+  .codigo .mal { text-decoration: line-through; text-decoration-color: #C2501D; text-decoration-thickness: 2px; }
+
+  .ruta5 { grid-template-columns: repeat(5, 1fr); }
+  .nulo-t { color: #C2501D; font-family: var(--mono); font-weight: 600; }
+
+  /* Portada: una consulta que se escribe sola */
+  .portada .terminal { position: absolute; right: 110px; top: 50%; transform: translateY(-50%); width: 600px; display: grid; gap: .9rem; }
+  .terminal .codigo { min-height: 200px; }
+  .cursor { display: inline-block; width: .6em; height: 1.1em; background: var(--naranja); vertical-align: -3px; animation: titila 1s steps(1) infinite; }
+  @keyframes titila { 50% { opacity: 0; } }
+
+  /* Tablas chicas */
+  .mini { border-collapse: separate; border-spacing: 0; font-size: 16px; background: var(--superficie); border: 1.5px solid var(--linea); border-radius: 12px; overflow: hidden; width: 100%; }
+  .mini th { text-align: left; font-weight: 700; padding: .45rem .7rem; background: #F2EFE8; border-bottom: 1.5px solid var(--linea); font-size: 14px; }
+  .mini td { padding: .38rem .7rem; border-bottom: 1px solid var(--borde); font-variant-numeric: tabular-nums; }
+  .mini tr:last-child td { border-bottom: none; }
+  .mini td.der { text-align: right; }
+  .mini .nulo { color: #C2501D; font-family: var(--mono); font-weight: 600; }
+  .mini tr.nueva td { background: rgba(255, 122, 61, .14); }
+  .mini tr.perdida td { background: rgba(194, 80, 29, .10); color: #b3aea4; text-decoration: line-through; }
+  .pild { display: inline-block; padding: .05em .55em; border-radius: 999px; border: 1.5px solid var(--linea); font-weight: 600; font-size: 14px; }
+
+  /* Traductor de vocabulario */
+  .traductor { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: .55rem 1rem; align-items: center; }
+  .traductor .cab { font-size: 14px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--tenue); }
+  .traductor .t { background: var(--superficie); border: 1.5px solid var(--linea); border-radius: 12px; padding: .45rem .9rem; font-size: 20px; }
+  .traductor .t.sql { background: rgba(255, 122, 61, .16); font-weight: 600; }
+  .traductor .flecha { color: var(--naranja); font-size: 22px; font-weight: 700; }
+
+  /* Escritorio contra archivo central */
+  .lados { display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem; align-items: center; }
+  .lado { background: var(--superficie); border: 1.5px solid var(--linea); border-radius: 18px; padding: 1.2rem 1.4rem; }
+  .lado h3 { font-family: var(--serif); font-stretch: 72%; font-weight: 800; font-size: 40px; color: var(--titulo); margin-bottom: .3rem; }
+  .lado .rotulo-c { font-size: 14px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); }
+  .lado ul { list-style: none; display: grid; gap: .3rem; margin-top: .5rem; font-size: 19px; color: var(--tenue); }
+  .lado.central { border-top: 8px solid var(--naranja); }
+  .lado.escritorio { border-top: 8px solid var(--salvia); }
+  .pedido { display: grid; gap: .3rem; justify-items: center; text-align: center; font-weight: 600; font-size: 17px; color: var(--tenue); }
+  .pedido b { font-size: 44px; color: var(--naranja); line-height: 1; }
+  .cita-grande { font-family: var(--serif); font-stretch: 75%; font-weight: 700; font-size: 34px; color: var(--titulo); }
+  .cita-grande span { font-family: var(--sans); font-size: 17px; font-weight: 500; color: var(--tenue); display: block; margin-top: .3rem; }
+
+  /* Modelo estrella */
+  .estrella { position: relative; height: 470px; }
+  .estrella svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .tabla-e { position: absolute; background: var(--superficie); border: 1.5px solid var(--linea); border-radius: 14px; padding: .7rem 1rem; width: 300px; }
+  .tabla-e h3 { font-family: var(--mono); font-size: 22px; margin-bottom: .2rem; }
+  .tabla-e .filas { font-size: 15px; color: var(--tenue); margin-bottom: .4rem; }
+  .tabla-e .col { font-family: var(--mono); font-size: 16px; padding: .15rem 0; }
+  .tabla-e .col.clave { font-weight: 600; color: #C2501D; }
+  .tabla-e.hechos { border-top: 8px solid var(--naranja); }
+  .tabla-e.ref { border-top: 8px solid var(--salvia); }
+  .postit { position: absolute; width: 250px; background: #FFE9A8; border: 1.5px solid var(--linea); padding: .6rem .8rem; font-size: 15px; box-shadow: 4px 4px 0 rgba(26, 26, 26, .12); }
+  .postit b { display: block; font-size: 16px; margin-bottom: .2rem; }
+
+  /* Anatomía de una consulta */
+  .anatomia { display: grid; grid-template-columns: auto 1fr; gap: .55rem 1.6rem; align-items: center; }
+  .anatomia .codigo { font-size: 26px; padding: .45rem 1rem; }
+  .anatomia .dice { font-size: 22px; color: var(--texto); }
+  .anatomia .dice b { color: #C2501D; }
+
+  /* Constructor de consultas */
+  .constructor { display: grid; grid-template-columns: 430px 1fr; gap: 1.4rem; align-items: start; }
+  .panel { background: var(--superficie); border: 1.5px solid var(--linea); border-radius: 16px; padding: 1rem 1.1rem; display: grid; gap: .9rem; }
+  .panel .grupo { display: grid; gap: .4rem; }
+  .panel .grupo > span { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--tenue); }
+  .chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .chip-t { font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; background: #fff; border: 1.5px solid var(--linea); border-radius: 999px; padding: .25em .8em; }
+  .chip-t.on { background: var(--naranja); }
+  .panel select { font: inherit; font-size: 15px; padding: .35em .5em; border: 1.5px solid var(--linea); border-radius: 10px; background: #fff; }
+  .panel .linea-sel { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .resultado { display: grid; gap: .7rem; }
+  .resultado .info { font-size: 16px; color: var(--tenue); }
+  .resultado .info b { color: var(--texto); }
+
+  /* Trampas */
+  .trampas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
+  .trampa { display: grid; gap: .5rem; align-content: start; }
+  .trampa h3 { font-size: 21px; }
+  .trampa .rotulo-c { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+  .trampa .rotulo-c.no { color: #C2501D; }
+  .trampa .rotulo-c.si { color: var(--verde); }
+  .trampa p { font-size: 17px; }
+
+  /* Orden de escritura y de ejecución */
+  .ordenes { display: grid; gap: 1.6rem; }
+  .orden-fila { display: grid; grid-template-columns: 170px repeat(7, 1fr); gap: .5rem; align-items: center; }
+  .orden-fila > span { font-size: 15px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); }
+  .orden-fila b { font-family: var(--mono); font-size: 18px; text-align: center; padding: .55rem .2rem; border: 1.5px solid var(--linea); border-radius: 10px; background: #fff; }
+  .orden-fila b.select { background: var(--naranja); }
+  .orden-fila b.filtro { background: var(--salvia); }
+
+  /* JOIN */
+  .join-casos { display: flex; gap: .6rem; flex-wrap: wrap; }
+  .tab { font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; background: #fff; border: 1.5px solid var(--linea); border-radius: 999px; padding: .35em 1em; }
+  .tab.on { background: var(--linea); color: #fff; }
+  .tipo { font: inherit; font-family: var(--mono); font-size: 17px; font-weight: 600; cursor: pointer; background: #fff; border: 1.5px solid var(--linea); border-radius: 10px; padding: .4em 1em; }
+  .tipo.on { background: var(--naranja); }
+  .join-grid { display: grid; grid-template-columns: 250px 1fr 1fr; gap: 1.4rem; align-items: start; }
+  .contador-filas { font-family: var(--serif); font-stretch: 75%; font-weight: 800; font-size: 54px; color: var(--titulo); line-height: 1; }
+  .contador-filas span { font-family: var(--sans); font-size: 16px; font-weight: 500; color: var(--tenue); display: block; margin-top: .3rem; }
+  .venn text { font-family: var(--sans); font-size: 15px; fill: var(--texto); font-weight: 600; }
+
+  .grande-num { font-family: var(--serif); font-stretch: 72%; font-weight: 800; font-size: 120px; line-height: .95; color: var(--titulo); }
+  .grande-num .flecha-n { color: var(--naranja); }
+
+  /* Subconsultas: cajas una adentro de otra */
+  .muneca { border: 2px solid var(--linea); border-radius: 18px; padding: 1rem 1.2rem; background: var(--superficie); display: grid; gap: .7rem; }
+  .muneca .muneca { background: rgba(255, 122, 61, .12); border-style: dashed; }
+  .muneca .rotulo-c { font-size: 14px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); }
+
+  /* Esquema */
+  .esquema { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .badge { display: inline-block; font-family: var(--sans); font-size: 12px; font-weight: 700; padding: .05em .5em; border-radius: 6px; margin-left: .4rem; border: 1.5px solid var(--linea); vertical-align: 2px; }
+  .badge.pk { background: var(--naranja); }
+  .badge.fk { background: var(--salvia); }
+  .badge.nn { background: #fff; }
+  .error-sql { font-family: var(--mono); font-size: 18px; color: #fff; background: #B3261E; border-radius: 10px; padding: .6rem .9rem; }
+
+  /* Front, back y ambientes */
+  .sistema { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 1rem; align-items: center; }
+  .sistema .caja-s { background: var(--superficie); border: 1.5px solid var(--linea); border-radius: 16px; padding: .9rem 1.1rem; }
+  .sistema .caja-s h3 { font-size: 22px; }
+  .sistema .caja-s p { font-size: 16px; }
+  .sistema .caja-s.base { background: var(--linea); }
+  .sistema .caja-s.base h3, .sistema .caja-s.base p { color: #fff; }
+  .sistema .flecha { font-size: 30px; color: var(--naranja); font-weight: 700; }
+  .ambientes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .ambiente { border: 1.5px solid var(--linea); border-radius: 14px; padding: .8rem 1rem; background: var(--superficie); }
+  .ambiente h3 { font-size: 20px; }
+  .ambiente p { font-size: 16px; }
+  .ambiente.prod { border-top: 8px solid #B3261E; }
+  .ambiente.dev { border-top: 8px solid var(--salvia); }
+  .ambiente.qa { border-top: 8px solid var(--naranja); }
+
+  @media (max-width: 900px) {
+    .traductor, .lados, .constructor, .trampas, .join-grid, .esquema, .sistema, .ambientes { grid-template-columns: 1fr; }
+    .portada .terminal { display: none; }
+    .estrella { height: auto; } .estrella svg { display: none; }
+    .tabla-e, .postit { position: static; width: auto; margin-bottom: .6rem; }
+    .orden-fila { grid-template-columns: repeat(4, 1fr); }
+  }
+</style>
+</head>
+<body>
+<canvas id="fondo" aria-hidden="true"></canvas>
+<div class="barra" id="barra"></div>
+<div id="tip"></div>
+<div class="escenario" id="escenario">
+
+<!-- · Portada -->
+<section class="slide portada" data-seccion="Clase 20">
+  <span class="etiqueta">Clase 20 · Laboratorio de Métodos Cuantitativos</span>
+  <h1>Preguntarle <span class="hl">a la base</span></h1>
+  <p class="grande">SQL: el idioma con el que se le habla a los datos de una empresa. Traer, resumir y cruzar tablas.</p>
+  <p class="autores">Juan Ignacio Da Torre · lunes 27 de octubre de 2026 · FCE-UBA</p>
+  <div class="terminal">
+    <div class="codigo" id="tipeo"></div>
+    <div id="tipeo-res"></div>
+  </div>
+</section>
+
+<!-- · Ruta -->
+<section class="slide" data-seccion="La clase de hoy">
+  <span class="etiqueta">La clase de hoy</span>
+  <h2 class="ancho">Cinco pasos para <span class="hl">hablarle a una base</span></h2>
+  <div class="ruta ruta5">
+    <svg class="linea" preserveAspectRatio="none" viewBox="0 0 100 4"><line x1="2" y1="2" x2="90" y2="2" pathLength="1"/></svg>
+    <div class="nodo" style="--d:0"><div class="circ">A</div><h3>Por qué SQL</h3><p>Si ya sé pandas, ¿para qué?</p></div>
+    <div class="nodo" style="--d:1"><div class="circ">B</div><h3>La base</h3><p>Tres tablas de una distribuidora.</p></div>
+    <div class="nodo" style="--d:2"><div class="circ">C</div><h3>Traer y filtrar</h3><p><code>SELECT</code> · <code>WHERE</code></p></div>
+    <div class="nodo" style="--d:3"><div class="circ">D</div><h3>Resumir</h3><p><code>GROUP BY</code> · <code>HAVING</code></p></div>
+    <div class="nodo" style="--d:4"><div class="circ">E</div><h3>Cruzar tablas</h3><p><code>JOIN</code>: el corazón de la clase.</p></div>
+  </div>
+  <p class="pista">Todo lo corremos en Colab: <strong>notebook 20</strong>. No hay que instalar nada.</p>
+</section>
+
+<!-- · Por qué SQL -->
+<section class="slide" data-seccion="A · Por qué SQL">
+  <span class="etiqueta">A · Por qué SQL</span>
+  <h2 class="ancho">pandas es tu escritorio; SQL, <span class="hl">el archivo central</span></h2>
+  <div class="lados">
+    <div class="lado central"><span class="rotulo-c">Base de datos · SQL</span><h3>El archivo central</h3>
+      <ul><li>Millones de filas, ordenadas.</li><li>En un servidor de la empresa.</li><li>Varias personas a la vez.</li></ul></div>
+    <div class="pedido"><b>→</b>pedís solo<br>lo que necesitás</div>
+    <div class="lado escritorio"><span class="rotulo-c">Tu computadora · pandas</span><h3>Tu escritorio</h3>
+      <ul><li>Lo que entre en tu memoria.</li><li>Para analizar y graficar.</li><li>Solo vos.</li></ul></div>
+  </div>
+  <p class="cita-grande paso">«¿Sabés SQL?» <span>Es la primera pregunta en una entrevista de análisis de datos, control de gestión o auditoría. Y es de lo más fácil de aprender.</span></p>
+</section>
+
+<!-- · Vocabulario -->
+<section class="slide" data-seccion="A · Por qué SQL">
+  <span class="etiqueta">A · Por qué SQL</span>
+  <h2 class="ancho">Las mismas cosas, <span class="hl">con otro nombre</span></h2>
+  <div class="traductor">
+    <span class="cab">En Excel</span><span></span><span class="cab">En SQL</span><span></span><span class="cab">En pandas</span>
+    <span class="t">El archivo</span><span class="flecha">→</span><span class="t sql">Base de datos</span><span class="flecha">→</span><span class="t">—</span>
+    <span class="t">Una hoja</span><span class="flecha">→</span><span class="t sql">Tabla</span><span class="flecha">→</span><span class="t">DataFrame</span>
+    <span class="t">Una fila</span><span class="flecha">→</span><span class="t sql">Registro</span><span class="flecha">→</span><span class="t">Fila</span>
+    <span class="t">Una columna</span><span class="flecha">→</span><span class="t sql">Campo</span><span class="flecha">→</span><span class="t">Columna</span>
+    <span class="t">La columna de ID única</span><span class="flecha">→</span><span class="t sql">Clave primaria</span><span class="flecha">→</span><span class="t">Índice</span>
+    <span class="t">Un filtro o tabla dinámica</span><span class="flecha">→</span><span class="t sql">Consulta (query)</span><span class="flecha">→</span><span class="t">Una línea de código</span>
+  </div>
+</section>
+
+<!-- · La base -->
+<section class="slide" data-seccion="B · La base">
+  <span class="etiqueta">B · La base</span>
+  <h2 class="ancho">Una distribuidora, <span class="hl">tres tablas</span></h2>
+  <div class="estrella">
+    <svg viewBox="0 0 1376 470" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M 330 175 C 420 175, 440 175, 540 175" fill="none" stroke="#1A1A1A" stroke-width="2.5" stroke-dasharray="7 6"/>
+      <path d="M 850 175 C 950 175, 960 175, 1050 175" fill="none" stroke="#1A1A1A" stroke-width="2.5" stroke-dasharray="7 6"/>
+      <text x="435" y="160" text-anchor="middle" style="font: 600 16px var(--mono); fill: #C2501D">Producto</text>
+      <text x="950" y="160" text-anchor="middle" style="font: 600 16px var(--mono); fill: #C2501D">Vendedor</text>
+    </svg>
+    <div class="tabla-e ref" style="left:20px; top:40px"><h3>productos</h3><div class="filas">El catálogo · 6 filas</div>
+      <div class="col clave">Producto</div><div class="col">Categoria</div><div class="col">Costo</div></div>
+    <div class="tabla-e hechos" style="left:538px; top:40px"><h3>ventas</h3><div class="filas">Cada operación · 201 filas</div>
+      <div class="col">Fecha</div><div class="col clave">Producto</div><div class="col clave">Vendedor</div><div class="col">Ciudad</div><div class="col">Cantidad · Precio_Unitario · Total</div></div>
+    <div class="tabla-e ref" style="left:1056px; top:40px"><h3>vendedores</h3><div class="filas">El equipo · 6 filas</div>
+      <div class="col clave">Vendedor</div><div class="col">Sucursal</div><div class="col">Antiguedad</div></div>
+    <div class="postit paso" style="left:560px; top:330px; transform: rotate(-2deg)"><b>Parlante</b>Una venta de un producto que todavía no está en el catálogo, y sin ciudad cargada.</div>
+    <div class="postit paso" style="left:1070px; top:290px; transform: rotate(2deg)"><b>Tomás</b>Un vendedor que acaba de entrar y todavía no vendió nada.</div>
+  </div>
+  <p class="pista">Una tabla de <strong>hechos</strong> (las ventas) rodeada de tablas de <strong>referencia</strong>: se llama <em>modelo estrella</em>. Los papelitos son datos "de la vida real": las bases nunca están perfectas.</p>
+</section>
+
+<!-- · Anatomía -->
+<section class="slide" data-seccion="C · Traer y filtrar">
+  <span class="etiqueta">C · Traer y filtrar</span>
+  <h2 class="ancho">Una consulta <span class="hl">se lee como una oración</span></h2>
+  <div class="anatomia">
+    <div class="codigo paso" data-sql="SELECT   Producto, Total"></div><div class="dice paso"><b>qué</b> quiero</div>
+    <div class="codigo paso" data-sql="FROM     ventas"></div><div class="dice paso"><b>de dónde</b> lo saco</div>
+    <div class="codigo paso" data-sql="WHERE    Ciudad = 'Córdoba'"></div><div class="dice paso"><b>qué filas</b> me quedo</div>
+    <div class="codigo paso" data-sql="ORDER BY Total DESC"></div><div class="dice paso">en <b>qué orden</b></div>
+    <div class="codigo paso" data-sql="LIMIT    5"></div><div class="dice paso"><b>cuántas</b></div>
+  </div>
+</section>
+
+<!-- · Constructor -->
+<section class="slide" data-seccion="C · Traer y filtrar">
+  <span class="etiqueta">C · Traer y filtrar</span>
+  <h2 class="ancho">Armá tu consulta <span class="hl">y mirá qué devuelve</span></h2>
+  <div class="constructor">
+    <div class="panel">
+      <div class="grupo"><span>SELECT · columnas</span><div class="chips" id="c-columnas"></div></div>
+      <div class="grupo"><span>WHERE · filtro</span><div class="linea-sel"><select id="c-campo" aria-label="Campo del filtro"></select><select id="c-valor" aria-label="Valor del filtro"></select></div></div>
+      <div class="grupo"><span>ORDER BY · orden</span><select id="c-orden" aria-label="Orden"></select></div>
+      <div class="grupo"><span>LIMIT · cuántas</span><select id="c-limite" aria-label="Cuántas filas"></select></div>
+    </div>
+    <div class="resultado">
+      <div class="codigo chico" id="c-sql"></div>
+      <div class="info" id="c-info"></div>
+      <div id="c-tabla"></div>
+    </div>
+  </div>
+</section>
+
+<!-- · Trampas -->
+<section class="slide" data-seccion="C · Traer y filtrar">
+  <span class="etiqueta">C · Traer y filtrar</span>
+  <h2 class="ancho">Tres trampas para <span class="hl">el que viene de Python</span></h2>
+  <div class="trampas">
+    <div class="trampa"><h3>La igualdad lleva un solo <code>=</code></h3>
+      <span class="rotulo-c no">Así no</span><div class="codigo chico" data-sql="WHERE Ciudad == 'Rosario'"></div>
+      <span class="rotulo-c si">Así sí</span><div class="codigo chico" data-sql="WHERE Ciudad = 'Rosario'"></div></div>
+    <div class="trampa"><h3>El texto, entre comillas simples</h3>
+      <span class="rotulo-c no">Así no</span><div class="codigo chico" data-sql='WHERE Producto = "Mouse"'></div>
+      <span class="rotulo-c si">Así sí</span><div class="codigo chico" data-sql="WHERE Producto = 'Mouse'"></div></div>
+    <div class="trampa"><h3>El dato que falta es <code>NULL</code></h3>
+      <span class="rotulo-c no">Así no (devuelve 0 filas, sin error)</span><div class="codigo chico" data-sql="WHERE Ciudad = NULL"></div>
+      <span class="rotulo-c si">Así sí (encuentra el Parlante)</span><div class="codigo chico" data-sql="WHERE Ciudad IS NULL"></div></div>
+  </div>
+  <p class="pista">Y para sacar repetidos: <code>SELECT DISTINCT Ciudad FROM ventas</code> devuelve cada ciudad una sola vez.</p>
+</section>
+
+<!-- · GROUP BY -->
+<section class="slide" data-seccion="D · Resumir">
+  <span class="etiqueta">D · Resumir</span>
+  <h2 class="ancho"><code>GROUP BY</code>: <span class="hl">201 filas se vuelven 5</span></h2>
+  <div class="fila dos-uno">
+    <div class="grafico-caja"><div id="g-grupos"></div></div>
+    <div style="display:grid; gap:1rem">
+      <div class="codigo chico" data-sql="SELECT Vendedor,
+       COUNT(*)   AS operaciones,
+       SUM(Total) AS facturacion
+FROM ventas
+GROUP BY Vendedor"></div>
+      <p>Cada cuadradito es una venta. <code>GROUP BY</code> las junta por vendedor y las funciones (<code>COUNT</code>, <code>SUM</code>, <code>AVG</code>) resumen cada grupo en <strong>un solo número</strong>.</p>
+      <button class="boton" id="b-grupos">Agrupar de nuevo</button>
+    </div>
+  </div>
+</section>
+
+<!-- · WHERE vs HAVING -->
+<section class="slide" data-seccion="D · Resumir">
+  <span class="etiqueta">D · Resumir</span>
+  <h2 class="ancho"><code>WHERE</code> filtra ventas; <span class="hl"><code>HAVING</code>, grupos</span></h2>
+  <div class="fila dos">
+    <div class="grafico-caja"><div class="leyenda"><span style="--c:var(--naranja)">WHERE Total &gt; umbral: cada venta por separado</span></div><div id="g-where"></div></div>
+    <div class="grafico-caja"><div class="leyenda"><span style="--c:var(--naranja)">HAVING AVG(Total) &gt; umbral: el promedio de cada producto</span></div><div id="g-having"></div></div>
+  </div>
+  <div class="fila dos-uno">
+    <div class="lectura" id="l-umbral"></div>
+    <div class="control">Umbral <input type="range" id="r-umbral" min="300000" max="3000000" step="100000" value="1200000"></div>
+  </div>
+</section>
+
+<!-- · Orden de ejecución -->
+<section class="slide" data-seccion="D · Resumir">
+  <span class="etiqueta">D · Resumir</span>
+  <h2 class="ancho">Se escribe en un orden, <span class="hl">se ejecuta en otro</span></h2>
+  <div class="ordenes">
+    <div class="orden-fila"><span>Se escribe</span><b class="select">SELECT</b><b>FROM</b><b class="filtro">WHERE</b><b>GROUP BY</b><b class="filtro">HAVING</b><b>ORDER BY</b><b>LIMIT</b></div>
+    <div class="orden-fila paso"><span>Se ejecuta</span><b>FROM</b><b class="filtro">WHERE</b><b>GROUP BY</b><b class="filtro">HAVING</b><b class="select">SELECT</b><b>ORDER BY</b><b>LIMIT</b></div>
+  </div>
+  <div class="fila dos">
+    <div class="tarjeta salvia paso"><h3>Por eso <code>WHERE</code> no puede usar <code>SUM</code></h3><p>Corre <strong>antes</strong> de armar los grupos: los totales todavía no existen. Para filtrar por un total está <code>HAVING</code>, que corre <strong>después</strong>.</p></div>
+    <div class="tarjeta naranja paso"><h3>Y por eso <code>ORDER BY</code> sí puede usar un alias</h3><p>Corre <strong>después</strong> del <code>SELECT</code>, cuando el nombre <code>facturacion</code> ya existe.</p></div>
+  </div>
+</section>
+
+<!-- · JOIN: la idea -->
+<section class="slide" data-seccion="E · Cruzar tablas">
+  <span class="etiqueta">E · Cruzar tablas</span>
+  <h2 class="ancho"><code>JOIN</code>: pegar tablas <span class="hl">por la columna en común</span></h2>
+  <div class="fila dos">
+    <div style="display:grid; gap:.5rem"><span class="pista">La tabla <strong>ventas</strong> sabe qué se vendió…</span><div id="j-ventas"></div></div>
+    <div style="display:grid; gap:.5rem"><span class="pista">…y <strong>productos</strong> sabe cuánto cuesta.</span><div id="j-productos"></div></div>
+  </div>
+  <div class="fila dos-uno paso">
+    <div style="display:grid; gap:.5rem"><span class="pista">Resultado: cada venta con su costo, y la ganancia calculada.</span><div id="j-resultado"></div></div>
+    <div class="codigo chico" data-sql="SELECT v.Producto, v.Total, p.Costo
+FROM ventas v
+JOIN productos p
+  ON v.Producto = p.Producto"></div>
+  </div>
+</section>
+
+<!-- · JOIN: tipos -->
+<section class="slide" data-seccion="E · Cruzar tablas">
+  <span class="etiqueta">E · Cruzar tablas</span>
+  <h2 class="ancho"><code>INNER</code> o <code>LEFT</code>: <span class="hl">qué pasa con lo que no tiene pareja</span></h2>
+  <div class="join-casos">
+    <button class="tab on" data-caso="1">Caso 1 · la venta del Parlante</button>
+    <button class="tab" data-caso="2">Caso 2 · el vendedor sin ventas</button>
+    <span style="flex:1"></span>
+    <button class="tipo on" data-tipo="INNER">INNER JOIN</button>
+    <button class="tipo" data-tipo="LEFT">LEFT JOIN</button>
+  </div>
+  <div class="join-grid">
+    <div style="display:grid; gap:1rem; align-content:start">
+      <svg class="venn" viewBox="0 0 240 150" id="j-venn" aria-label="Diagrama del JOIN"></svg>
+      <div class="contador-filas" id="j-cuenta"></div>
+    </div>
+    <div style="display:grid; gap:.8rem; align-content:start">
+      <div class="codigo chico" id="j-sql"></div>
+      <p id="j-explica"></p>
+    </div>
+    <div id="j-tabla"></div>
+  </div>
+</section>
+
+<!-- · El error más caro -->
+<section class="slide" data-seccion="E · Cruzar tablas">
+  <span class="etiqueta">E · Cruzar tablas</span>
+  <h2 class="ancho">El error más caro de SQL: <span class="hl">perder filas sin enterarte</span></h2>
+  <div class="fila uno-dos">
+    <div style="display:grid; gap:.4rem">
+      <div class="grande-num">201 <span class="flecha-n">→</span> 200</div>
+      <p class="grande">ventas antes y después del <code>INNER JOIN</code> con el catálogo. <strong>Nadie avisó.</strong></p>
+    </div>
+    <div style="display:grid; gap:1rem">
+      <div class="tarjeta naranja paso"><h3>El control: contar antes y después</h3><p>Si las filas <strong>bajaron</strong>, perdiste datos. Si <strong>subieron</strong>, la clave estaba repetida y estás contando ventas de más.</p></div>
+      <div class="tarjeta salvia paso"><h3>Para encontrar a las perdidas</h3><div class="codigo chico" data-sql="SELECT v.*
+FROM ventas v
+LEFT JOIN productos p ON v.Producto = p.Producto
+WHERE p.Producto IS NULL"></div></div>
+      <div class="tarjeta gris paso"><h3>Y si te olvidás el <code>ON</code></h3><p>Se cruza cada fila con cada fila: <strong>201 × 6 = 1.206 filas</strong> de basura. Se llama <em>producto cartesiano</em>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- · JOIN para el negocio -->
+<section class="slide" data-seccion="E · Cruzar tablas">
+  <span class="etiqueta">E · Cruzar tablas</span>
+  <h2 class="ancho">Con el <code>JOIN</code>, <span class="hl">la pregunta de negocio</span>: ¿qué deja más margen?</h2>
+  <div class="fila dos-uno">
+    <div class="grafico-caja"><div class="leyenda"><span style="--c:var(--salvia)">facturación</span><span style="--c:var(--naranja)">ganancia (venta menos costo)</span></div><div id="g-margen"></div></div>
+    <div style="display:grid; gap:1rem">
+      <div class="tarjeta naranja"><h3>Cómputo trae la plata</h3><p id="t-computo"></p></div>
+      <div class="tarjeta salvia"><h3>Audio, el margen</h3><p id="t-audio"></p></div>
+      <p class="pista">Facturar más no es ganar más: depende del costo, que está en <strong>otra tabla</strong>. Por eso hace falta el <code>JOIN</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- · Subconsultas -->
+<section class="slide" data-seccion="F · Subconsultas">
+  <span class="etiqueta">F · Subconsultas (solo para conocerlas)</span>
+  <h2 class="ancho">Una pregunta adentro de otra: <span class="hl">se lee de adentro hacia afuera</span></h2>
+  <div class="fila dos-uno">
+    <div class="muneca"><span class="rotulo-c">2 · Afuera: las ventas que superan ese promedio</span>
+      <div class="codigo chico" data-sql="SELECT Fecha, Producto, Total
+FROM ventas
+WHERE Total &gt;"></div>
+      <div class="muneca paso"><span class="rotulo-c">1 · Adentro: calcula el promedio</span>
+        <div class="codigo chico" data-sql="(SELECT AVG(Total) FROM ventas)"></div>
+        <div class="lectura" id="t-promedio"></div></div>
+    </div>
+    <div style="display:grid; gap:1rem; align-content:center">
+      <div class="tarjeta cifra paso"><span class="rotulo">Ventas por encima del promedio</span><b id="t-arriba">—</b><p class="nota">Si mañana se cargan ventas nuevas, el promedio se recalcula solo.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- · SQL y pandas -->
+<section class="slide" data-seccion="G · SQL y pandas">
+  <span class="etiqueta">G · SQL y pandas</span>
+  <h2 class="ancho">Las dos hacen lo mismo: <span class="hl">el diccionario</span></h2>
+  <div class="traductor" style="grid-template-columns: 1.1fr 1fr auto 1.4fr">
+    <span class="cab">Quiero…</span><span class="cab">SQL</span><span></span><span class="cab">pandas</span>
+    <span class="t">filtrar filas</span><span class="t sql"><code>WHERE a &gt; 5</code></span><span class="flecha">↔</span><span class="t"><code>df[df["a"] &gt; 5]</code></span>
+    <span class="t">ordenar</span><span class="t sql"><code>ORDER BY a DESC</code></span><span class="flecha">↔</span><span class="t"><code>df.sort_values("a", ascending=False)</code></span>
+    <span class="t">agrupar y sumar</span><span class="t sql"><code>GROUP BY a</code> + <code>SUM(b)</code></span><span class="flecha">↔</span><span class="t"><code>df.groupby("a")["b"].sum()</code></span>
+    <span class="t">cruzar tablas</span><span class="t sql"><code>JOIN t2 ON t.k = t2.k</code></span><span class="flecha">↔</span><span class="t"><code>df.merge(df2, on="k")</code></span>
+    <span class="t">cruzar sin perder filas</span><span class="t sql"><code>LEFT JOIN …</code></span><span class="flecha">↔</span><span class="t"><code>df.merge(df2, on="k", how="left")</code></span>
+    <span class="t">sacar repetidos</span><span class="t sql"><code>SELECT DISTINCT a</code></span><span class="flecha">↔</span><span class="t"><code>df["a"].unique()</code></span>
+    <span class="t">buscar vacíos</span><span class="t sql"><code>WHERE a IS NULL</code></span><span class="flecha">↔</span><span class="t"><code>df[df["a"].isna()]</code></span>
+  </div>
+  <p class="pista">En la práctica se usan juntas: SQL para traer del servidor solo lo que necesitás, pandas para analizar y graficar.</p>
+</section>
+
+<!-- · Esquema -->
+<section class="slide" data-seccion="G · Script y esquema">
+  <span class="etiqueta">G · Script y esquema</span>
+  <h2 class="ancho">El esquema: <span class="hl">el plano de la base</span></h2>
+  <div class="fila uno-dos">
+    <div style="display:grid; gap:.9rem">
+      <div class="codigo chico" data-sql="CREATE TABLE ventas (
+  id          INTEGER PRIMARY KEY,
+  sucursal_id INTEGER REFERENCES sucursales(id),
+  importe     REAL NOT NULL,
+  fecha       TEXT
+);"></div>
+      <p>Una base no se arma a mano: se arma corriendo un <strong>script</strong>, un archivo con instrucciones en orden. Así queda escrita y cualquiera la puede rearmar igual.</p>
+    </div>
+    <div style="display:grid; gap:1rem">
+      <div class="esquema">
+        <div class="tarjeta"><h3><code>PRIMARY KEY</code><span class="badge pk">PK</span></h3><p>Identifica cada fila. Sin esto, la misma venta puede quedar cargada dos veces.</p></div>
+        <div class="tarjeta"><h3><code>REFERENCES</code><span class="badge fk">FK</span></h3><p>Conecta con otra tabla: es lo que hace posible el <code>JOIN</code>.</p></div>
+      </div>
+      <div class="tarjeta naranja paso"><h3><code>NOT NULL</code><span class="badge nn">NN</span>: la base rechaza el dato malo</h3>
+        <div class="codigo chico" data-sql="INSERT INTO ventas (id, sucursal_id, importe)
+VALUES (5, 1, NULL);"></div>
+        <div class="error-sql">✗ NOT NULL constraint failed: ventas.importe</div>
+        <p>En una planilla cualquiera escribe cualquier cosa. En una base con buen esquema, <strong>el dato inconsistente ni siquiera entra</strong>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- · Empresa -->
+<section class="slide" data-seccion="Para leer en casa">
+  <span class="etiqueta salvia">Para leer en casa</span>
+  <h2 class="ancho">Dónde vive SQL <span class="hl">en una empresa</span></h2>
+  <div class="sistema">
+    <div class="caja-s"><h3>Front-end</h3><p>Lo que el usuario ve: la pantalla del homebanking.</p></div><span class="flecha">→</span>
+    <div class="caja-s"><h3>Back-end</h3><p>Las reglas que no se ven: verificar que tengas saldo.</p></div><span class="flecha">→</span>
+    <div class="caja-s base"><h3>Base de datos</h3><p>Acá corren consultas como las de hoy.</p></div>
+  </div>
+  <div class="ambientes paso">
+    <div class="ambiente dev"><h3>Desarrollo</h3><p>Donde el programador prueba. Si rompés algo, no pasa nada.</p></div>
+    <div class="ambiente qa"><h3>Testing</h3><p>Donde se verifica que ande. El error lo encuentra el equipo de prueba.</p></div>
+    <div class="ambiente prod"><h3>Producción</h3><p>El sistema real. Un <code>DELETE</code> sin <code>WHERE</code> borra datos de clientes reales.</p></div>
+  </div>
+  <p class="pista paso"><strong>La regla de oro:</strong> antes de escribir una consulta en la base de una empresa, preguntá en qué ambiente estás parado. <em>Deploy</em> es pasar el código a producción.</p>
+</section>
+
+<!-- · Para llevarse -->
+<section class="slide" data-seccion="Para llevarse">
+  <span class="etiqueta">Para llevarse</span>
+  <div class="fila dos">
+    <div class="codigo" style="font-size:22px" data-sql="SELECT   columnas, SUM(col) AS alias
+FROM     tabla t
+JOIN     otra o ON t.clave = o.clave
+WHERE    condición sobre filas
+GROUP BY columnas sin agregar
+HAVING   condición sobre grupos
+ORDER BY columna DESC
+LIMIT    n"></div>
+    <div class="ideas chicas">
+      <p class="idea paso"><span class="n">1</span><span>Ese bloque es el <span class="hl">90% del SQL</span> que vas a escribir.</span></p>
+      <p class="idea paso"><span class="n">2</span><span><code>WHERE</code> filtra filas; <code>HAVING</code>, <span class="hl">grupos</span>.</span></p>
+      <p class="idea paso"><span class="n">3</span><span>Después de cada <code>JOIN</code>, <span class="hl">contá las filas</span>.</span></p>
+      <p class="idea paso"><span class="n">4</span><span>Los vacíos se buscan con <code>IS NULL</code>, nunca con <code>= NULL</code>.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- · A Colab -->
+<section class="slide" data-seccion="Ahora, a Colab">
+  <span class="etiqueta salvia">Ahora, a Colab</span>
+  <h2 class="ancho">Notebook 20: <span class="hl">siete ejercicios</span></h2>
+  <div class="ideas chicas">
+    <p class="idea"><span class="n">1</span><span>Las 10 ventas más grandes.</span></p>
+    <p class="idea"><span class="n">2</span><span>Qué productos y en qué ciudades vendió Pedro (<code>DISTINCT</code>).</span></p>
+    <p class="idea"><span class="n">3</span><span>Operaciones y facturación por ciudad: ¿qué pasa con la venta sin ciudad?</span></p>
+    <p class="idea"><span class="n">4</span><span>Vendedores con ticket promedio de más de $1.100.000: <code>WHERE</code> contra <code>HAVING</code>.</span></p>
+    <p class="idea"><span class="n">5</span><span>El producto más rentable en pesos (<code>JOIN</code> con el catálogo).</span></p>
+    <p class="idea"><span class="n">6</span><span>Los vendedores que no vendieron nada (<code>LEFT JOIN</code> + <code>IS NULL</code>).</span></p>
+    <p class="idea"><span class="n">7</span><span>Desafío: facturación y vendedores distintos por sucursal.</span></p>
+  </div>
+  <p class="pista">Las soluciones están al final del notebook. Y hay un apéndice opcional con fechas y más ejercicios.</p>
+</section>
+
+</div>
+
+<footer class="pie">
+  <span id="pie-seccion"></span>
+  <div class="controles">
+    <button id="ant" aria-label="Anterior">←</button>
+    <span class="contador" id="contador"></span>
+    <button id="sig" aria-label="Siguiente">→</button>
+  </div>
+</footer>
+
+<script>
+const D = {"ventas":[["2024-01-01","Monitor","Juan","Mendoza",6,215200,1291200],["2024-01-02","Notebook","Lucía","La Plata",7,873800,6116600],["2024-01-03","Teclado","Juan","Córdoba",3,34800,104400],["2024-01-04","Notebook","Juan","Mendoza",7,828000,5796000],["2024-01-05","Notebook","María","Córdoba",3,825300,2475900],["2024-01-06","Mouse","Lucía","Rosario",2,19000,38000],["2024-01-07","Teclado","Lucía","Buenos Aires",4,37800,151200],["2024-01-08","Teclado","María","Rosario",8,32700,261600],["2024-01-09","Teclado","Pedro","Mendoza",9,36100,324900],["2024-01-10","Notebook","Juan","Córdoba",7,815700,5709900],["2024-01-11","Monitor","Sofía","Córdoba",1,251500,251500],["2024-01-12","Teclado","Juan","La Plata",3,37900,113700],["2024-01-13","Impresora","Juan","Córdoba",9,267100,2403900],["2024-01-14","Notebook","Pedro","La Plata",1,893000,893000],["2024-01-15","Mouse","Juan","Buenos Aires",9,18100,162900],["2024-01-16","Monitor","María","Mendoza",8,245000,1960000],["2024-01-17","Impresora","María","La Plata",1,257300,257300],["2024-01-18","Impresora","Lucía","Buenos Aires",6,251600,1509600],["2024-01-19","Mouse","Sofía","Córdoba",5,17200,86000],["2024-01-20","Monitor","Juan","Córdoba",6,217400,1304400],["2024-01-21","Notebook","Juan","Buenos Aires",5,854400,4272000],["2024-01-22","Auriculares","Pedro","Córdoba",6,44400,266400],["2024-01-23","Monitor","María","Buenos Aires",5,237500,1187500],["2024-01-24","Mouse","Sofía","La Plata",5,16200,81000],["2024-01-25","Impresora","Lucía","La Plata",4,257300,1029200],["2024-01-26","Notebook","María","Buenos Aires",3,827100,2481300],["2024-01-27","Monitor","Lucía","La Plata",3,216000,648000],["2024-01-28","Auriculares","Pedro","La Plata",4,45900,183600],["2024-01-29","Auriculares","Pedro","La Plata",9,44400,399600],["2024-01-30","Teclado","Juan","Rosario",2,33600,67200],["2024-01-31","Teclado","Sofía","Mendoza",9,33000,297000],["2024-02-01","Mouse","Lucía","Córdoba",1,19300,19300],["2024-02-02","Monitor","María","Rosario",1,243700,243700],["2024-02-03","Monitor","Pedro","La Plata",5,234900,1174500],["2024-02-04","Impresora","Juan","Buenos Aires",6,251900,1511400],["2024-02-05","Impresora","Juan","La Plata",6,283200,1699200],["2024-02-06","Impresora","Lucía","Mendoza",3,263300,789900],["2024-02-07","Teclado","Pedro","La Plata",7,34500,241500],["2024-02-08","Monitor","Sofía","Buenos Aires",9,248400,2235600],["2024-02-09","Monitor","Pedro","Mendoza",8,221700,1773600],["2024-02-10","Auriculares","Lucía","La Plata",6,46800,280800],["2024-02-11","Teclado","Lucía","Mendoza",8,33700,269600],["2024-02-12","Notebook","Pedro","Córdoba",5,809500,4047500],["2024-02-13","Teclado","Lucía","Córdoba",8,36400,291200],["2024-02-14","Notebook","Pedro","La Plata",4,803700,3214800],["2024-02-15","Auriculares","María","Mendoza",8,44900,359200],["2024-02-16","Mouse","Pedro","Buenos Aires",2,18300,36600],["2024-02-17","Monitor","Pedro","La Plata",5,215700,1078500],["2024-02-18","Auriculares","Lucía","Córdoba",9,47100,423900],["2024-02-19","Monitor","Lucía","Córdoba",4,232200,928800],["2024-02-20","Impresora","Juan","La Plata",6,266300,1597800],["2024-02-21","Mouse","Juan","Mendoza",1,17500,17500],["2024-02-22","Mouse","María","Córdoba",9,17700,159300],["2024-02-23","Auriculares","Juan","Mendoza",1,45000,45000],["2024-02-24","Mouse","Pedro","Córdoba",5,17900,89500],["2024-02-25","Notebook","Lucía","Córdoba",4,879900,3519600],["2024-02-26","Mouse","Juan","Rosario",3,18300,54900],["2024-02-27","Monitor","Juan","Córdoba",6,226100,1356600],["2024-02-28","Monitor","María","Buenos Aires",2,207100,414200],["2024-02-29","Monitor","María","La Plata",3,243500,730500],["2024-03-01","Monitor","Pedro","La Plata",5,230900,1154500],["2024-03-02","Notebook","Lucía","Mendoza",9,820500,7384500],["2024-03-03","Teclado","María","Córdoba",2,35000,70000],["2024-03-04","Impresora","Juan","Buenos Aires",8,238900,1911200],["2024-03-05","Auriculares","Lucía","Mendoza",2,48600,97200],["2024-03-06","Monitor","Lucía","Rosario",5,252500,1262500],["2024-03-07","Mouse","Juan","Mendoza",7,16400,114800],["2024-03-08","Monitor","María","Mendoza",8,223500,1788000],["2024-03-09","Mouse","Juan","Córdoba",1,18800,18800],["2024-03-10","Impresora","Lucía","Rosario",6,250300,1501800],["2024-03-11","Impresora","Sofía","Mendoza",1,263500,263500],["2024-03-12","Impresora","Sofía","Buenos Aires",2,255700,511400],["2024-03-13","Mouse","Pedro","Buenos Aires",1,19000,19000],["2024-03-14","Monitor","Juan","La Plata",5,251100,1255500],["2024-03-15","Impresora","Juan","Rosario",9,280200,2521800],["2024-03-16","Notebook","Pedro","Rosario",6,870600,5223600],["2024-03-17","Mouse","Pedro","La Plata",1,16800,16800],["2024-03-18","Mouse","Pedro","Mendoza",1,19600,19600],["2024-03-19","Monitor","Lucía","Rosario",2,208100,416200],["2024-03-20","Mouse","Juan","Buenos Aires",9,17300,155700],["2024-03-21","Mouse","Lucía","Buenos Aires",3,17200,51600],["2024-03-22","Impresora","Pedro","Córdoba",1,268900,268900],["2024-03-23","Monitor","Juan","Rosario",5,229400,1147000],["2024-03-24","Impresora","Lucía","Mendoza",7,238800,1671600],["2024-03-25","Impresora","Lucía","La Plata",6,234700,1408200],["2024-03-26","Monitor","Pedro","La Plata",1,234800,234800],["2024-03-27","Auriculares","Juan","Mendoza",5,44900,224500],["2024-03-28","Impresora","Pedro","Córdoba",5,265300,1326500],["2024-03-29","Notebook","Juan","La Plata",6,860900,5165400],["2024-03-30","Notebook","Sofía","Rosario",3,916400,2749200],["2024-03-31","Mouse","María","Córdoba",5,19500,97500],["2024-04-01","Notebook","María","Rosario",7,797000,5579000],["2024-04-02","Mouse","María","Buenos Aires",5,19600,98000],["2024-04-03","Auriculares","Pedro","Córdoba",5,47600,238000],["2024-04-04","Monitor","Sofía","La Plata",5,236400,1182000],["2024-04-05","Monitor","Juan","Córdoba",3,237300,711900],["2024-04-06","Monitor","Lucía","Córdoba",1,232100,232100],["2024-04-07","Notebook","Juan","Córdoba",5,920900,4604500],["2024-04-08","Auriculares","Lucía","Córdoba",9,42600,383400],["2024-04-09","Notebook","Juan","Rosario",1,866900,866900],["2024-04-10","Notebook","Sofía","Buenos Aires",3,903400,2710200],["2024-04-11","Auriculares","Lucía","Mendoza",4,41700,166800],["2024-04-12","Auriculares","Pedro","Córdoba",1,46000,46000],["2024-04-13","Auriculares","Juan","La Plata",1,44100,44100],["2024-04-14","Auriculares","Juan","Córdoba",8,47400,379200],["2024-04-15","Monitor","Lucía","La Plata",2,210100,420200],["2024-04-16","Teclado","Pedro","Rosario",8,35700,285600],["2024-04-17","Teclado","Pedro","La Plata",7,37500,262500],["2024-04-18","Auriculares","Sofía","Mendoza",2,46200,92400],["2024-04-19","Teclado","Pedro","Buenos Aires",6,33700,202200],["2024-04-20","Teclado","Pedro","La Plata",6,36100,216600],["2024-04-21","Auriculares","Pedro","La Plata",3,43500,130500],["2024-04-22","Teclado","María","Buenos Aires",2,36200,72400],["2024-04-23","Notebook","Sofía","Mendoza",1,786800,786800],["2024-04-24","Mouse","Juan","Córdoba",6,17200,103200],["2024-04-25","Mouse","Lucía","La Plata",5,16300,81500],["2024-04-26","Auriculares","Juan","Buenos Aires",9,41300,371700],["2024-04-27","Monitor","Sofía","Rosario",1,232500,232500],["2024-04-28","Auriculares","Lucía","Buenos Aires",7,42600,298200],["2024-04-29","Monitor","Sofía","Rosario",5,230700,1153500],["2024-04-30","Mouse","Pedro","Mendoza",5,18600,93000],["2024-05-01","Auriculares","Lucía","Córdoba",2,48400,96800],["2024-05-02","Impresora","Pedro","Buenos Aires",3,252500,757500],["2024-05-03","Notebook","Juan","La Plata",7,819200,5734400],["2024-05-04","Teclado","Juan","Mendoza",6,33700,202200],["2024-05-05","Monitor","Lucía","Buenos Aires",2,212400,424800],["2024-05-06","Impresora","Lucía","La Plata",6,268500,1611000],["2024-05-07","Teclado","Sofía","Buenos Aires",2,37200,74400],["2024-05-08","Teclado","Sofía","Rosario",2,34800,69600],["2024-05-09","Auriculares","Pedro","Buenos Aires",2,45500,91000],["2024-05-10","Teclado","Lucía","Buenos Aires",3,38200,114600],["2024-05-11","Notebook","Juan","Buenos Aires",2,883800,1767600],["2024-05-12","Impresora","Sofía","Mendoza",4,272700,1090800],["2024-05-13","Teclado","Sofía","Buenos Aires",9,37700,339300],["2024-05-14","Auriculares","Juan","La Plata",6,42400,254400],["2024-05-15","Notebook","Sofía","Rosario",1,875500,875500],["2024-05-16","Mouse","Pedro","Rosario",8,18800,150400],["2024-05-17","Impresora","Lucía","Buenos Aires",7,277800,1944600],["2024-05-18","Teclado","Juan","Mendoza",3,33900,101700],["2024-05-19","Auriculares","Lucía","Mendoza",1,46700,46700],["2024-05-20","Mouse","Sofía","La Plata",5,18400,92000],["2024-05-21","Mouse","Sofía","Buenos Aires",4,17700,70800],["2024-05-22","Monitor","Juan","Rosario",8,211700,1693600],["2024-05-23","Notebook","Pedro","Mendoza",1,825000,825000],["2024-05-24","Teclado","María","Buenos Aires",1,38200,38200],["2024-05-25","Auriculares","Juan","Mendoza",4,42400,169600],["2024-05-26","Monitor","María","Mendoza",8,212200,1697600],["2024-05-27","Notebook","María","Rosario",5,827500,4137500],["2024-05-28","Monitor","Pedro","Córdoba",2,211600,423200],["2024-05-29","Impresora","María","La Plata",6,247900,1487400],["2024-05-30","Notebook","María","La Plata",5,920500,4602500],["2024-05-31","Notebook","Pedro","Rosario",2,819200,1638400],["2024-06-01","Teclado","María","Mendoza",3,35600,106800],["2024-06-02","Notebook","María","Buenos Aires",9,805600,7250400],["2024-06-03","Monitor","María","Mendoza",7,237700,1663900],["2024-06-04","Notebook","Juan","Rosario",7,786700,5506900],["2024-06-05","Teclado","Juan","La Plata",6,37000,222000],["2024-06-06","Teclado","Juan","Mendoza",8,34500,276000],["2024-06-07","Impresora","Pedro","La Plata",4,243600,974400],["2024-06-08","Monitor","Sofía","Buenos Aires",8,241900,1935200],["2024-06-09","Mouse","María","La Plata",4,18200,72800],["2024-06-10","Mouse","María","La Plata",8,17800,142400],["2024-06-11","Notebook","Pedro","Córdoba",9,805900,7253100],["2024-06-12","Impresora","María","Córdoba",3,274600,823800],["2024-06-13","Auriculares","Juan","Córdoba",3,43800,131400],["2024-06-14","Notebook","Sofía","La Plata",2,772300,1544600],["2024-06-15","Impresora","Lucía","Rosario",3,284200,852600],["2024-06-16","Monitor","María","La Plata",3,208400,625200],["2024-06-17","Monitor","Juan","Rosario",5,212500,1062500],["2024-06-18","Monitor","Lucía","Rosario",5,228400,1142000],["2024-06-19","Monitor","Sofía","Córdoba",2,216600,433200],["2024-06-20","Monitor","Lucía","Mendoza",6,222400,1334400],["2024-06-21","Impresora","Juan","Buenos Aires",5,263500,1317500],["2024-06-22","Impresora","Lucía","Córdoba",6,283800,1702800],["2024-06-23","Teclado","Pedro","Córdoba",1,38100,38100],["2024-06-24","Mouse","Lucía","Mendoza",5,16500,82500],["2024-06-25","Monitor","María","Buenos Aires",9,246300,2216700],["2024-06-26","Auriculares","María","La Plata",2,42000,84000],["2024-06-27","Impresora","Pedro","La Plata",1,276200,276200],["2024-06-28","Auriculares","Juan","Córdoba",9,43200,388800],["2024-06-29","Auriculares","María","Buenos Aires",9,47000,423000],["2024-06-30","Auriculares","Sofía","Córdoba",9,47000,423000],["2024-07-01","Teclado","María","Rosario",6,37500,225000],["2024-07-02","Impresora","María","Córdoba",8,284900,2279200],["2024-07-03","Auriculares","Juan","Córdoba",1,43000,43000],["2024-07-04","Monitor","Lucía","La Plata",4,235900,943600],["2024-07-05","Notebook","María","La Plata",1,890700,890700],["2024-07-06","Auriculares","Pedro","La Plata",8,41200,329600],["2024-07-07","Teclado","Lucía","Rosario",1,36100,36100],["2024-07-08","Impresora","Sofía","La Plata",3,250700,752100],["2024-07-09","Teclado","Juan","Buenos Aires",4,32600,130400],["2024-07-10","Auriculares","Sofía","Mendoza",8,45400,363200],["2024-07-11","Impresora","Lucía","Buenos Aires",6,258000,1548000],["2024-07-12","Notebook","Lucía","Buenos Aires",7,863100,6041700],["2024-07-13","Auriculares","Lucía","La Plata",8,46300,370400],["2024-07-14","Teclado","Sofía","Mendoza",2,35000,70000],["2024-07-15","Mouse","Lucía","Mendoza",8,19500,156000],["2024-07-16","Monitor","Sofía","Mendoza",3,215200,645600],["2024-07-17","Teclado","Lucía","Rosario",7,33500,234500],["2024-07-18","Impresora","Pedro","La Plata",3,252500,757500],["2024-07-15","Parlante","Sofía",null,4,62000,248000]],"productos":[{"Producto":"Notebook","Categoria":"Cómputo","Costo":640000},{"Producto":"Monitor","Categoria":"Cómputo","Costo":165000},{"Producto":"Impresora","Categoria":"Periférico","Costo":180000},{"Producto":"Teclado","Categoria":"Periférico","Costo":21000},{"Producto":"Mouse","Categoria":"Periférico","Costo":9500},{"Producto":"Auriculares","Categoria":"Audio","Costo":24000}],"vendedores":[{"Vendedor":"Juan","Sucursal":"Centro","Antiguedad":8},{"Vendedor":"Lucía","Sucursal":"Norte","Antiguedad":3},{"Vendedor":"María","Sucursal":"Centro","Antiguedad":12},{"Vendedor":"Pedro","Sucursal":"Sur","Antiguedad":1},{"Vendedor":"Sofía","Sucursal":"Norte","Antiguedad":5},{"Vendedor":"Tomás","Sucursal":"Sur","Antiguedad":0}]};
+
+/* ══ Utilidades (las mismas de la clase 19) ══ */
+const NS = 'http://www.w3.org/2000/svg';
+const $ = id => document.getElementById(id);
+const miles = v => '$ ' + Math.round(v).toLocaleString('es-AR');
+const millones = v => '$ ' + (v / 1e6).toLocaleString('es-AR', { maximumFractionDigits: 1 }) + ' M';
+const num = v => Math.round(v).toLocaleString('es-AR');
+function el(tag, attrs = {}, padre) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (padre) padre.appendChild(e);
+  return e;
+}
+const escala = (d0, d1, r0, r1) => v => r0 + (v - d0) / (d1 - d0) * (r1 - r0);
+function lienzo(id, W = 720, H = 340) {
+  const caja = $(id); caja.innerHTML = '';
+  const s = el('svg', { viewBox: `0 0 ${W} ${H}`, class: 'grafico' }); caja.appendChild(s);
+  return s;
+}
+const tip = $('tip');
+function conTip(nodo, html) {
+  nodo.addEventListener('mousemove', e => {
+    tip.innerHTML = typeof html === 'function' ? html() : html; tip.classList.add('ver');
+    const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8);
+    tip.style.left = x + 'px'; tip.style.top = (e.clientY - tip.offsetHeight - 12) + 'px';
+  });
+  nodo.addEventListener('mouseleave', () => tip.classList.remove('ver'));
+}
+const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/* SQL coloreado: palabras clave, textos, números y comentarios */
+const CLAVES = new Set(['SELECT', 'FROM', 'WHERE', 'GROUP', 'BY', 'HAVING', 'ORDER', 'LIMIT', 'JOIN', 'LEFT', 'INNER', 'ON', 'AS', 'AND', 'OR',
+  'IN', 'IS', 'NOT', 'NULL', 'DESC', 'ASC', 'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'ROUND', 'DISTINCT', 'CREATE', 'TABLE', 'PRIMARY', 'KEY',
+  'REFERENCES', 'INSERT', 'INTO', 'VALUES', 'INTEGER', 'TEXT', 'REAL', 'DELETE']);
+function colorSQL(texto) {
+  return texto.split('\n').map(linea => {
+    const i = linea.indexOf('--');
+    const cod = i >= 0 ? linea.slice(0, i) : linea, com = i >= 0 ? linea.slice(i) : '';
+    const coloreado = esc(cod).replace(/('[^']*'|"[^"]*")|(\b\d[\d.]*\b)|(\b[A-Z_]{2,}\b)/g, (m, s, n, w) =>
+      s ? `<span class="str">${s}</span>` : n ? `<span class="nro">${n}</span>` : CLAVES.has(w) ? `<span class="kw">${w}</span>` : w);
+    return coloreado + (com ? `<span class="com">${esc(com)}</span>` : '');
+  }).join('\n');
+}
+document.querySelectorAll('[data-sql]').forEach(c => { c.innerHTML = colorSQL(c.dataset.sql.replace(/&gt;/g, '>')); });
+
+/* Tabla chica a partir de filas */
+function tablaHTML(cols, filas, opc = {}) {
+  const cab = cols.map(c => `<th>${esc(c.t)}</th>`).join('');
+  const cuerpo = filas.map(f => `<tr class="${(opc.clase && opc.clase(f)) || ''}">` + cols.map(c => {
+    const v = c.f ? c.f(f) : f[c.k];
+    if (v === null || v === undefined) return '<td class="nulo">NULL</td>';
+    return `<td class="${c.num ? 'der' : ''}">${v}</td>`;
+  }).join('') + '</tr>').join('');
+  return `<table class="mini"><thead><tr>${cab}</tr></thead><tbody>${cuerpo}</tbody></table>`;
+}
+
+/* ══ Datos ══ */
+const VENTAS = D.ventas.map(([Fecha, Producto, Vendedor, Ciudad, Cantidad, Precio, Total]) => ({ Fecha, Producto, Vendedor, Ciudad, Cantidad, Precio, Total }));
+const PRODUCTOS = D.productos, VENDEDORES = D.vendedores;
+const costo = Object.fromEntries(PRODUCTOS.map(p => [p.Producto, p]));
+function agrupar(filas, clave) {
+  const g = new Map();
+  filas.forEach(f => { const k = f[clave]; if (!g.has(k)) g.set(k, []); g.get(k).push(f); });
+  return g;
+}
+const suma = (fs, k) => fs.reduce((a, f) => a + f[k], 0);
+
+/* ══ Portada: la consulta se escribe sola ══ */
+const CONSULTA_PORTADA = "SELECT Vendedor, SUM(Total) AS facturacion\nFROM ventas\nGROUP BY Vendedor\nORDER BY facturacion DESC;";
+let tipeoTimer = null;
+function tipear() {
+  clearTimeout(tipeoTimer);
+  const caja = $('tipeo'), res = $('tipeo-res');
+  let i = 0; res.innerHTML = '';
+  const paso = () => {
+    caja.innerHTML = colorSQL(CONSULTA_PORTADA.slice(0, i)) + '<span class="cursor"></span>';
+    if (i < CONSULTA_PORTADA.length) { i++; tipeoTimer = setTimeout(paso, 38); }
+    else {
+      const filas = [...agrupar(VENTAS, 'Vendedor')].map(([v, fs]) => ({ v, t: suma(fs, 'Total') })).sort((a, b) => b.t - a.t);
+      res.innerHTML = tablaHTML([{ t: 'Vendedor', k: 'v' }, { t: 'facturacion', f: r => miles(r.t), num: true }], filas);
+      tipeoTimer = setTimeout(tipear, 7000);
+    }
+  };
+  paso();
+}
+
+/* ══ Constructor de consultas ══ */
+const COLS = ['Fecha', 'Producto', 'Vendedor', 'Ciudad', 'Cantidad', 'Total'];
+const elegidas = new Set(['Fecha', 'Producto', 'Vendedor', 'Total']);
+const unicos = k => [...new Set(VENTAS.map(v => v[k]).filter(v => v !== null))].sort();
+const FILTROS = {
+  '': { t: '(sin filtro)', valores: [] },
+  'Ciudad': { t: "Ciudad =", valores: unicos('Ciudad'), sql: v => `Ciudad = '${v}'`, ok: (f, v) => f.Ciudad === v },
+  'Producto': { t: "Producto =", valores: unicos('Producto'), sql: v => `Producto = '${v}'`, ok: (f, v) => f.Producto === v },
+  'Vendedor': { t: "Vendedor =", valores: unicos('Vendedor'), sql: v => `Vendedor = '${v}'`, ok: (f, v) => f.Vendedor === v },
+  'Total': { t: "Total >", valores: [500000, 1000000, 2000000, 5000000], sql: v => `Total > ${v}`, ok: (f, v) => f.Total > +v, fmt: miles },
+  'Nulo': { t: "Ciudad IS NULL", valores: ['—'], sql: () => 'Ciudad IS NULL', ok: f => f.Ciudad === null },
+};
+const ORDENES = { '': '(sin orden)', 'Total DESC': 'Total, de mayor a menor', 'Total ASC': 'Total, de menor a mayor', 'Fecha': 'Fecha' };
+function armarConstructor() {
+  $('c-columnas').innerHTML = COLS.map(c => `<button class="chip-t ${elegidas.has(c) ? 'on' : ''}" data-col="${c}">${c}</button>`).join('');
+  $('c-columnas').querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    const c = b.dataset.col;
+    if (elegidas.has(c)) { if (elegidas.size > 1) elegidas.delete(c); } else elegidas.add(c);
+    b.classList.toggle('on', elegidas.has(c)); consultar();
+  }));
+  $('c-campo').innerHTML = Object.entries(FILTROS).map(([k, f]) => `<option value="${k}">${f.t}</option>`).join('');
+  $('c-campo').value = 'Ciudad';
+  $('c-orden').innerHTML = Object.entries(ORDENES).map(([k, t]) => `<option value="${k}">${t}</option>`).join('');
+  $('c-orden').value = 'Total DESC';
+  $('c-limite').innerHTML = [5, 8, 10].map(n => `<option value="${n}">${n}</option>`).join('');
+  $('c-limite').value = '5';
+  const valores = () => {
+    const f = FILTROS[$('c-campo').value];
+    $('c-valor').innerHTML = f.valores.map(v => `<option value="${v}">${f.fmt ? f.fmt(v) : v}</option>`).join('');
+    $('c-valor').style.display = f.valores.length && $('c-campo').value !== 'Nulo' ? '' : 'none';
+    if ($('c-campo').value === 'Ciudad') $('c-valor').value = 'Córdoba';
+  };
+  $('c-campo').addEventListener('change', () => { valores(); consultar(); });
+  ['c-valor', 'c-orden', 'c-limite'].forEach(id => $(id).addEventListener('change', consultar));
+  valores();
+}
+function consultar() {
+  const cols = COLS.filter(c => elegidas.has(c));
+  const campo = $('c-campo').value, f = FILTROS[campo], valor = $('c-valor').value;
+  const orden = $('c-orden').value, limite = +$('c-limite').value;
+  let filas = campo ? VENTAS.filter(r => f.ok(r, valor)) : VENTAS.slice();
+  if (orden === 'Total DESC') filas.sort((a, b) => b.Total - a.Total);
+  if (orden === 'Total ASC') filas.sort((a, b) => a.Total - b.Total);
+  if (orden === 'Fecha') filas.sort((a, b) => a.Fecha.localeCompare(b.Fecha));
+  const lineas = [`SELECT ${cols.join(', ')}`, 'FROM ventas'];
+  if (campo) lineas.push(`WHERE ${f.sql(valor)}`);
+  if (orden) lineas.push(`ORDER BY ${orden}`);
+  lineas.push(`LIMIT ${limite}`);
+  $('c-sql').innerHTML = colorSQL(lineas.join('\n'));
+  $('c-info').innerHTML = `<b>${num(filas.length)}</b> de las 201 ventas cumplen el filtro; se muestran las primeras <b>${Math.min(limite, filas.length)}</b>.`;
+  const fmt = { Total: r => miles(r.Total), Cantidad: r => r.Cantidad };
+  $('c-tabla').innerHTML = tablaHTML(cols.map(c => ({ t: c, k: c, f: fmt[c], num: c === 'Total' || c === 'Cantidad' })), filas.slice(0, limite));
+}
+
+/* ══ GROUP BY animado ══ */
+const COLOR_VEND = { 'Juan': '#FF7A3D', 'Lucía': '#2F7D5B', 'María': '#A9CDB1', 'Pedro': '#A29E94', 'Sofía': '#1A1A1A' };
+function grupos() {
+  const W = 760, H = 420, lado = 11, paso = 13.5;
+  const s = lienzo('g-grupos', W, H);
+  const orden = Object.keys(COLOR_VEND);
+  const porVend = agrupar(VENTAS, 'Vendedor');
+  const cuadros = VENTAS.map((v, i) => {
+    const r = el('rect', { x: 0, y: 0, width: lado, height: lado, rx: 2, fill: COLOR_VEND[v.Vendedor], class: 'cuadro' }, s);
+    r.style.transition = 'none';
+    r.style.transform = `translate(${40 + (i % 50) * paso}px, ${30 + Math.floor(i / 50) * paso}px)`;
+    conTip(r, `<b>${v.Vendedor}</b> · ${v.Producto}<br>${miles(v.Total)}`);
+    return { r, v };
+  });
+  // Destino: un bloque de 5 columnas por vendedor
+  const anchoBloque = 5 * paso, sep = (W - 80 - orden.length * anchoBloque) / (orden.length - 1);
+  const usados = Object.fromEntries(orden.map(o => [o, 0]));
+  setTimeout(() => cuadros.forEach(({ r, v }, i) => {
+    const b = orden.indexOf(v.Vendedor), k = usados[v.Vendedor]++;
+    const x = 40 + b * (anchoBloque + sep) + (k % 5) * paso, y = 300 - Math.floor(k / 5) * paso;
+    r.style.transition = `transform 1.1s cubic-bezier(.3,.8,.3,1) ${i * 6}ms`;
+    r.style.transform = `translate(${x}px, ${y}px)`;
+  }), 700);
+  orden.forEach((o, b) => {
+    const fs = porVend.get(o), x = 40 + b * (anchoBloque + sep) + anchoBloque / 2;
+    const t = el('text', { x, y: 340, 'text-anchor': 'middle', style: 'fill:var(--texto);font-weight:700;font-size:16px;opacity:0;transition:opacity .6s 1.9s' }, s);
+    t.textContent = o;
+    const t2 = el('text', { x, y: 362, 'text-anchor': 'middle', style: 'font-size:13px;opacity:0;transition:opacity .6s 2.1s' }, s);
+    t2.textContent = `${fs.length} operaciones`;
+    const t3 = el('text', { x, y: 384, 'text-anchor': 'middle', style: 'fill:#C2501D;font-weight:700;font-size:14px;opacity:0;transition:opacity .6s 2.3s' }, s);
+    t3.textContent = millones(suma(fs, 'Total'));
+    setTimeout(() => [t, t2, t3].forEach(e => e.style.opacity = 1), 50);
+  });
+}
+
+/* ══ WHERE contra HAVING ══ */
+const PRODS_ORDEN = ['Notebook', 'Impresora', 'Monitor', 'Parlante', 'Auriculares', 'Teclado', 'Mouse'];
+function whereHaving() {
+  const u = +$('r-umbral').value;
+  const porProd = agrupar(VENTAS, 'Producto');
+  const promedio = Object.fromEntries([...porProd].map(([p, fs]) => [p, suma(fs, 'Total') / fs.length]));
+  // Panel WHERE: cada venta es un punto
+  const W = 620, H = 320, m = { l: 100, r: 16, t: 10, b: 44 };
+  let s = lienzo('g-where', W, H);
+  const x = escala(0, 7.5e6, m.l, W - m.r), y = escala(0, PRODS_ORDEN.length, m.t, H - m.b);
+  [0, 2e6, 4e6, 6e6].forEach(v => { el('line', { x1: x(v), x2: x(v), y1: m.t, y2: H - m.b, class: 'grilla' }, s);
+    el('text', { x: x(v), y: H - m.b + 18, 'text-anchor': 'middle' }, s).textContent = v ? (v / 1e6) + ' M' : '0'; });
+  el('text', { x: (m.l + W - m.r) / 2, y: H - 6, 'text-anchor': 'middle', class: 'eje-titulo' }, s).textContent = 'Total de cada venta ($)';
+  const azar = (() => { let a = 7; return () => (a = (a * 9301 + 49297) % 233280) / 233280; })();
+  PRODS_ORDEN.forEach((p, i) => {
+    el('text', { x: m.l - 10, y: y(i + .5) + 5, 'text-anchor': 'end', style: 'fill:var(--texto);font-weight:600' }, s).textContent = p;
+    porProd.get(p).forEach(f => {
+      const c = el('circle', { cx: x(f.Total), cy: y(i + .5) + (azar() - .5) * 22, r: 4.5, fill: f.Total > u ? 'var(--naranja)' : '#CFCAC0', stroke: 'var(--linea)', 'stroke-width': .6 }, s);
+      conTip(c, `${p} · ${miles(f.Total)}`);
+    });
+  });
+  el('line', { x1: x(u), x2: x(u), y1: m.t, y2: H - m.b, stroke: 'var(--linea)', 'stroke-width': 2, 'stroke-dasharray': '6 5' }, s);
+  // Panel HAVING: el promedio de cada producto
+  s = lienzo('g-having', W, H);
+  const xb = escala(0, 4.2e6, m.l, W - m.r);
+  [0, 1e6, 2e6, 3e6, 4e6].forEach(v => { el('line', { x1: xb(v), x2: xb(v), y1: m.t, y2: H - m.b, class: 'grilla' }, s);
+    el('text', { x: xb(v), y: H - m.b + 18, 'text-anchor': 'middle' }, s).textContent = v ? (v / 1e6) + ' M' : '0'; });
+  el('text', { x: (m.l + W - m.r) / 2, y: H - 6, 'text-anchor': 'middle', class: 'eje-titulo' }, s).textContent = 'Promedio de las ventas del producto ($)';
+  PRODS_ORDEN.forEach((p, i) => {
+    el('text', { x: m.l - 10, y: y(i + .5) + 5, 'text-anchor': 'end', style: 'fill:var(--texto);font-weight:600' }, s).textContent = p;
+    const r = el('rect', { x: m.l, y: y(i) + 9, width: xb(promedio[p]) - m.l, height: y(1) - y(0) - 18, fill: promedio[p] > u ? 'var(--naranja)' : 'var(--salvia)', stroke: 'var(--linea)', 'stroke-width': 1.2, rx: 3 }, s);
+    conTip(r, `${p}: promedio ${miles(promedio[p])}`);
+  });
+  el('line', { x1: xb(u), x2: xb(u), y1: m.t, y2: H - m.b, stroke: 'var(--linea)', 'stroke-width': 2, 'stroke-dasharray': '6 5' }, s);
+  // Lectura
+  const conWhere = PRODS_ORDEN.filter(p => porProd.get(p).some(f => f.Total > u));
+  const conHaving = PRODS_ORDEN.filter(p => promedio[p] > u);
+  const solo = conWhere.filter(p => !conHaving.includes(p));
+  $('l-umbral').innerHTML = `Umbral: <b>${miles(u)}</b>. Con <code>WHERE</code> aparecen <strong>${conWhere.join(', ') || 'ninguno'}</strong>; con <code>HAVING</code>, <strong>${conHaving.join(', ') || 'ninguno'}</strong>.`
+    + (solo.length ? ` <span class="marcado">${solo.join(', ')}: tiene${solo.length > 1 ? 'n' : ''} ventas grandes, pero su venta típica no.</span>` : '');
+}
+$('r-umbral').addEventListener('input', whereHaving);
+
+/* ══ JOIN: la idea ══ */
+const COLOR_PROD = { 'Notebook': '#FF7A3D', 'Monitor': '#A9CDB1', 'Teclado': '#FFE9A8', 'Impresora': '#fff', 'Mouse': '#fff', 'Auriculares': '#fff' };
+const pildora = p => `<span class="pild" style="background:${COLOR_PROD[p] || '#fff'}">${p}</span>`;
+function joinIdea() {
+  const muestra = VENTAS.slice(0, 3);
+  $('j-ventas').innerHTML = tablaHTML([{ t: 'Fecha', k: 'Fecha' }, { t: 'Producto', f: r => pildora(r.Producto) }, { t: 'Cantidad', k: 'Cantidad', num: true }, { t: 'Total', f: r => miles(r.Total), num: true }], muestra);
+  $('j-productos').innerHTML = tablaHTML([{ t: 'Producto', f: r => pildora(r.Producto) }, { t: 'Categoria', k: 'Categoria' }, { t: 'Costo', f: r => miles(r.Costo), num: true }], PRODUCTOS);
+  $('j-resultado').innerHTML = tablaHTML([{ t: 'Producto', f: r => pildora(r.Producto) }, { t: 'Total', f: r => miles(r.Total), num: true },
+    { t: 'Costo × Cantidad', f: r => miles(costo[r.Producto].Costo * r.Cantidad), num: true },
+    { t: 'Ganancia', f: r => miles(r.Total - costo[r.Producto].Costo * r.Cantidad), num: true }], muestra);
+}
+
+/* ══ JOIN: INNER contra LEFT ══ */
+let caso = '1', tipo = 'INNER';
+function venn() {
+  const s = $('j-venn'); s.innerHTML = '';
+  const izq = caso === '1' ? 'ventas' : 'vendedores', der = caso === '1' ? 'productos' : 'ventas';
+  const lleno = 'rgba(255,122,61,.75)', vacio = '#fff';
+  el('circle', { cx: 90, cy: 70, r: 55, fill: tipo === 'LEFT' ? lleno : vacio, stroke: '#1A1A1A', 'stroke-width': 2 }, s);
+  el('circle', { cx: 150, cy: 70, r: 55, fill: vacio, 'fill-opacity': 0, stroke: '#1A1A1A', 'stroke-width': 2 }, s);
+  // la intersección siempre queda
+  const clip = el('clipPath', { id: 'clip-izq' }, s); el('circle', { cx: 90, cy: 70, r: 55 }, clip);
+  el('circle', { cx: 150, cy: 70, r: 55, fill: lleno, 'clip-path': 'url(#clip-izq)' }, s);
+  el('circle', { cx: 90, cy: 70, r: 55, fill: 'none', stroke: '#1A1A1A', 'stroke-width': 2 }, s);
+  el('circle', { cx: 150, cy: 70, r: 55, fill: 'none', stroke: '#1A1A1A', 'stroke-width': 2 }, s);
+  el('text', { x: 60, y: 140, 'text-anchor': 'middle' }, s).textContent = izq;
+  el('text', { x: 180, y: 140, 'text-anchor': 'middle' }, s).textContent = der;
+}
+function joinTipos() {
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.caso === caso));
+  document.querySelectorAll('.tipo').forEach(b => b.classList.toggle('on', b.dataset.tipo === tipo));
+  venn();
+  const J = tipo === 'LEFT' ? 'LEFT JOIN' : 'JOIN';
+  if (caso === '1') {
+    const conPareja = VENTAS.filter(v => costo[v.Producto]);
+    const total = tipo === 'LEFT' ? VENTAS.length : conPareja.length;
+    $('j-sql').innerHTML = colorSQL(`SELECT v.Fecha, v.Producto, v.Total, p.Categoria\nFROM ventas v\n${J} productos p\n  ON v.Producto = p.Producto`);
+    $('j-cuenta').innerHTML = `${VENTAS.length} → ${total}<span>filas antes y después del cruce</span>`;
+    $('j-explica').innerHTML = tipo === 'INNER'
+      ? 'El <strong>Parlante</strong> no está en el catálogo: el <code>INNER JOIN</code> no le encuentra pareja y <strong>lo descarta en silencio</strong>.'
+      : 'El <code>LEFT JOIN</code> conserva <strong>todas</strong> las ventas. Al Parlante le pone <span class="nulo-t">NULL</span> en las columnas del catálogo.';
+    const muestra = VENTAS.filter(v => v.Fecha >= '2024-07-13' && v.Fecha <= '2024-07-17');
+    $('j-tabla').innerHTML = tablaHTML([{ t: 'Fecha', k: 'Fecha' }, { t: 'Producto', k: 'Producto' }, { t: 'Total', f: r => miles(r.Total), num: true },
+      { t: 'Categoria', f: r => costo[r.Producto] ? costo[r.Producto].Categoria : null }], muestra,
+      { clase: r => costo[r.Producto] ? '' : (tipo === 'INNER' ? 'perdida' : 'nueva') });
+  } else {
+    const porVend = agrupar(VENTAS, 'Vendedor');
+    const filas = VENDEDORES.map(v => ({ Vendedor: v.Vendedor, Sucursal: v.Sucursal, ops: porVend.has(v.Vendedor) ? porVend.get(v.Vendedor).length : 0,
+      fact: porVend.has(v.Vendedor) ? suma(porVend.get(v.Vendedor), 'Total') : null }));
+    const visibles = tipo === 'LEFT' ? filas : filas.filter(f => f.ops > 0);
+    $('j-sql').innerHTML = colorSQL(`SELECT ve.Vendedor, COUNT(v.Total) AS operaciones,\n       SUM(v.Total) AS facturacion\nFROM vendedores ve\n${J} ventas v\n  ON v.Vendedor = ve.Vendedor\nGROUP BY ve.Vendedor`);
+    $('j-cuenta').innerHTML = `${VENDEDORES.length} → ${visibles.length}<span>vendedores antes y después del cruce</span>`;
+    $('j-explica').innerHTML = tipo === 'INNER'
+      ? '<strong>Tomás</strong> no vendió nada: el <code>INNER JOIN</code> lo saca del informe. Para la empresa, "no existe".'
+      : 'Con <code>LEFT JOIN</code> aparecen <strong>todos</strong> los vendedores, también Tomás, con 0 operaciones y facturación NULL. Ojo: contá con <code>COUNT(v.Total)</code>, no con <code>COUNT(*)</code>.';
+    $('j-tabla').innerHTML = tablaHTML([{ t: 'Vendedor', k: 'Vendedor' }, { t: 'operaciones', k: 'ops', num: true }, { t: 'facturacion', f: r => r.fact === null ? null : miles(r.fact), num: true }],
+      filas, { clase: r => r.ops ? '' : (tipo === 'INNER' ? 'perdida' : 'nueva') });
+  }
+}
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { caso = b.dataset.caso; joinTipos(); }));
+document.querySelectorAll('.tipo').forEach(b => b.addEventListener('click', () => { tipo = b.dataset.tipo; joinTipos(); }));
+
+/* ══ JOIN para el negocio: facturación y margen por categoría ══ */
+function margen() {
+  const filas = VENTAS.filter(v => costo[v.Producto]).map(v => ({ ...v, Categoria: costo[v.Producto].Categoria, Ganancia: v.Total - costo[v.Producto].Costo * v.Cantidad }));
+  const cats = [...agrupar(filas, 'Categoria')].map(([c, fs]) => ({ c, fact: suma(fs, 'Total'), gan: suma(fs, 'Ganancia') })).sort((a, b) => b.fact - a.fact);
+  const W = 760, H = 360, m = { l: 120, r: 120, t: 20, b: 46 };
+  const s = lienzo('g-margen', W, H);
+  const x = escala(0, 180e6, m.l, W - m.r), banda = (H - m.t - m.b) / cats.length;
+  [0, 50e6, 100e6, 150e6].forEach(v => { el('line', { x1: x(v), x2: x(v), y1: m.t, y2: H - m.b, class: 'grilla' }, s);
+    el('text', { x: x(v), y: H - m.b + 18, 'text-anchor': 'middle' }, s).textContent = v ? (v / 1e6) + ' M' : '0'; });
+  el('text', { x: (m.l + W - m.r) / 2, y: H - 6, 'text-anchor': 'middle', class: 'eje-titulo' }, s).textContent = 'Pesos (millones)';
+  cats.forEach((c, i) => {
+    const y0 = m.t + i * banda;
+    el('text', { x: m.l - 12, y: y0 + banda / 2 + 5, 'text-anchor': 'end', style: 'fill:var(--texto);font-weight:700;font-size:16px' }, s).textContent = c.c;
+    const r1 = el('rect', { x: m.l, y: y0 + 12, width: x(c.fact) - m.l, height: banda / 2 - 14, fill: 'var(--salvia)', stroke: 'var(--linea)', 'stroke-width': 1.2, rx: 3, class: 'crece' }, s);
+    const r2 = el('rect', { x: m.l, y: y0 + banda / 2, width: x(c.gan) - m.l, height: banda / 2 - 14, fill: 'var(--naranja)', stroke: 'var(--linea)', 'stroke-width': 1.2, rx: 3, class: 'crece' }, s);
+    conTip(r1, `${c.c}: facturó ${miles(c.fact)}`); conTip(r2, `${c.c}: ganó ${miles(c.gan)}`);
+    el('text', { x: W - m.r + 12, y: y0 + banda / 2 + 8, style: 'fill:var(--texto);font-weight:700;font-size:22px' }, s).textContent = Math.round(100 * c.gan / c.fact) + '%';
+  });
+  el('text', { x: W - m.r + 12, y: m.t + 4, style: 'font-size:12px' }, s).textContent = 'margen';
+  const C = cats.find(c => c.c === 'Cómputo'), A = cats.find(c => c.c === 'Audio');
+  $('t-computo').innerHTML = `Factura <strong>${millones(C.fact)}</strong> y deja <strong>${millones(C.gan)}</strong> de ganancia, pero su margen es de solo <strong>${Math.round(100 * C.gan / C.fact)}%</strong>.`;
+  $('t-audio').innerHTML = `Factura poco (<strong>${millones(A.fact)}</strong>), pero se queda con el <strong>${Math.round(100 * A.gan / A.fact)}%</strong> de cada venta.`;
+}
+
+/* ══ Subconsulta ══ */
+function subconsulta() {
+  const prom = suma(VENTAS, 'Total') / VENTAS.length;
+  $('t-promedio').innerHTML = `Devuelve un solo número: <b>${miles(prom)}</b>`;
+  $('t-arriba').textContent = VENTAS.filter(v => v.Total > prom).length + ' de 201';
+}
+
+/* ══ Navegación (la misma de la clase 19) ══ */
+const slides = [...document.querySelectorAll('.slide')];
+const alEntrar = { 'tipeo': tipear, 'c-sql': consultar, 'g-grupos': grupos, 'g-where': whereHaving, 'j-ventas': joinIdea, 'j-sql': joinTipos, 'g-margen': margen, 't-promedio': subconsulta };
+let actual = 0;
+function ir(i) {
+  actual = Math.max(0, Math.min(slides.length - 1, i));
+  const pasos = [...slides[actual].querySelectorAll('.paso')];
+  pasos.forEach(p => p.classList.remove('visto'));
+  pasos.forEach((p, k) => setTimeout(() => p.classList.add('visto'), 350 + k * 450));
+  slides.forEach((s, k) => s.classList.toggle('activa', k === actual));
+  $('barra').style.width = ((actual + 1) / slides.length * 100) + '%';
+  $('contador').textContent = `${actual + 1} / ${slides.length}`;
+  $('pie-seccion').textContent = slides[actual].dataset.seccion || '';
+  for (const id in alEntrar) if (slides[actual].querySelector('#' + id)) alEntrar[id]();
+  try { history.replaceState(null, '', '#' + (actual + 1)); } catch (e) { /* algunos visores no dejan tocar la dirección */ }
+}
+$('sig').addEventListener('click', () => ir(actual + 1));
+$('ant').addEventListener('click', () => ir(actual - 1));
+$('b-grupos').addEventListener('click', grupos);
+document.addEventListener('keydown', e => {
+  if (['INPUT', 'SELECT'].includes(e.target.tagName)) return;
+  if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); ir(actual + 1); }
+  if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); ir(actual - 1); }
+  if (e.key === 'f') (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()).catch(() => {});
+});
+
+/* ══ Fondo: palabras de SQL que flotan, muy tenues ══ */
+(function fondo() {
+  const lienzoF = $('fondo'), ctx = lienzoF.getContext('2d');
+  const PALABRAS = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'GROUP BY', 'HAVING', 'ORDER BY', 'LIMIT', 'COUNT(*)', 'SUM', 'AVG', 'LEFT JOIN', 'IS NULL', 'DISTINCT', 'ON', 'AS'];
+  const COLORES = ['rgba(194, 80, 29, .09)', 'rgba(47, 125, 91, .10)', 'rgba(26, 26, 26, .06)'];
+  let W, H, d, palabras = [];
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function medir() {
+    d = devicePixelRatio || 1; W = lienzoF.width = innerWidth * d; H = lienzoF.height = innerHeight * d;
+    palabras = Array.from({ length: 18 }, (_, i) => ({ t: PALABRAS[i % PALABRAS.length], x: Math.random() * W, y: Math.random() * H,
+      v: (0.12 + Math.random() * 0.25) * d, tam: (13 + Math.random() * 14) * d, c: COLORES[i % 3] }));
+  }
+  function dibujar() {
+    ctx.clearRect(0, 0, W, H);
+    palabras.forEach(p => {
+      ctx.font = `600 ${p.tam}px 'IBM Plex Mono', monospace`; ctx.fillStyle = p.c; ctx.fillText(p.t, p.x, p.y);
+      if (!quieto) { p.y -= p.v; if (p.y < -40 * d) { p.y = H + 30 * d; p.x = Math.random() * W; } }
+    });
+    if (!quieto) requestAnimationFrame(dibujar);
+  }
+  addEventListener('resize', medir); medir(); dibujar();
+})();
+
+/* Escala del escenario: la presentación entra entera en cualquier ventana */
+function ajustarEscala() {
+  const e = innerWidth <= 900 ? 1 : Math.min(innerWidth / 1600, innerHeight / 900);
+  document.documentElement.style.setProperty('--escala', e);
+}
+addEventListener('resize', ajustarEscala); ajustarEscala();
+if (location.search.includes('todo')) document.body.classList.add('ver-todo');
+armarConstructor();
+ir((parseInt(location.hash.slice(1)) || 1) - 1);
+</script>
+</body>
+</html>

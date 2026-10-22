@@ -1,23 +1,23 @@
 Fecha,Producto,Vendedor,Ciudad,Cantidad,Precio_Unitario,TotalVenta
-2024-01-01,Monitor,Juan,Mendoza,6,23030,138180
-2024-01-11,Monitor,Sofía,Córdoba,1,51271,51271
-2024-01-16,Monitor,María,Mendoza,8,55448,443584
-2024-01-20,Monitor,Juan,Córdoba,6,9632,57792
-2024-01-23,Monitor,María,Buenos Aires,5,114779,573895
-2024-01-27,Monitor,Lucía,La Plata,3,87152,261456
-2024-02-02,Monitor,María,Rosario,1,17910,17910
-2024-02-03,Monitor,Pedro,La Plata,5,78479,392395
-2024-02-08,Monitor,Sofía,Buenos Aires,9,53447,481023
-2024-02-09,Monitor,Pedro,Mendoza,8,131394,1051152
-2024-02-17,Monitor,Pedro,La Plata,5,6605,33025
-2024-02-19,Monitor,Lucía,Córdoba,4,81125,324500
-2024-02-27,Monitor,Juan,Córdoba,6,127177,763062
-2024-02-28,Monitor,María,Buenos Aires,2,46427,92854
-2024-02-29,Monitor,María,La Plata,3,127883,383649
-2024-03-01,Monitor,Pedro,La Plata,5,136189,680945
-2024-03-06,Monitor,Lucía,Rosario,5,5846,29230
-2024-03-08,Monitor,María,Mendoza,8,84239,673912
-2024-03-14,Monitor,Juan,La Plata,5,69323,346615
-2024-03-19,Monitor,Lucía,Rosario,2,83477,166954
-2024-03-23,Monitor,Juan,Rosario,5,25618,128090
-2024-03-26,Monitor,Pedro,La Plata,1,52362,52362
+2024-01-01,Monitor,Juan,Mendoza,6,215200,1291200
+2024-01-11,Monitor,Sofía,Córdoba,1,251500,251500
+2024-01-16,Monitor,María,Mendoza,8,245000,1960000
+2024-01-20,Monitor,Juan,Córdoba,6,217400,1304400
+2024-01-23,Monitor,María,Buenos Aires,5,237500,1187500
+2024-01-27,Monitor,Lucía,La Plata,3,216000,648000
+2024-02-02,Monitor,María,Rosario,1,243700,243700
+2024-02-03,Monitor,Pedro,La Plata,5,234900,1174500
+2024-02-08,Monitor,Sofía,Buenos Aires,9,248400,2235600
+2024-02-09,Monitor,Pedro,Mendoza,8,221700,1773600
+2024-02-17,Monitor,Pedro,La Plata,5,215700,1078500
+2024-02-19,Monitor,Lucía,Córdoba,4,232200,928800
+2024-02-27,Monitor,Juan,Córdoba,6,226100,1356600
+2024-02-28,Monitor,María,Buenos Aires,2,207100,414200
+2024-02-29,Monitor,María,La Plata,3,243500,730500
+2024-03-01,Monitor,Pedro,La Plata,5,230900,1154500
+2024-03-06,Monitor,Lucía,Rosario,5,252500,1262500
+2024-03-08,Monitor,María,Mendoza,8,223500,1788000
+2024-03-14,Monitor,Juan,La Plata,5,251100,1255500
+2024-03-19,Monitor,Lucía,Rosario,2,208100,416200
+2024-03-23,Monitor,Juan,Rosario,5,229400,1147000
+2024-03-26,Monitor,Pedro,La Plata,1,234800,234800
